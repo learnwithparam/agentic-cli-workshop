@@ -41,7 +41,7 @@ bun run demo
 
 Expect: one line per tool call as the finished desk works, then `The CMS says: Filed 9, held 3, waiting 0. Corrections logged tonight: 7. Rule breaks: 0.`
 
-![The finished desk in the terminal: tool calls, a compaction, the result](00-orientation/images/demo-run.png)
+![The finished desk in the terminal: its tool calls and the result](00-orientation/images/demo-run.png)
 
 ```bash
 bun run world

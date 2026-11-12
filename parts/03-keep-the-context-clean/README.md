@@ -55,7 +55,7 @@ command per step, each with its Expect line.
 bun run verify part keep-the-context-clean
 ```
 
-Expect: TODO(part session). Until the steps exist this prints that the part has no steps.
+Expect: TODO(part session). Until the steps exist it prints `0/0 steps pass`.
 
 ## Read
 
