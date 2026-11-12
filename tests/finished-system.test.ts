@@ -48,7 +48,7 @@ test("headless never-ask mode denies the filing and exits 4", async () => {
     keep: true,
   });
   try {
-    expect([3, 4]).toContain(run.code);
+    expect([3, 4]).toContain(run.code ?? -1);
     expect(run.world.cms.state().log.filter((l) => l.answer === "filed")).toHaveLength(0);
   } finally {
     run.world.cleanup();
