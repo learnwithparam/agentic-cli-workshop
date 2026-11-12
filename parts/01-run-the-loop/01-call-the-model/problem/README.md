@@ -55,13 +55,13 @@ Expect: `Done. All 4 rules pass.` and a `Progress:` line.
 
 ## If you get stuck
 
-| What you see                                                      | Fix                                                                                                                    |
-| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| What you see                                                      | Fix                                                                                                                         |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `FAIL It prints the practice model's reply and exits with code 0` | Print the `text` that `generateText` returns. A string you type yourself will not match: each check run gets a fresh reply. |
-| `FAIL It sends one request with your prompt as the user message`  | Pass the `-p` text as `prompt`, and call the model once.                                                               |
-| `FAIL It asks config/models.ts for the smart role`                | Use `model("smart")`. The fast role is for cheap side calls, such as summaries.                                        |
-| `FAIL It sends no temperature`                                    | Delete `temperature`. Newer models can reject it, and copied examples often set it.                                    |
-| `Cannot find module '#models'`                                    | Run `bun install` at the repo root. `#models` is set in the root `package.json`.                                       |
+| `FAIL It sends one request with your prompt as the user message`  | Pass the `-p` text as `prompt`, and call the model once.                                                                    |
+| `FAIL It asks config/models.ts for the smart role`                | Use `model("smart")`. The fast role is for cheap side calls, such as summaries.                                             |
+| `FAIL It sends no temperature`                                    | Delete `temperature`. Newer models can reject it, and copied examples often set it.                                         |
+| `Cannot find module '#models'`                                    | Run `bun install` at the repo root. `#models` is set in the root `package.json`.                                            |
 
 Compare with `../solution/src/main.ts` once your check passes.
 
