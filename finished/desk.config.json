@@ -1,0 +1,8 @@
+{
+  "compact_at_tokens": 9000,
+  "permissions": {
+    "allow": ["list_files", "read_file", "search_files", "todo_write", "ask_researcher"],
+    "ask": ["edit_file", "file_story", "hold_story", "log_correction"],
+    "deny": []
+  }
+}
