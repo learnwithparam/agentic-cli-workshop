@@ -1,2 +1,6 @@
 verify-report.json
 node_modules
+.env
+world/newsroom/
+world/.state/
+.desk/

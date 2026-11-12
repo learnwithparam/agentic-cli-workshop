@@ -1,0 +1,9 @@
+line,department,item,amount_gbp,approved
+1,highways,Mill Lane bridge repairs,420000,yes
+2,highways,Station Road resurfacing,185000,yes
+3,leisure,Millbrook Leisure Pool refit,1380000,yes
+4,leisure,Library opening hours extension,46000,yes
+5,parks,Allotment site expansion at Fenwick Road,38000,yes
+6,transport,Bus network support grant,610000,yes
+7,markets,Market hall roof,92000,no
+8,parking,Car park charge review,15000,yes
