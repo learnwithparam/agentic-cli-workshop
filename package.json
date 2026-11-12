@@ -11,6 +11,7 @@
     "verify": "bun scripts/verify.ts",
     "world": "bun world/world.ts",
     "demo": "bun finished/demo.ts",
+    "try": "bun scripts/try.ts",
     "desk": "bun finished/desk/src/main.ts",
     "models": "bun config/models-check.ts",
     "doctor": "bun scripts/doctor.ts",

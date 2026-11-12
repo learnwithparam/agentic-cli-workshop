@@ -145,13 +145,41 @@ function researcher(req: Request): Turn {
   return { text: `The motion was carried 11 votes to 4 (sources/council-meeting-transcript.txt, line ${line}). An earlier amendment vote was first misread as 9 to 6, then corrected.` };
 }
 
+// A short run for a harness that does not have the night desk tools yet (the early steps):
+// list the drafts if it can, read one, and say what it found.
+function explore(req: Request): Turn {
+  const has = (n: string) => req.tools.some((t) => t.name === n);
+  const results = toolResults(req);
+  const uses = toolUses(req);
+  const asked = userText(req);
+  const named = asked.match(/([a-z]+(?:-[a-z]+)+)/)?.[1];
+  const draft = `drafts/${named && answerKey().drafts[named] ? named : "bridge-repairs"}.md`;
+  if (uses.length === 0) {
+    if (has("list_files") && !named) return { text: "I will look at the drafts first.", tools: [{ name: "list_files", input: { path: "drafts" } }] };
+    if (has("read_file")) return { text: `I will read ${draft}.`, tools: [{ name: "read_file", input: { path: draft } }] };
+  }
+  const lastUse = uses[uses.length - 1];
+  const lastResult = results[results.length - 1];
+  if (lastUse?.name === "list_files" && lastResult && !lastResult.is_error && has("read_file")) {
+    const first = lastResult.content.split("\n").find((f) => f.endsWith(".md")) ?? "bridge-repairs.md";
+    return { text: `There are ${lastResult.content.split("\n").length} files. I will read ${first}.`, tools: [{ name: "read_file", input: { path: `drafts/${first}` } }] };
+  }
+  if (lastResult) {
+    if (lastResult.is_error) return { text: `The tool said: ${lastResult.content}` };
+    const body = lastResult.content.split("\n---\n")[1]?.trim().split("\n")[0] ?? lastResult.content.slice(0, 160);
+    return { text: `I read ${String((lastUse?.input as any)?.path ?? "the file")}. It opens: "${body}"` };
+  }
+  return { text: "I have no tools to read the newsroom with yet." };
+}
+
 export const nightDesk: Scenario = (req) => {
   if (req.system.startsWith("You summarise")) return summarise(req);
   if (req.system.includes("You are a researcher")) return researcher(req);
   if (req.tools.length === 0) {
     const ask = userText(req);
-    const word = ask.match(/word (\w+)/i)?.[1];
-    return { text: word ?? "ok" };
+    const word = ask.match(/(?:word|say) (\w+)/i)?.[1];
+    return { text: word ? `${word[0].toUpperCase()}${word.slice(1)}. The night desk is listening.` : "ok" };
   }
+  if (!req.tools.some((t) => t.name === "file_story")) return explore(req);
   return mainDesk(req);
 };
