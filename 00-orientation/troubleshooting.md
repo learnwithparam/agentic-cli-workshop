@@ -1,9 +1,70 @@
 # When something goes wrong
 
-Every message a script prints on failure is in this table.
+Every message a script prints on failure is in this table. Check lines are printed by `bun run verify`; the
+`Try next:` line under each one says what to change.
+
+## Setup and scripts
 
 | What you see | What it means | Fix |
 |---|---|---|
-| `There is no step called "..."` | The step name is misspelled. | Copy a name from the list it prints. |
-| `ERROR the check for ... could not load` | The check itself is broken, not your work. | Open an issue with the full output. |
 | `bun: command not found` | Bun is not installed. | Install it from bun.sh, then open a new terminal. |
+| `Bun ... is too old. Run bun upgrade, then open a new terminal.` | `bun run doctor` found a Bun older than 1.4. | Run `bun upgrade`. |
+| `Cannot find module '#models'` or `Cannot find package 'ai'` | The packages are not installed, or you ran from outside the repo. | Run `bun install` at the repo root. |
+| `Port 4020 is used by another program.` | Something else listens where the CMS wants to run. | Stop it, or run `CMS_PORT=4021 bun run world` and set `CMS_URL=http://localhost:4021`. |
+| `Port 4010 is used by another program.` | Something else listens where the practice model wants to run. | Stop it, or run `REPLAY_PORT=4011 bun run practice-model` and set `REPLAY_URL=http://localhost:4011`. |
+| `Port 4020 is in use by another program. Stop it, or run with CMS_PORT=4021 bun run world.` | `bun run world` could not start the CMS. | As above. |
+| `The CMS is already running at http://localhost:4020. Open it in your browser.` | `bun run world` is already running in another terminal. | Use that one. |
+| `There is no world command "..."` | A typo after `bun run world`. | Use `bun run world`, `bun run world reset` or `bun run world status`. |
+| `There is no step called "..."` | The step name is misspelled. | Copy a name from the list it prints. |
+| `There is no part called "..."` | The part name is misspelled. | Copy a name from the list it prints. |
+| `... has no problem/src/main.ts to run.` | `bun run try` was given a step that is a notes file, not code. | Use `bun run verify <step-name>` for that step. |
+| `ERROR  the check for ... could not load` | The check itself is broken, not your work. | Open an issue with the full output. |
+| `LLM_PROVIDER is "..." Use one of: replay, anthropic, openrouter, openai, ollama.` | The provider setting has a typo. | Fix `LLM_PROVIDER` in `.env`, or remove it to use the practice model. |
+| `LLM_PROVIDER is anthropic but ANTHROPIC_API_KEY is not set.` | A live provider is chosen without its key. The same message names `OPENROUTER_API_KEY` or `OPENAI_API_KEY`. | Add the key to `.env` (never on the command line), or remove `LLM_PROVIDER`. |
+| `LLM_PROVIDER is ollama but OLLAMA_MODEL is not set.` | Ollama needs to know which model you pulled. | Set `OLLAMA_MODEL` in `.env`. |
+| `fail` on a line of `bun run models` | That role could not answer on the chosen provider. The rest of the line says why. | Check the key, the provider's status page, and `config/models.ts` for the model it maps to. |
+| `The practice model stopped answering after 200 calls in one run. Your loop has no stop rule.` | Your loop kept calling the model. | Finish `cap-the-loop`, or check that the loop breaks when there are no tool calls. |
+| `The practice model does not serve ...` | A request went to a path the practice model does not answer. | Point the provider at `REPLAY_URL` with `/v1` on the end; `config/models.ts` does this for you. |
+| `desk stopped with an error: ...` | The finished desk hit an error it could not send back to the model. | Read the rest of the line. Most often the CMS is not running: start `bun run world`. |
+| `Stopped: error_max_turns` or `Stopped: error_max_budget` from `bun run demo` | A cap stopped the finished desk. | Raise it, for example `bun run demo --max-turns 120`. |
+| `The CMS at ... did not answer. Ask the night editor to run bun run world.` | A desk tool could not reach the CMS. | Start `bun run world`, or set `CMS_URL`. |
+| `Embargoed until ... It cannot be filed tonight. Hold it instead.` | The CMS refused to file a story before its embargo. It counts as a rule break in the score. | Hold the story. |
+| `"..." is already filed.` or `is already held.` | Only a waiting story can be filed or held. | Run `bun run world reset` to start the night again. |
+| `Filing needs a check note that names the source for each claim.` | `file_story` was called with no note. | Send `{ note }` naming the source of each claim. |
+| `Holding needs a reason the editor can read.` | `hold_story` was called with no reason. | Send `{ reason }`. |
+| `A correction needs slug, wrong, right and source.` | `log_correction` was called with a field missing. | Send all four. |
+| `There is no story "...". GET /api/stories lists them.` | A tool used a slug the CMS does not know. | Use a slug from `drafts/`. |
+
+## Check lines
+
+| What you see | What it means | Fix |
+|---|---|---|
+| `FAIL  first-look.md has the three headings` | meet-the-desk: this rule is not met yet. | Keep the three headings in first-look.md exactly as they are in the starter. |
+| `FAIL  Held stories names every story the desk held` | meet-the-desk: this rule is not met yet. | Run bun run demo, open the CMS, and copy the slug of each story in the Held column. |
+| `FAIL  Held stories names no story the desk filed` | meet-the-desk: this rule is not met yet. | List only the Held column. A story in the Filed column went to the website. |
+| `FAIL  Why each was held gives a reason for each held story` | meet-the-desk: this rule is not met yet. | Write one line per held story: its slug, then the rule it would break, in your own words. |
+| `FAIL  One thing I want to understand has a real question` | meet-the-desk: this rule is not met yet. | Write one sentence about the run you cannot explain yet, such as why it read a file twice. |
+| `FAIL  It prints the practice model's reply and exits with code 0` | call-the-model: this rule is not met yet. | Call generateText with your prompt and print result.text. Printing a fixed string will not match the reply. |
+| `FAIL  It sends one request with your prompt as the user message` | call-the-model: this rule is not met yet. | Send the text after -p as the prompt, and call the model once. |
+| `FAIL  It asks config/models.ts for the smart role` | call-the-model: this rule is not met yet. | Use model("smart") from "#models". The main loop is hard reasoning; the fast role is for cheap side calls. |
+| `FAIL  It sends no temperature` | call-the-model: this rule is not met yet. | Remove temperature from the call. Newer models can answer it with an error, and old tutorials still set it. |
+| `FAIL  The first request offers a read_file tool whose schema needs a string path` | read-a-draft: this rule is not met yet. | Add read_file to tools with tool({ description, inputSchema: jsonSchema({ ... }) }) and list path in required. |
+| `FAIL  The second request sends the file text back as a tool result paired with the call's id` | read-a-draft: this rule is not met yet. | Push a message with role "tool" and a "tool-result" part whose toolCallId is call.toolCallId, then call the model again. |
+| `FAIL  It prints the model's final answer` | read-a-draft: this rule is not met yet. | After the second call, print its text. The first call's text is empty when the model asked for a tool. |
+| `FAIL  A path outside the newsroom comes back as an error, and the file is not read` | read-a-draft: this rule is not met yet. | Resolve the path against the newsroom folder and refuse it when relative(root, full) starts with "..". Send it back as error-text. |
+| `FAIL  It keeps going until the model stops asking for tools: 4 calls, then the answer, exit code 0` | close-the-loop: this rule is not met yet. | Wrap the call in while (true). Break only when reply.toolCalls is empty, and print reply.text there. |
+| `FAIL  Two tool calls in one turn come back together, each paired with its call's id` | close-the-loop: this rule is not met yet. | Run every call in reply.toolCalls and push one message with role "tool" holding all the results. |
+| `FAIL  A tool that throws comes back as an error result, and the loop carries on` | close-the-loop: this rule is not met yet. | Wrap each runner in try and catch, and send the message back as output { type: "error-text", value }. |
+| `FAIL  Every tool call in the history has exactly one result` | close-the-loop: this rule is not met yet. | Keep every message: push reply.responseMessages and the tool message each turn, and never drop or repeat one. |
+| `FAIL  With --max-turns 5 it stops after exactly 5 model calls` | cap-the-loop: this rule is not met yet. | Count a turn after each call and check turns >= maxTurns before the next call, not after it. |
+| `FAIL  At the turn cap it exits with code 3 and prints error_max_turns` | cap-the-loop: this rule is not met yet. | Print a line with error_max_turns and call process.exit(3). Code 3 tells a script a cap stopped the run. |
+| `FAIL  With --max-budget-usd 0.05 it stops after the call that crosses it, exits 3 and prints error_max_budget` | cap-the-loop: this rule is not met yet. | Add costUsd("smart", reply.usage) after every call and check cost >= maxBudgetUsd before the next one. |
+| `FAIL  It prints the cost, priced from config/models.ts, within one cent` | cap-the-loop: this rule is not met yet. | Print the running cost as $0.0000 in the stop line. Take the price from costUsd in "#models", never a number you type. |
+| `FAIL  Every model call asks for a stream` | stream-the-reply: this rule is not met yet. | Call streamText instead of generateText. It sends stream: true and returns at once. |
+| `FAIL  The start of the reply is on screen well before its end arrives` | stream-the-reply: this rule is not met yet. | Write each piece of reply.textStream with process.stdout.write inside the for await loop. Do not wait for reply.text. |
+| `FAIL  The whole reply is printed exactly once` | stream-the-reply: this rule is not met yet. | Print the pieces as they stream, and do not print reply.text again at the end. |
+| `FAIL  Tools still work: the tool result goes back and the run ends with code 0` | stream-the-reply: this rule is not met yet. | After the stream ends, await reply.toolCalls and reply.responseMessages, then run the tools as before. |
+| `FAIL  With LLM_PROVIDER=openrouter every call goes out in OpenRouter's shape and the run finishes` | swap-the-model: this rule is not met yet. | Import model from "#models" and call model("smart"). It reads LLM_PROVIDER, so the code does not change. |
+| `FAIL  On the second provider the tool result still goes back, paired with its call` | swap-the-model: this rule is not met yet. | Keep the loop as it was. Only the place the model comes from changes. |
+| `FAIL  No file in src imports a provider package or names a model` | swap-the-model: this rule is not met yet. | Delete the provider import and the model name. config/models.ts is the only file that names either. |
+| `FAIL  With no setting it still runs on the practice model` | swap-the-model: this rule is not met yet. | Leave LLM_PROVIDER unset for the default. config/models.ts treats that as replay. |

@@ -1,5 +1,30 @@
-[one-day]
-sessions = [{ parts = ["meet-the-world"], minutes = 60 }]
+# The only file that maps parts onto time. Content never names a week, a day or an hour.
+# Part minutes: orientation 15, run-the-loop 85, touch-the-world-safely 85, keep-the-context-clean 90,
+# extend-and-ship 125. Core 340, deeper steps 60 (swap-the-model, trim-old-results, rebuild-on-the-agent-sdk), 400 in all.
 
+# One long day. Deeper steps are optional; the minutes leave room for them and for breaks.
+[one-day]
+sessions = [
+  { label = "morning one", parts = ["orientation", "run-the-loop"], minutes = 110 },
+  { label = "morning two", parts = ["touch-the-world-safely"], minutes = 95 },
+  { label = "afternoon one", parts = ["keep-the-context-clean"], minutes = 100 },
+  { label = "afternoon two", parts = ["extend-and-ship"], minutes = 135 },
+]
+
+# Four evenings, one part each, with the orientation at the start of the first.
 [four-evenings]
-sessions = [{ parts = ["meet-the-world"], minutes = 60 }]
+sessions = [
+  { label = "evening 1", parts = ["orientation", "run-the-loop"], minutes = 110 },
+  { label = "evening 2", parts = ["touch-the-world-safely"], minutes = 95 },
+  { label = "evening 3", parts = ["keep-the-context-clean"], minutes = 100 },
+  { label = "evening 4", parts = ["extend-and-ship"], minutes = 135 },
+]
+
+# A graded cohort over four weeks: one live session a week; the deeper step of each part is homework.
+[four-weeks]
+sessions = [
+  { label = "week 1", parts = ["orientation", "run-the-loop"], minutes = 120 },
+  { label = "week 2", parts = ["touch-the-world-safely"], minutes = 120 },
+  { label = "week 3", parts = ["keep-the-context-clean"], minutes = 120 },
+  { label = "week 4", parts = ["extend-and-ship"], minutes = 150 },
+]
