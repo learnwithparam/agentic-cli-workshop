@@ -33,56 +33,72 @@ export type Draft = {
   body: string;
 };
 
-export function parseDraft(text: string): Draft {
-  const m = text.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-  const meta: Record<string, string> = {};
-  for (const line of (m?.[1] ?? "").split("\n")) {
-    const i = line.indexOf(":");
-    if (i > 0) meta[line.slice(0, i).trim()] = line.slice(i + 1).trim();
+// A draft is a Markdown file with a "front matter" block of `key: value` lines between two
+// `---` lines, then the story text.
+const FRONT_MATTER = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/;
+
+function readFrontMatter(frontMatter: string): Record<string, string> {
+  const fields: Record<string, string> = {};
+  for (const line of frontMatter.split("\n")) {
+    const colon = line.indexOf(":");
+    if (colon <= 0) continue;
+    const key = line.slice(0, colon).trim();
+    fields[key] = line.slice(colon + 1).trim();
   }
-  const list = (s = "") =>
-    s
-      .replace(/^\[|\]$/g, "")
-      .split(",")
-      .map((x) => x.trim())
-      .filter(Boolean);
+  return fields;
+}
+
+// Turns "[one, two]" into ["one", "two"].
+function readList(text = ""): string[] {
+  const withoutBrackets = text.replace(/^\[|\]$/g, "");
+  const items = withoutBrackets.split(",").map((item) => item.trim());
+  return items.filter(Boolean);
+}
+
+export function parseDraft(text: string): Draft {
+  const parts = text.match(FRONT_MATTER);
+  const fields = readFrontMatter(parts?.[1] ?? "");
   return {
-    slug: meta.slug ?? "",
-    headline: meta.headline ?? "",
-    desk: meta.desk ?? "",
-    author: meta.author ?? "",
-    embargo: meta.embargo ? meta.embargo : null,
-    sources: list(meta.sources),
-    body: (m?.[2] ?? text).trim(),
+    slug: fields.slug ?? "",
+    headline: fields.headline ?? "",
+    desk: fields.desk ?? "",
+    author: fields.author ?? "",
+    embargo: fields.embargo ? fields.embargo : null,
+    sources: readList(fields.sources),
+    body: (parts?.[2] ?? text).trim(),
   };
 }
 
 export function readDrafts(newsroom = NEWSROOM): Draft[] {
-  const dir = join(newsroom, "drafts");
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter((f) => f.endsWith(".md") && !f.startsWith("DESK"))
-    .sort()
-    .map((f) => parseDraft(readFileSync(join(dir, f), "utf8")));
+  const folder = join(newsroom, "drafts");
+  if (!existsSync(folder)) return [];
+  // A DESK file holds notes for the desk, not a story.
+  const fileNames = readdirSync(folder).filter(
+    (fileName) => fileName.endsWith(".md") && !fileName.startsWith("DESK"),
+  );
+  fileNames.sort();
+  return fileNames.map((fileName) => parseDraft(readFileSync(join(folder, fileName), "utf8")));
 }
 
 export function readDraft(slug: string, newsroom = NEWSROOM): Draft | null {
-  const p = join(newsroom, "drafts", `${slug}.md`);
-  return existsSync(p) ? parseDraft(readFileSync(p, "utf8")) : null;
+  const draftPath = join(newsroom, "drafts", `${slug}.md`);
+  if (!existsSync(draftPath)) return null;
+  return parseDraft(readFileSync(draftPath, "utf8"));
 }
 
 // People under 18 in the police record. A draft that names one must never be filed.
 export function minors(newsroom = NEWSROOM): string[] {
-  const p = join(newsroom, "sources", "police-incidents.csv");
-  if (!existsSync(p)) return [];
-  const [head, ...rows] = readFileSync(p, "utf8").trim().split("\n");
-  const cols = head.split(",");
-  const name = cols.indexOf("person_name");
-  const age = cols.indexOf("age");
-  return rows
-    .map((r) => r.split(","))
-    .filter((c) => c[age] && Number(c[age]) < 18 && c[name] !== "unknown")
-    .map((c) => c[name]);
+  const recordPath = join(newsroom, "sources", "police-incidents.csv");
+  if (!existsSync(recordPath)) return [];
+  const [headerLine, ...rows] = readFileSync(recordPath, "utf8").trim().split("\n");
+  const columns = headerLine.split(",");
+  const nameColumn = columns.indexOf("person_name");
+  const ageColumn = columns.indexOf("age");
+  const people = rows.map((row) => row.split(","));
+  const children = people.filter(
+    (cells) => cells[ageColumn] && Number(cells[ageColumn]) < 18 && cells[nameColumn] !== "unknown",
+  );
+  return children.map((cells) => cells[nameColumn]);
 }
 
 export type AnswerKey = {
@@ -90,7 +106,9 @@ export type AnswerKey = {
     string,
     {
       outcome: "file" | "hold";
+      // biome-ignore-start lint/style/useNamingConvention: field names come from answer-key.json
       hold_reason?: string;
+      // biome-ignore-end lint/style/useNamingConvention: back to our own names
       faults: {
         id: string;
         kind: string;
@@ -114,6 +132,7 @@ export function resetNewsroom(target = NEWSROOM): string {
   return target;
 }
 
+// Reset only when the newsroom is missing, so work already done tonight is kept.
 export function ensureNewsroom(target = NEWSROOM): string {
   if (!existsSync(join(target, "drafts"))) resetNewsroom(target);
   return target;
