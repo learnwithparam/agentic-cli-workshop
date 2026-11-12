@@ -34,12 +34,12 @@ flowchart LR
 
 ## Steps
 
-| Step | Minutes | You build | The check reads |
-|---|---|---|---|
-| `shape-the-tools` | 15 | `list_files`, `search_files` and `file_story` with schemas the model uses well and errors that say what to try next | Each schema, the error text for planted bad calls, the CMS filing log (two identical filings land once) |
-| `edit-drafts-safely` | 25 | `edit_file(path, old_text, new_text)` that refuses 0 or 2+ matches and a file not read first | The draft on disk after the run: one line changed, nothing else; the error results |
-| `run-commands` | 15 | `run_command` with a timeout, a folder jail and output cut at 20,000 characters | Exit and timing of a planted `sleep`, the length of the result, the answer to a sum over `sources/school-results.csv` |
-| `ask-before-acting` | 30 | Permission modes (`ask`, `accept-edits`, `plan`, `never-ask`) and rules (`allow`, `ask`, `deny`) in `desk.config.json` | The CMS after a "no" (unchanged), a deny that beats an allow, `plan` mode leaving files untouched |
+| Step                 | Minutes | You build                                                                                                              | The check reads                                                                                                       |
+| -------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `shape-the-tools`    | 15      | `list_files`, `search_files` and `file_story` with schemas the model uses well and errors that say what to try next    | Each schema, the error text for planted bad calls, the CMS filing log (two identical filings land once)               |
+| `edit-drafts-safely` | 25      | `edit_file(path, old_text, new_text)` that refuses 0 or 2+ matches and a file not read first                           | The draft on disk after the run: one line changed, nothing else; the error results                                    |
+| `run-commands`       | 15      | `run_command` with a timeout, a folder jail and output cut at 20,000 characters                                        | Exit and timing of a planted `sleep`, the length of the result, the answer to a sum over `sources/school-results.csv` |
+| `ask-before-acting`  | 30      | Permission modes (`ask`, `accept-edits`, `plan`, `never-ask`) and rules (`allow`, `ask`, `deny`) in `desk.config.json` | The CMS after a "no" (unchanged), a deny that beats an allow, `plan` mode leaving files untouched                     |
 
 Minutes in this part: 85.
 

@@ -36,13 +36,13 @@ Expect: `Done. All 5 rules pass.` and a `Progress:` line.
 
 ## If you get stuck
 
-| What you see | Fix |
-|---|---|
-| `FAIL first-look.md has the three headings` | Keep the headings from the starter exactly, including `##`. |
-| `FAIL Held stories names every story the desk held` | Copy the slug from each card in the Held column, such as `shop-break-in`. |
-| `FAIL Held stories names no story the desk filed` | A story in the Filed column went to the website. Leave it out. |
-| `FAIL Why each was held gives a reason for each held story` | Put the slug and a reason of four words or more on the same line. |
-| `FAIL One thing I want to understand has a real question` | Replace `TODO` with a sentence of five words or more. |
+| What you see                                                | Fix                                                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `FAIL first-look.md has the three headings`                 | Keep the headings from the starter exactly, including `##`.               |
+| `FAIL Held stories names every story the desk held`         | Copy the slug from each card in the Held column, such as `shop-break-in`. |
+| `FAIL Held stories names no story the desk filed`           | A story in the Filed column went to the website. Leave it out.            |
+| `FAIL Why each was held gives a reason for each held story` | Put the slug and a reason of four words or more on the same line.         |
+| `FAIL One thing I want to understand has a real question`   | Replace `TODO` with a sentence of five words or more.                     |
 
 ## Words you will use
 

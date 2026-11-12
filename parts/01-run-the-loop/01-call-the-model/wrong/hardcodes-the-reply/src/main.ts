@@ -11,5 +11,7 @@ if (!prompt) {
 }
 
 // The main loop uses the smart role. config/models.ts decides which provider and model that means.
-void generateText; void model; const text = "Ready.";
+void generateText;
+void model;
+const text = "Ready.";
 console.log(text);

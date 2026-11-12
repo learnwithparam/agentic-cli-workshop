@@ -53,12 +53,12 @@ Expect: `Done. All 4 rules pass.`
 
 ## If you get stuck
 
-| What you see | Fix |
-|---|---|
-| `FAIL Every model call asks for a stream` | Call `streamText`, not `generateText`. |
-| `FAIL The start of the reply is on screen well before its end arrives` | Write inside the `for await` loop. `await reply.text` waits for the end. |
-| `FAIL The whole reply is printed exactly once` | Remove the extra `console.log` of the full text. |
-| `FAIL Tools still work: the tool result goes back and the run ends with code 0` | `await reply.toolCalls` after the stream and run them as before. |
+| What you see                                                                    | Fix                                                                      |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `FAIL Every model call asks for a stream`                                       | Call `streamText`, not `generateText`.                                   |
+| `FAIL The start of the reply is on screen well before its end arrives`          | Write inside the `for await` loop. `await reply.text` waits for the end. |
+| `FAIL The whole reply is printed exactly once`                                  | Remove the extra `console.log` of the full text.                         |
+| `FAIL Tools still work: the tool result goes back and the run ends with code 0` | `await reply.toolCalls` after the stream and run them as before.         |
 
 ## Words you will use
 

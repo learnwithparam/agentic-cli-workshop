@@ -4,7 +4,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { startCms } from "../world/cms/server";
-import { NEWSROOM, ensureNewsroom } from "../world/lib/newsroom";
+import { ensureNewsroom, NEWSROOM } from "../world/lib/newsroom";
 import { nightDesk } from "../world/practice-model/night-desk";
 import { startPracticeModel } from "../world/practice-model/server";
 import { allSteps, findStep } from "./structure";
@@ -20,19 +20,27 @@ const which = rest[0] === "solution" ? "solution" : "problem";
 const args = rest[0] === "solution" ? rest.slice(1) : rest;
 const main = join(step.dir, which, "src", "main.ts");
 if (!existsSync(main)) {
-  console.log(`${step.name} has no ${which}/src/main.ts to run. This step is checked with bun run verify ${step.name}.`);
+  console.log(
+    `${step.name} has no ${which}/src/main.ts to run. This step is checked with bun run verify ${step.name}.`,
+  );
   process.exit(1);
 }
 ensureNewsroom();
 const live = (process.env.LLM_PROVIDER ?? "replay") !== "replay";
 const practice = live ? null : startPracticeModel({ scenario: nightDesk });
 const cmsUrl = process.env.CMS_URL ?? "http://localhost:4020";
-const up = await fetch(`${cmsUrl}/api/status`).then((r) => r.ok).catch(() => false);
+const up = await fetch(`${cmsUrl}/api/status`)
+  .then((r) => r.ok)
+  .catch(() => false);
 const cms = up ? null : startCms({ newsroom: NEWSROOM });
 const proc = Bun.spawn(["bun", main, ...args], {
   cwd: NEWSROOM,
   stdio: ["inherit", "inherit", "inherit"],
-  env: { ...process.env, CMS_URL: cms?.url ?? cmsUrl, ...(practice ? { REPLAY_URL: practice.url } : {}) },
+  env: {
+    ...process.env,
+    CMS_URL: cms?.url ?? cmsUrl,
+    ...(practice ? { REPLAY_URL: practice.url } : {}),
+  },
 });
 const code = await proc.exited;
 practice?.stop();

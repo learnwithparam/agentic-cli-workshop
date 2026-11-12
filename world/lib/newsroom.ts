@@ -1,5 +1,13 @@
 // The Millbrook Herald newsroom: where its files live, how to reset them, and how to read a draft.
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { councilTranscript } from "./transcript";
 
@@ -32,7 +40,12 @@ export function parseDraft(text: string): Draft {
     const i = line.indexOf(":");
     if (i > 0) meta[line.slice(0, i).trim()] = line.slice(i + 1).trim();
   }
-  const list = (s = "") => s.replace(/^\[|\]$/g, "").split(",").map((x) => x.trim()).filter(Boolean);
+  const list = (s = "") =>
+    s
+      .replace(/^\[|\]$/g, "")
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean);
   return {
     slug: meta.slug ?? "",
     headline: meta.headline ?? "",
@@ -78,7 +91,14 @@ export type AnswerKey = {
     {
       outcome: "file" | "hold";
       hold_reason?: string;
-      faults: { id: string; kind: string; wrong?: string; right?: string; source?: string; correction?: boolean }[];
+      faults: {
+        id: string;
+        kind: string;
+        wrong?: string;
+        right?: string;
+        source?: string;
+        correction?: boolean;
+      }[];
     }
   >;
 };

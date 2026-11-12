@@ -1,6 +1,6 @@
 // stream-the-reply: desk asks for a stream and prints the reply piece by piece, once, while tools still work.
 import type { Rule } from "../scripts/verify";
-import { every, runs, toolResults, type Run } from "./lib/harness";
+import { every, type Run, runs, toolResults } from "./lib/harness";
 
 const answer = (nonce: string) =>
   `Start ${nonce}. Bridge figure checked against the council budget. River date checked against the readings. End ${nonce}.`;
@@ -28,7 +28,8 @@ function firstSeen(r: Run, text: string): number | null {
 export default [
   {
     says: "Every model call asks for a stream",
-    test: (d) => every(stream(d), (r) => r.requests.length === 2 && r.requests.every((q) => q.stream)),
+    test: (d) =>
+      every(stream(d), (r) => r.requests.length === 2 && r.requests.every((q) => q.stream)),
     tryNext: "Call streamText instead of generateText. It sends stream: true and returns at once.",
   },
   {
@@ -39,7 +40,8 @@ export default [
         const end = firstSeen(r, `End ${r.world.nonce}`);
         return start !== null && end !== null && end - start >= 400;
       }),
-    tryNext: "Write each piece of reply.textStream with process.stdout.write inside the for await loop. Do not wait for reply.text.",
+    tryNext:
+      "Write each piece of reply.textStream with process.stdout.write inside the for await loop. Do not wait for reply.text.",
   },
   {
     says: "The whole reply is printed exactly once",
@@ -48,7 +50,15 @@ export default [
   },
   {
     says: "Tools still work: the tool result goes back and the run ends with code 0",
-    test: (d) => every(stream(d), (r) => r.code === 0 && toolResults(r.requests[1]).length === 1 && !toolResults(r.requests[1])[0].is_error),
-    tryNext: "After the stream ends, await reply.toolCalls and reply.responseMessages, then run the tools as before.",
+    test: (d) =>
+      every(
+        stream(d),
+        (r) =>
+          r.code === 0 &&
+          toolResults(r.requests[1]).length === 1 &&
+          !toolResults(r.requests[1])[0].is_error,
+      ),
+    tryNext:
+      "After the stream ends, await reply.toolCalls and reply.responseMessages, then run the tools as before.",
   },
 ] satisfies Rule[];

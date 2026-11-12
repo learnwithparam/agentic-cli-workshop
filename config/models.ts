@@ -33,7 +33,11 @@ const IDS: Record<Provider, Record<Role, string>> = {
     judge: "anthropic/claude-haiku-5.5",
   },
   openai: { fast: "gpt-6-luna", smart: "gpt-6-luna-pro", judge: "gpt-6-luna" },
-  ollama: { fast: process.env.OLLAMA_MODEL ?? "", smart: process.env.OLLAMA_MODEL ?? "", judge: process.env.OLLAMA_MODEL ?? "" },
+  ollama: {
+    fast: process.env.OLLAMA_MODEL ?? "",
+    smart: process.env.OLLAMA_MODEL ?? "",
+    judge: process.env.OLLAMA_MODEL ?? "",
+  },
 };
 
 // USD per million tokens, input and output. Anthropic: platform.claude.com/docs/en/about-claude/pricing.
@@ -55,7 +59,8 @@ const KEYS: Partial<Record<Provider, string>> = {
 
 export function provider(): Provider {
   const p = (process.env.LLM_PROVIDER ?? "replay").trim().toLowerCase() as Provider;
-  if (!PROVIDERS.includes(p)) throw new Error(`LLM_PROVIDER is "${p}". Use one of: ${PROVIDERS.join(", ")}.`);
+  if (!PROVIDERS.includes(p))
+    throw new Error(`LLM_PROVIDER is "${p}". Use one of: ${PROVIDERS.join(", ")}.`);
   return p;
 }
 
@@ -71,31 +76,52 @@ export function model(role: Role): LanguageModel {
   const p = provider();
   const id = IDS[p][role];
   const key = KEYS[p];
-  if (key && !process.env[key]) throw new Error(`LLM_PROVIDER is ${p} but ${key} is not set. Add it to .env, or unset LLM_PROVIDER to use the practice model.`);
+  if (key && !process.env[key])
+    throw new Error(
+      `LLM_PROVIDER is ${p} but ${key} is not set. Add it to .env, or unset LLM_PROVIDER to use the practice model.`,
+    );
   switch (p) {
     case "replay":
       return createAnthropic({ baseURL: `${replayUrl()}/v1`, apiKey: "practice" })(id);
     case "anthropic":
       return createAnthropic({ baseURL: process.env.ANTHROPIC_BASE_URL })(id);
     case "openrouter":
-      return createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY, baseURL: process.env.OPENROUTER_BASE_URL })(id);
+      return createOpenRouter({
+        apiKey: process.env.OPENROUTER_API_KEY,
+        baseURL: process.env.OPENROUTER_BASE_URL,
+      })(id);
     case "openai":
       return createOpenAI({ baseURL: process.env.OPENAI_BASE_URL })(id);
     case "ollama":
-      if (!id) throw new Error("LLM_PROVIDER is ollama but OLLAMA_MODEL is not set. Set it to a model you pulled.");
-      return createOpenAI({ baseURL: process.env.OLLAMA_BASE_URL ?? "http://localhost:11434/v1", apiKey: "ollama" }).chat(id);
+      if (!id)
+        throw new Error(
+          "LLM_PROVIDER is ollama but OLLAMA_MODEL is not set. Set it to a model you pulled.",
+        );
+      return createOpenAI({
+        baseURL: process.env.OLLAMA_BASE_URL ?? "http://localhost:11434/v1",
+        apiKey: "ollama",
+      }).chat(id);
   }
 }
 
 // The same thing as a property per role: models.smart, models.fast, models.judge.
 export const models = {
-  get fast() { return model("fast"); },
-  get smart() { return model("smart"); },
-  get judge() { return model("judge"); },
+  get fast() {
+    return model("fast");
+  },
+  get smart() {
+    return model("smart");
+  },
+  get judge() {
+    return model("judge");
+  },
 };
 
 // What a call cost, from its token counts. Returns null when the price is unknown.
-export function costUsd(role: Role, usage: { inputTokens?: number; outputTokens?: number }): number | null {
+export function costUsd(
+  role: Role,
+  usage: { inputTokens?: number; outputTokens?: number },
+): number | null {
   const price = PRICES[provider()][role];
   if (!price) return null;
   return ((usage.inputTokens ?? 0) * price[0] + (usage.outputTokens ?? 0) * price[1]) / 1_000_000;

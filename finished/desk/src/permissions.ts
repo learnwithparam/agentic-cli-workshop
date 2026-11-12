@@ -35,16 +35,34 @@ function askPerson(question: string): string {
 export function makeGate(mode: Mode, rules: Rules) {
   const always = new Set<string>();
   return (name: string, summary: string): Decision => {
-    if (rules.deny.includes(name)) return { allow: false, reason: `A deny rule blocks ${name}.`, asked: false };
+    if (rules.deny.includes(name))
+      return { allow: false, reason: `A deny rule blocks ${name}.`, asked: false };
     const readOnly = (READ_ONLY as string[]).includes(name);
-    if (mode === "plan" && !readOnly) return { allow: false, reason: `Plan mode: ${name} would change the newsroom. Describe the change instead.`, asked: false };
-    if (rules.allow.includes(name) || (readOnly && !rules.ask.includes(name)) || always.has(name)) return { allow: true, reason: "allowed", asked: false };
-    if (mode === "accept-edits" && (EDITS as string[]).includes(name)) return { allow: true, reason: "accept-edits mode", asked: false };
+    if (mode === "plan" && !readOnly)
+      return {
+        allow: false,
+        reason: `Plan mode: ${name} would change the newsroom. Describe the change instead.`,
+        asked: false,
+      };
+    if (rules.allow.includes(name) || (readOnly && !rules.ask.includes(name)) || always.has(name))
+      return { allow: true, reason: "allowed", asked: false };
+    if (mode === "accept-edits" && (EDITS as string[]).includes(name))
+      return { allow: true, reason: "accept-edits mode", asked: false };
     if (mode === "accept-all") return { allow: true, reason: "accept-all mode", asked: false };
-    if (mode === "never-ask") return { allow: false, reason: `${name} needs a person's approval and this run cannot ask (never-ask mode).`, asked: false };
+    if (mode === "never-ask")
+      return {
+        allow: false,
+        reason: `${name} needs a person's approval and this run cannot ask (never-ask mode).`,
+        asked: false,
+      };
     const answer = askPerson(`\n${summary}\nAllow ${name}?`);
     if (answer === "a") always.add(name);
-    if (answer === "y" || answer === "a") return { allow: true, reason: "the night editor approved it", asked: true };
-    return { allow: false, reason: `The night editor said no to ${name}. Do not try it again; hold the story or move on.`, asked: true };
+    if (answer === "y" || answer === "a")
+      return { allow: true, reason: "the night editor approved it", asked: true };
+    return {
+      allow: false,
+      reason: `The night editor said no to ${name}. Do not try it again; hold the story or move on.`,
+      asked: true,
+    };
   };
 }

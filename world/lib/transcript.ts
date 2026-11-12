@@ -72,10 +72,15 @@ const CLOSERS = [
 ];
 
 function speech(r: () => number): string {
-  const pick = <T,>(a: T[]) => a[Math.floor(r() * a.length)];
+  const pick = <T>(a: T[]) => a[Math.floor(r() * a.length)];
   const n = 2 + Math.floor(r() * 4);
   const parts = [pick(OPENERS)];
-  for (let i = 0; i < n; i++) parts.push(`${pick(MIDDLES)}.`.replace(/^./, (c) => (i === 0 && parts[0].endsWith(",") ? c : c.toUpperCase())));
+  for (let i = 0; i < n; i++)
+    parts.push(
+      `${pick(MIDDLES)}.`.replace(/^./, (c) =>
+        i === 0 && parts[0].endsWith(",") ? c : c.toUpperCase(),
+      ),
+    );
   parts.push(pick(CLOSERS));
   return parts.join(" ");
 }
@@ -109,7 +114,10 @@ export function councilTranscript(target = 400_000): string {
   };
   while (size < target) {
     if (size > (item + 1) * (target / ITEMS.length) && item < ITEMS.length - 1) item++;
-    if (r() < 0.04) push(`THE CHAIR (Councillor Ruth Ellery): We are on item ${item + 1}, ${ITEMS[item]}. Who wants to speak?`);
+    if (r() < 0.04)
+      push(
+        `THE CHAIR (Councillor Ruth Ellery): We are on item ${item + 1}, ${ITEMS[item]}. Who wants to speak?`,
+      );
     if (!keyDone && size >= keyAt) {
       for (const k of KEY_PASSAGE) push(k);
       keyDone = true;

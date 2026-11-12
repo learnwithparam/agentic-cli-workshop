@@ -2,7 +2,7 @@
 // Run from the newsroom folder: bun src/main.ts -p "what does the bridge-repairs draft say?"
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";
-import { generateText, jsonSchema, tool, type ModelMessage } from "ai";
+import { generateText, jsonSchema, type ModelMessage, tool } from "ai";
 import { model } from "#models";
 
 const i = process.argv.indexOf("-p");
@@ -13,7 +13,7 @@ if (!prompt) {
 }
 
 // The newsroom is the folder desk runs in. No tool reads outside it.
-const root = process.cwd();
+const _root = process.cwd();
 
 // TODO: describe a read_file tool the model can call: a description and a JSON schema
 //       with one required string property, path. Use tool() and jsonSchema() from "ai".
@@ -22,7 +22,14 @@ const tools = {};
 // TODO: read the file at `path` inside root. Return ok: false with a message the model can read
 //       when the path leaves the newsroom folder or the file does not exist.
 function readFile(path: string): { ok: boolean; text: string } {
-  void path; void existsSync; void readFileSync; void statSync; void relative; void resolve; void tool; void jsonSchema;
+  void path;
+  void existsSync;
+  void readFileSync;
+  void statSync;
+  void relative;
+  void resolve;
+  void tool;
+  void jsonSchema;
   return { ok: false, text: "TODO" };
 }
 

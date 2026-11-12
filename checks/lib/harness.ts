@@ -4,11 +4,17 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { startCms, type Cms } from "../../world/cms/server";
+import { type Cms, startCms } from "../../world/cms/server";
 import { resetNewsroom } from "../../world/lib/newsroom";
-import { startPracticeModel, type Request, type Scenario } from "../../world/practice-model/server";
+import { type Request, type Scenario, startPracticeModel } from "../../world/practice-model/server";
 
-export type World = { root: string; newsroom: string; cms: Cms; nonce: string; cleanup: () => void };
+export type World = {
+  root: string;
+  newsroom: string;
+  cms: Cms;
+  nonce: string;
+  cleanup: () => void;
+};
 
 export const nonce = () => Math.random().toString(36).slice(2, 8);
 
@@ -86,7 +92,8 @@ export async function runDesk(dir: string, o: RunOptions): Promise<Run> {
     }, o.timeoutMs ?? 20_000);
     const dec = new TextDecoder();
     const readOut = (async () => {
-      for await (const c of proc.stdout as ReadableStream<Uint8Array>) chunks.push({ at: Date.now(), text: dec.decode(c) });
+      for await (const c of proc.stdout as ReadableStream<Uint8Array>)
+        chunks.push({ at: Date.now(), text: dec.decode(c) });
     })();
     const readErr = (async () => {
       stderr = await new Response(proc.stderr).text();
@@ -94,7 +101,17 @@ export async function runDesk(dir: string, o: RunOptions): Promise<Run> {
     const code = await proc.exited;
     await Promise.all([readOut, readErr]);
     clearTimeout(timer);
-    const run: Run = { code: timedOut ? null : code, stdout: chunks.map((c) => c.text).join(""), stderr, chunks, requests: [...model.requests], world, timedOut, started, ended: Date.now() };
+    const run: Run = {
+      code: timedOut ? null : code,
+      stdout: chunks.map((c) => c.text).join(""),
+      stderr,
+      chunks,
+      requests: [...model.requests],
+      world,
+      timedOut,
+      started,
+      ended: Date.now(),
+    };
     return run;
   } finally {
     model.stop();
@@ -119,13 +136,14 @@ export function runs(dir: string, name: string, o: RunOptions, n = 3): Promise<R
   return cache.get(key)!;
 }
 
-export const every = async (p: Promise<Run[]>, test: (r: Run) => boolean) => (await p).every((r) => {
-  try {
-    return test(r);
-  } catch {
-    return false;
-  }
-});
+export const every = async (p: Promise<Run[]>, test: (r: Run) => boolean) =>
+  (await p).every((r) => {
+    try {
+      return test(r);
+    } catch {
+      return false;
+    }
+  });
 
 // Plant a line in a world file so a check can tell the learner's tool really read it.
 export function plant(w: World, path: string, line: string) {
@@ -133,5 +151,4 @@ export function plant(w: World, path: string, line: string) {
   writeFileSync(p, `${existsSync(p) ? readFileSync(p, "utf8") : ""}\n${line}\n`);
 }
 
-export { type Request } from "../../world/practice-model/server";
-export { toolResults, toolUses, userText } from "../../world/practice-model/server";
+export { type Request, toolResults, toolUses, userText } from "../../world/practice-model/server";

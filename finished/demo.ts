@@ -14,24 +14,48 @@ const live = (process.env.LLM_PROVIDER ?? "replay") !== "replay";
 resetNewsroom();
 rmSync(CMS_STATE, { force: true });
 let ownCms: ReturnType<typeof startCms> | null = null;
-const up = await fetch(`${CMS_URL}/api/status`).then((r) => r.ok).catch(() => false);
+const up = await fetch(`${CMS_URL}/api/status`)
+  .then((r) => r.ok)
+  .catch(() => false);
 if (up) await fetch(`${CMS_URL}/api/reset`, { method: "POST" });
-else ownCms = startCms({ newsroom: NEWSROOM, stateFile: CMS_STATE, port: Number(new URL(CMS_URL).port) });
+else
+  ownCms = startCms({
+    newsroom: NEWSROOM,
+    stateFile: CMS_STATE,
+    port: Number(new URL(CMS_URL).port),
+  });
 
 const practice = live ? null : startPracticeModel({ scenario: nightDesk });
 const prompt = "Check tonight's drafts. File the clean ones and hold the rest with a reason.";
 const proc = Bun.spawn(
-  ["bun", join(import.meta.dir, "desk", "src", "main.ts"), "-p", prompt, "--permission-mode", "accept-all", ...process.argv.slice(2)],
+  [
+    "bun",
+    join(import.meta.dir, "desk", "src", "main.ts"),
+    "-p",
+    prompt,
+    "--permission-mode",
+    "accept-all",
+    ...process.argv.slice(2),
+  ],
   {
     cwd: NEWSROOM,
     stdio: ["inherit", "inherit", "inherit"],
-    env: { ...process.env, CMS_URL, DESK_CONFIG: join(import.meta.dir, "desk.config.json"), ...(practice ? { REPLAY_URL: practice.url } : {}) },
+    env: {
+      ...process.env,
+      CMS_URL,
+      DESK_CONFIG: join(import.meta.dir, "desk.config.json"),
+      ...(practice ? { REPLAY_URL: practice.url } : {}),
+    },
   },
 );
 const code = await proc.exited;
 const status = await (await fetch(`${CMS_URL}/api/status`)).json();
 console.log(`\nThe CMS says: ${statusLine(status)}`);
-console.log(ownCms ? "Run bun run world and open http://localhost:4020 to see the board." : "Open http://localhost:4020 to see the board.");
+console.log(
+  ownCms
+    ? "Run bun run world and open http://localhost:4020 to see the board."
+    : "Open http://localhost:4020 to see the board.",
+);
 practice?.stop();
 ownCms?.stop();
 process.exit(code);

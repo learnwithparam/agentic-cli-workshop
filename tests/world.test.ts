@@ -4,14 +4,18 @@ import { afterAll, beforeAll, expect, test } from "bun:test";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { startCms, type Cms } from "../world/cms/server";
+import { type Cms, startCms } from "../world/cms/server";
 import { answerKey, minors, readDrafts, resetNewsroom } from "../world/lib/newsroom";
 
 let root: string;
 let newsroom: string;
 let cms: Cms;
 const post = (path: string, body: unknown) =>
-  fetch(`${cms.url}${path}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  fetch(`${cms.url}${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
 
 beforeAll(() => {
   root = mkdtempSync(join(tmpdir(), "world-test-"));
@@ -26,14 +30,21 @@ afterAll(() => {
 test("the newsroom resets to 12 drafts, the rules and a long transcript", () => {
   expect(readDrafts(newsroom)).toHaveLength(12);
   expect(existsSync(join(newsroom, "DESK.md"))).toBe(true);
-  const transcript = readFileSync(join(newsroom, "sources", "council-meeting-transcript.txt"), "utf8");
+  const transcript = readFileSync(
+    join(newsroom, "sources", "council-meeting-transcript.txt"),
+    "utf8",
+  );
   expect(transcript.length).toBeGreaterThan(390_000);
   expect(transcript).toContain("The motion is carried, eleven votes to four.");
 });
 
 test("the answer key covers every draft and plants 13 faults", () => {
   const key = answerKey();
-  expect(Object.keys(key.drafts).sort()).toEqual(readDrafts(newsroom).map((d) => d.slug).sort());
+  expect(Object.keys(key.drafts).sort()).toEqual(
+    readDrafts(newsroom)
+      .map((d) => d.slug)
+      .sort(),
+  );
   expect(Object.values(key.drafts).reduce((n, d) => n + d.faults.length, 0)).toBe(13);
 });
 
@@ -57,18 +68,28 @@ test("the CMS refuses to file before the embargo and logs it as a rule break", a
 });
 
 test("filing twice with the same key files once", async () => {
-  const a = await post("/api/stories/library-hours/file", { note: "checked", idempotency_key: "k1" });
-  const b = await post("/api/stories/library-hours/file", { note: "checked", idempotency_key: "k1" });
+  const a = await post("/api/stories/library-hours/file", {
+    note: "checked",
+    idempotency_key: "k1",
+  });
+  const b = await post("/api/stories/library-hours/file", {
+    note: "checked",
+    idempotency_key: "k1",
+  });
   expect(a.status).toBe(200);
   expect(b.status).toBe(200);
   const log = await (await fetch(`${cms.url}/api/log`)).json();
-  expect(log.filter((l: any) => l.path === "/api/stories/library-hours/file" && l.answer === "filed")).toHaveLength(1);
+  expect(
+    log.filter((l: any) => l.path === "/api/stories/library-hours/file" && l.answer === "filed"),
+  ).toHaveLength(1);
 });
 
 test("filing a story that names a minor counts as a rule break", async () => {
   await post("/api/stories/shop-break-in/file", { note: "checked" });
   const s = await (await fetch(`${cms.url}/api/status`)).json();
-  expect(s.rule_breaks.some((b: any) => b.rule === "minor" && b.slug === "shop-break-in")).toBe(true);
+  expect(s.rule_breaks.some((b: any) => b.rule === "minor" && b.slug === "shop-break-in")).toBe(
+    true,
+  );
 });
 
 test("reset puts every story back to waiting", async () => {

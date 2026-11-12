@@ -49,12 +49,12 @@ Expect: `Done. All 4 rules pass.`
 
 ## If you get stuck
 
-| What you see | Fix |
-|---|---|
-| `FAIL It keeps going until the model stops asking for tools: 4 calls, then the answer, exit code 0` | Use `while (true)` and `break` only when there are no tool calls. |
-| `FAIL Two tool calls in one turn come back together, each paired with its call's id` | Map over every call in `reply.toolCalls`, not only the first. |
-| `FAIL A tool that throws comes back as an error result, and the loop carries on` | Put `try` and `catch` around the runner, inside the map. |
-| `FAIL Every tool call in the history has exactly one result` | Push `reply.responseMessages` every turn and never rebuild `messages` from scratch. |
+| What you see                                                                                        | Fix                                                                                 |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `FAIL It keeps going until the model stops asking for tools: 4 calls, then the answer, exit code 0` | Use `while (true)` and `break` only when there are no tool calls.                   |
+| `FAIL Two tool calls in one turn come back together, each paired with its call's id`                | Map over every call in `reply.toolCalls`, not only the first.                       |
+| `FAIL A tool that throws comes back as an error result, and the loop carries on`                    | Put `try` and `catch` around the runner, inside the map.                            |
+| `FAIL Every tool call in the history has exactly one result`                                        | Push `reply.responseMessages` every turn and never rebuild `messages` from scratch. |
 
 This is the heart of the course. Try it before you open `../solution/src/main.ts`.
 

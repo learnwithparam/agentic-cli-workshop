@@ -52,12 +52,12 @@ Expect: `Done. All 4 rules pass.`
 
 ## If you get stuck
 
-| What you see | Fix |
-|---|---|
+| What you see                                                                                       | Fix                                                                                             |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `FAIL With LLM_PROVIDER=openrouter every call goes out in OpenRouter's shape and the run finishes` | `model("smart")` from `"#models"` reads `LLM_PROVIDER`. A provider you build yourself does not. |
-| `FAIL On the second provider the tool result still goes back, paired with its call` | Keep the loop as it was; only the source of the model changes. |
-| `FAIL No file in src imports a provider package or names a model` | Search `src/` for `@ai-sdk/`, `@openrouter/` and `practice-` and remove them. |
-| `FAIL With no setting it still runs on the practice model` | Unset `LLM_PROVIDER` in your terminal, or leave it empty in `.env`. |
+| `FAIL On the second provider the tool result still goes back, paired with its call`                | Keep the loop as it was; only the source of the model changes.                                  |
+| `FAIL No file in src imports a provider package or names a model`                                  | Search `src/` for `@ai-sdk/`, `@openrouter/` and `practice-` and remove them.                   |
+| `FAIL With no setting it still runs on the practice model`                                         | Unset `LLM_PROVIDER` in your terminal, or leave it empty in `.env`.                             |
 
 ## Words you will use
 

@@ -1,5 +1,5 @@
 // Reads the repo layout once. Every other script asks this file where things are.
-import { readdirSync, existsSync, statSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 export const ROOT = join(import.meta.dir, "..");
@@ -13,7 +13,11 @@ export type Step = {
 export type Part = { name: string; dir: string; steps: Step[] };
 
 const dirs = (p: string) =>
-  existsSync(p) ? readdirSync(p).filter((d) => statSync(join(p, d)).isDirectory()).sort() : [];
+  existsSync(p)
+    ? readdirSync(p)
+        .filter((d) => statSync(join(p, d)).isDirectory())
+        .sort()
+    : [];
 
 // Folders keep an order prefix for sorting only. Learners never type it.
 export const bareName = (folder: string) => folder.replace(/^\d+-/, "");
@@ -25,7 +29,11 @@ function readStep(sdir: string, folder: string, part: string): Step {
     name: bareName(folder),
     dir: sdir,
     part,
-    meta: { minutes: Number(raw.minutes ?? 0), screen: Boolean(raw.screen), solution: Boolean(raw.solution) },
+    meta: {
+      minutes: Number(raw.minutes ?? 0),
+      screen: Boolean(raw.screen),
+      solution: Boolean(raw.solution),
+    },
   };
 }
 

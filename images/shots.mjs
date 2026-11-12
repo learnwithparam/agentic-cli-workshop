@@ -3,9 +3,9 @@
 // dark terminal about 800 pixels wide. Uses the Playwright Chromium on this machine (node + playwright).
 import { execSync, spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createRequire } from "node:module";
 
 // Playwright is installed on the machine, not in this repo, so load it with require.
 const { chromium } = createRequire(import.meta.url)("playwright");
@@ -20,7 +20,12 @@ const run = (cmd) => {
   }
 };
 const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
-const clean = (s) => s.split("\n").filter((l) => !/^\$ bun /.test(l) && !/^error: script/.test(l)).join("\n").trimEnd();
+const clean = (s) =>
+  s
+    .split("\n")
+    .filter((l) => !/^\$ bun /.test(l) && !/^error: script/.test(l))
+    .join("\n")
+    .trimEnd();
 
 function terminal(command, output) {
   return `<!doctype html><html><head><meta charset="utf-8"><style>
@@ -33,7 +38,10 @@ function terminal(command, output) {
 }
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 });
+const page = await browser.newPage({
+  viewport: { width: 1280, height: 800 },
+  deviceScaleFactor: 2,
+});
 
 async function shootTerminal(file, command, output) {
   mkdirSync(dirname(join(ROOT, file)), { recursive: true });
@@ -53,7 +61,7 @@ async function shootCms(file) {
 
 // 1. The CMS before the run.
 run("bun world/world.ts reset");
-let cms = spawn("bun", ["world/world.ts"], { cwd: ROOT, env, stdio: "ignore" });
+const cms = spawn("bun", ["world/world.ts"], { cwd: ROOT, env, stdio: "ignore" });
 await new Promise((r) => setTimeout(r, 1500));
 await shootCms("00-orientation/images/cms-waiting.png");
 
@@ -75,7 +83,11 @@ await shootTerminal(
 await shootTerminal(
   "parts/01-run-the-loop/05-stream-the-reply/images/expected.png",
   'bun run try stream-the-reply -p "what does the river-levels draft say?"',
-  clean(run('bun world/world.ts reset >/dev/null && bun scripts/try.ts stream-the-reply solution -p "what does the river-levels draft say?"')),
+  clean(
+    run(
+      'bun world/world.ts reset >/dev/null && bun scripts/try.ts stream-the-reply solution -p "what does the river-levels draft say?"',
+    ),
+  ),
 );
 
 await browser.close();

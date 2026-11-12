@@ -52,12 +52,12 @@ Expect: `Done. All 4 rules pass.`
 
 ## If you get stuck
 
-| What you see | Fix |
-|---|---|
-| `FAIL With --max-turns 5 it stops after exactly 5 model calls` | Check the cap at the top of the loop, before the call, with `>=`. |
-| `FAIL At the turn cap it exits with code 3 and prints error_max_turns` | `process.exit(3)` after printing. Code 0 tells a script the run went fine. |
-| `FAIL With --max-budget-usd 0.05 it stops after the call that crosses it, exits 3 and prints error_max_budget` | Add the cost after every call and compare before the next one. |
-| `FAIL It prints the cost, priced from config/models.ts, within one cent` | Use `costUsd` from `"#models"` and print `$` with the number. |
+| What you see                                                                                                   | Fix                                                                        |
+| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `FAIL With --max-turns 5 it stops after exactly 5 model calls`                                                 | Check the cap at the top of the loop, before the call, with `>=`.          |
+| `FAIL At the turn cap it exits with code 3 and prints error_max_turns`                                         | `process.exit(3)` after printing. Code 0 tells a script the run went fine. |
+| `FAIL With --max-budget-usd 0.05 it stops after the call that crosses it, exits 3 and prints error_max_budget` | Add the cost after every call and compare before the next one.             |
+| `FAIL It prints the cost, priced from config/models.ts, within one cent`                                       | Use `costUsd` from `"#models"` and print `$` with the number.              |
 
 ## Words you will use
 

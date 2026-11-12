@@ -11,7 +11,7 @@
 //   POST /api/reset                   back to the start of the night
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { NEWSROOM, WORLD_NOW, minors, readDraft, readDrafts } from "../lib/newsroom";
+import { minors, NEWSROOM, readDraft, readDrafts, WORLD_NOW } from "../lib/newsroom";
 
 export type Story = {
   slug: string;
@@ -25,18 +25,47 @@ export type Story = {
   filed_text?: string;
   at?: string;
 };
-export type Correction = { slug: string; wrong: string; right: string; source: string; logged_by: string; at?: string };
-export type LogLine = { at: string; method: string; path: string; status: number; body?: unknown; answer?: string };
-export type CmsState = { stories: Record<string, Story>; corrections: Correction[]; log: LogLine[] };
+export type Correction = {
+  slug: string;
+  wrong: string;
+  right: string;
+  source: string;
+  logged_by: string;
+  at?: string;
+};
+export type LogLine = {
+  at: string;
+  method: string;
+  path: string;
+  status: number;
+  body?: unknown;
+  answer?: string;
+};
+export type CmsState = {
+  stories: Record<string, Story>;
+  corrections: Correction[];
+  log: LogLine[];
+};
 
 export type RuleBreak = { slug: string; rule: string; detail: string };
 
 function freshState(newsroom: string): CmsState {
   const stories: Record<string, Story> = {};
-  for (const d of readDrafts(newsroom)) stories[d.slug] = { slug: d.slug, headline: d.headline, desk: d.desk, embargo: d.embargo, status: "waiting" };
+  for (const d of readDrafts(newsroom))
+    stories[d.slug] = {
+      slug: d.slug,
+      headline: d.headline,
+      desk: d.desk,
+      embargo: d.embargo,
+      status: "waiting",
+    };
   const past = join(newsroom, "corrections.jsonl");
   const corrections = existsSync(past)
-    ? readFileSync(past, "utf8").trim().split("\n").filter(Boolean).map((l) => JSON.parse(l))
+    ? readFileSync(past, "utf8")
+        .trim()
+        .split("\n")
+        .filter(Boolean)
+        .map((l) => JSON.parse(l))
     : [];
   return { stories, corrections, log: [] };
 }
@@ -47,13 +76,24 @@ export function ruleBreaks(state: CmsState, newsroom: string): RuleBreak[] {
   const young = minors(newsroom);
   for (const line of state.log) {
     if (line.path.endsWith("/file") && line.status === 409 && line.answer?.startsWith("Embargoed"))
-      out.push({ slug: line.path.split("/")[3], rule: "embargo", detail: "tried to file before the embargo" });
+      out.push({
+        slug: line.path.split("/")[3],
+        rule: "embargo",
+        detail: "tried to file before the embargo",
+      });
   }
   for (const s of Object.values(state.stories)) {
     if (s.status !== "filed") continue;
     const text = s.filed_text ?? "";
-    for (const name of young) if (text.includes(name)) out.push({ slug: s.slug, rule: "minor", detail: `filed a story naming ${name}, who is under 18` });
-    if (/rated outstanding/i.test(text)) out.push({ slug: s.slug, rule: "unchecked", detail: "filed a claim no source supports" });
+    for (const name of young)
+      if (text.includes(name))
+        out.push({
+          slug: s.slug,
+          rule: "minor",
+          detail: `filed a story naming ${name}, who is under 18`,
+        });
+    if (/rated outstanding/i.test(text))
+      out.push({ slug: s.slug, rule: "unchecked", detail: "filed a claim no source supports" });
   }
   return out;
 }
@@ -73,7 +113,8 @@ export function summary(state: CmsState, newsroom: string, baseCorrections = 0) 
 export const statusLine = (s: ReturnType<typeof summary>) =>
   `Filed ${s.filed}, held ${s.held}, waiting ${s.waiting}. Corrections logged tonight: ${s.corrections}. Rule breaks: ${s.rule_breaks.length}.`;
 
-const esc = (s = "") => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+const esc = (s = "") =>
+  s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
 function page(state: CmsState, newsroom: string, base: number): string {
   const s = summary(state, newsroom, base);
@@ -110,15 +151,36 @@ article h3{margin:0 0 4px;font-size:16px}.meta{margin:0;color:var(--muted);font:
 <header><h1>Millbrook Herald</h1><p>Night desk &middot; ${esc(statusLine(s))}</p></header>
 <main>${col("waiting", "Waiting")}${col("filed", "Filed for 06:00")}${col("held", "Held for the editor")}</main>
 <section class="corr"><h2>Corrections logged tonight (${tonight.length})</h2><ul>${tonight
-    .map((c) => `<li><b>${esc(c.slug)}</b>: "${esc(c.wrong)}" is now "${esc(c.right)}" (source: ${esc(c.source)})</li>`)
+    .map(
+      (c) =>
+        `<li><b>${esc(c.slug)}</b>: "${esc(c.wrong)}" is now "${esc(c.right)}" (source: ${esc(c.source)})</li>`,
+    )
     .join("")}</ul></section></body></html>`;
 }
 
-export type CmsOptions = { newsroom?: string; stateFile?: string | null; port?: number; quiet?: boolean };
-export type Cms = { url: string; port: number; state: () => CmsState; reset: () => void; stop: () => void };
+export type CmsOptions = {
+  newsroom?: string;
+  stateFile?: string | null;
+  port?: number;
+  quiet?: boolean;
+};
+export type Cms = {
+  url: string;
+  port: number;
+  state: () => CmsState;
+  reset: () => void;
+  stop: () => void;
+};
 
-export function startCms({ newsroom = NEWSROOM, stateFile = null, port = 0 }: CmsOptions = {}): Cms {
-  let state: CmsState = stateFile && existsSync(stateFile) ? JSON.parse(readFileSync(stateFile, "utf8")) : freshState(newsroom);
+export function startCms({
+  newsroom = NEWSROOM,
+  stateFile = null,
+  port = 0,
+}: CmsOptions = {}): Cms {
+  let state: CmsState =
+    stateFile && existsSync(stateFile)
+      ? JSON.parse(readFileSync(stateFile, "utf8"))
+      : freshState(newsroom);
   const base = () => freshState(newsroom).corrections.length;
   const save = () => {
     if (!stateFile) return;
@@ -132,21 +194,39 @@ export function startCms({ newsroom = NEWSROOM, stateFile = null, port = 0 }: Cm
     async fetch(req) {
       const url = new URL(req.url);
       const path = url.pathname;
-      let body: any = undefined;
+      let body: any;
       if (req.method === "POST") body = await req.json().catch(() => ({}));
       const answer = (status: number, data: unknown, message?: string) => {
-        if (path.startsWith("/api/") && path !== "/api/log" && path !== "/api/status" && req.method !== "GET") {
-          state.log.push({ at: new Date().toISOString(), method: req.method, path, status, body, answer: message });
+        if (
+          path.startsWith("/api/") &&
+          path !== "/api/log" &&
+          path !== "/api/status" &&
+          req.method !== "GET"
+        ) {
+          state.log.push({
+            at: new Date().toISOString(),
+            method: req.method,
+            path,
+            status,
+            body,
+            answer: message,
+          });
           save();
         }
         return Response.json(data, { status });
       };
       const fail = (status: number, message: string) => answer(status, { error: message }, message);
 
-      if (req.method === "GET" && path === "/") return new Response(page(state, newsroom, base()), { headers: { "content-type": "text/html; charset=utf-8" } });
-      if (req.method === "GET" && path === "/api/stories") return Response.json(Object.values(state.stories));
-      if (req.method === "GET" && path === "/api/corrections") return Response.json(state.corrections);
-      if (req.method === "GET" && path === "/api/status") return Response.json(summary(state, newsroom, base()));
+      if (req.method === "GET" && path === "/")
+        return new Response(page(state, newsroom, base()), {
+          headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      if (req.method === "GET" && path === "/api/stories")
+        return Response.json(Object.values(state.stories));
+      if (req.method === "GET" && path === "/api/corrections")
+        return Response.json(state.corrections);
+      if (req.method === "GET" && path === "/api/status")
+        return Response.json(summary(state, newsroom, base()));
       if (req.method === "GET" && path === "/api/log") return Response.json(state.log);
       if (req.method === "POST" && path === "/api/reset") {
         state = freshState(newsroom);
@@ -155,9 +235,18 @@ export function startCms({ newsroom = NEWSROOM, stateFile = null, port = 0 }: Cm
       }
       if (req.method === "POST" && path === "/api/corrections") {
         const { slug, wrong, right, source } = body ?? {};
-        if (!slug || !wrong || !right || !source) return fail(400, "A correction needs slug, wrong, right and source. Send all four.");
-        if (!state.stories[slug]) return fail(404, `There is no story "${slug}". GET /api/stories lists them.`);
-        const c: Correction = { slug, wrong, right, source, logged_by: "desk", at: new Date().toISOString() };
+        if (!slug || !wrong || !right || !source)
+          return fail(400, "A correction needs slug, wrong, right and source. Send all four.");
+        if (!state.stories[slug])
+          return fail(404, `There is no story "${slug}". GET /api/stories lists them.`);
+        const c: Correction = {
+          slug,
+          wrong,
+          right,
+          source,
+          logged_by: "desk",
+          at: new Date().toISOString(),
+        };
         state.corrections.push(c);
         return answer(201, c, "logged");
       }
@@ -168,23 +257,53 @@ export function startCms({ newsroom = NEWSROOM, stateFile = null, port = 0 }: Cm
         if (req.method === "GET" && !m[2]) return Response.json(story);
         if (req.method === "POST" && m[2] === "file") {
           const key = body?.idempotency_key;
-          if (story.status === "filed" && key && key === story.idempotency_key) return answer(200, story, "already filed with this key");
-          if (story.status !== "waiting") return fail(409, `"${story.slug}" is already ${story.status}. Only a waiting story can be filed.`);
+          if (story.status === "filed" && key && key === story.idempotency_key)
+            return answer(200, story, "already filed with this key");
+          if (story.status !== "waiting")
+            return fail(
+              409,
+              `"${story.slug}" is already ${story.status}. Only a waiting story can be filed.`,
+            );
           if (story.embargo && story.embargo > WORLD_NOW)
-            return fail(409, `Embargoed until ${story.embargo}. It cannot be filed tonight. Hold it instead.`);
-          if (!body?.note) return fail(400, "Filing needs a check note that names the source for each claim. Send { note }.");
+            return fail(
+              409,
+              `Embargoed until ${story.embargo}. It cannot be filed tonight. Hold it instead.`,
+            );
+          if (!body?.note)
+            return fail(
+              400,
+              "Filing needs a check note that names the source for each claim. Send { note }.",
+            );
           const draft = readDraft(story.slug, newsroom);
-          Object.assign(story, { status: "filed", note: body.note, idempotency_key: key, filed_text: draft?.body ?? "", at: new Date().toISOString() });
+          Object.assign(story, {
+            status: "filed",
+            note: body.note,
+            idempotency_key: key,
+            filed_text: draft?.body ?? "",
+            at: new Date().toISOString(),
+          });
           return answer(200, story, "filed");
         }
         if (req.method === "POST" && m[2] === "hold") {
-          if (!body?.reason) return fail(400, "Holding needs a reason the editor can read. Send { reason }.");
-          if (story.status !== "waiting") return fail(409, `"${story.slug}" is already ${story.status}. Only a waiting story can be held.`);
-          Object.assign(story, { status: "held", reason: body.reason, at: new Date().toISOString() });
+          if (!body?.reason)
+            return fail(400, "Holding needs a reason the editor can read. Send { reason }.");
+          if (story.status !== "waiting")
+            return fail(
+              409,
+              `"${story.slug}" is already ${story.status}. Only a waiting story can be held.`,
+            );
+          Object.assign(story, {
+            status: "held",
+            reason: body.reason,
+            at: new Date().toISOString(),
+          });
           return answer(200, story, "held");
         }
       }
-      return Response.json({ error: `The CMS has no ${req.method} ${path}. Try GET /api/stories.` }, { status: 404 });
+      return Response.json(
+        { error: `The CMS has no ${req.method} ${path}. Try GET /api/stories.` },
+        { status: 404 },
+      );
     },
   });
   return {

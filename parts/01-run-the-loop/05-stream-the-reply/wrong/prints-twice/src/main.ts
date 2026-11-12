@@ -2,9 +2,9 @@
 // The loop and its caps stay the same.
 // Run from the newsroom folder: bun src/main.ts -p "check every draft" --max-turns 5 --max-budget-usd 0.50
 // Exit codes: 0 the model finished, 3 a cap stopped it.
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";
-import { jsonSchema, streamText, tool, type ModelMessage } from "ai";
+import { jsonSchema, type ModelMessage, streamText, tool } from "ai";
 import { costUsd, model } from "#models";
 
 const i = process.argv.indexOf("-p");
@@ -25,19 +25,31 @@ const root = process.cwd();
 const pathSchema = (example: string) =>
   jsonSchema<{ path: string }>({
     type: "object",
-    properties: { path: { type: "string", description: `A path inside the newsroom folder, such as ${example}` } },
+    properties: {
+      path: {
+        type: "string",
+        description: `A path inside the newsroom folder, such as ${example}`,
+      },
+    },
     required: ["path"],
     additionalProperties: false,
   });
 
 const tools = {
-  read_file: tool({ description: "Read a text file from the newsroom.", inputSchema: pathSchema("drafts/bridge-repairs.md") }),
-  list_files: tool({ description: "List the files in a newsroom folder.", inputSchema: pathSchema("drafts") }),
+  read_file: tool({
+    description: "Read a text file from the newsroom.",
+    inputSchema: pathSchema("drafts/bridge-repairs.md"),
+  }),
+  list_files: tool({
+    description: "List the files in a newsroom folder.",
+    inputSchema: pathSchema("drafts"),
+  }),
 };
 
 function inside(path: string): string {
   const full = resolve(root, path);
-  if (relative(root, full).startsWith("..")) throw new Error(`"${path}" is outside the newsroom folder.`);
+  if (relative(root, full).startsWith(".."))
+    throw new Error(`"${path}" is outside the newsroom folder.`);
   return full;
 }
 
@@ -45,7 +57,8 @@ function inside(path: string): string {
 const runners: Record<string, (input: { path: string }) => string> = {
   read_file: ({ path }) => {
     const full = inside(path);
-    if (!existsSync(full) || statSync(full).isDirectory()) throw new Error(`There is no file "${path}". Use list_files to see what is there.`);
+    if (!existsSync(full) || statSync(full).isDirectory())
+      throw new Error(`There is no file "${path}". Use list_files to see what is there.`);
     return readFileSync(full, "utf8");
   },
   list_files: ({ path }) => readdirSync(inside(path)).sort().join("\n"),
@@ -95,7 +108,12 @@ while (true) {
     } catch (e) {
       output = { type: "error-text", value: (e as Error).message };
     }
-    return { type: "tool-result" as const, toolCallId: call.toolCallId, toolName: call.toolName, output };
+    return {
+      type: "tool-result" as const,
+      toolCallId: call.toolCallId,
+      toolName: call.toolName,
+      output,
+    };
   });
   messages.push({ role: "tool", content: results });
 }

@@ -1,10 +1,10 @@
 // The agent loop: call the model, run the tools it asks for, send the results back, and repeat
 // until it answers with no tool call, or a cap stops it.
-import { streamText, type ModelMessage } from "ai";
+import { type ModelMessage, streamText } from "ai";
 import { costUsd, model, type Role } from "#models";
 import { compact, estimateTokens } from "./context";
 import type { Decision } from "./permissions";
-import { ToolError, definitions, runTool, type ToolContext, type ToolName } from "./tools";
+import { definitions, runTool, type ToolContext, ToolError, type ToolName } from "./tools";
 
 export type Event =
   | { type: "init"; session_id: string; tools: string[] }
@@ -13,9 +13,21 @@ export type Event =
   | { type: "tool_result"; id: string; is_error: boolean; content: string }
   | { type: "permission"; tool: string; decision: "allow" | "deny"; reason: string }
   | { type: "compact"; before_tokens: number; after_tokens: number }
-  | { type: "result"; subtype: Subtype; turns: number; cost_usd: number; session_id: string; text: string };
+  | {
+      type: "result";
+      subtype: Subtype;
+      turns: number;
+      cost_usd: number;
+      session_id: string;
+      text: string;
+    };
 
-export type Subtype = "success" | "error_max_turns" | "error_max_budget" | "error_permission" | "error";
+export type Subtype =
+  | "success"
+  | "error_max_turns"
+  | "error_max_budget"
+  | "error_permission"
+  | "error";
 
 export type LoopOptions = {
   role: Role;
@@ -32,7 +44,14 @@ export type LoopOptions = {
   stream?: boolean;
 };
 
-export type LoopResult = { subtype: Subtype; turns: number; cost: number; text: string; messages: ModelMessage[]; denials: number };
+export type LoopResult = {
+  subtype: Subtype;
+  turns: number;
+  cost: number;
+  text: string;
+  messages: ModelMessage[];
+  denials: number;
+};
 
 export async function runLoop(o: LoopOptions): Promise<LoopResult> {
   let messages = o.messages;
@@ -41,7 +60,14 @@ export async function runLoop(o: LoopOptions): Promise<LoopResult> {
   let denials = 0;
   let lastText = "";
   const defs = definitions(o.tools);
-  const done = (subtype: Subtype): LoopResult => ({ subtype, turns, cost, text: lastText, messages, denials });
+  const done = (subtype: Subtype): LoopResult => ({
+    subtype,
+    turns,
+    cost,
+    text: lastText,
+    messages,
+    denials,
+  });
 
   while (true) {
     if (turns >= o.maxTurns) return done("error_max_turns");
@@ -52,10 +78,20 @@ export async function runLoop(o: LoopOptions): Promise<LoopResult> {
       const c = await compact(messages);
       messages = c.messages;
       cost += c.cost;
-      o.emit({ type: "compact", before_tokens: before, after_tokens: estimateTokens(o.system, messages) });
+      o.emit({
+        type: "compact",
+        before_tokens: before,
+        after_tokens: estimateTokens(o.system, messages),
+      });
     }
 
-    const r = streamText({ model: model(o.role), instructions: o.system, messages, tools: defs, maxOutputTokens: 4096 });
+    const r = streamText({
+      model: model(o.role),
+      instructions: o.system,
+      messages,
+      tools: defs,
+      maxOutputTokens: 4096,
+    });
     let text = "";
     for await (const part of r.fullStream) {
       if (part.type === "text-delta") {
@@ -79,8 +115,16 @@ export async function runLoop(o: LoopOptions): Promise<LoopResult> {
     const results: any[] = [];
     for (const c of calls) {
       o.emit({ type: "tool_call", id: c.toolCallId, name: c.toolName, input: c.input });
-      const decision = o.gate(c.toolName, `desk wants to run ${c.toolName} ${JSON.stringify(c.input)}`);
-      o.emit({ type: "permission", tool: c.toolName, decision: decision.allow ? "allow" : "deny", reason: decision.reason });
+      const decision = o.gate(
+        c.toolName,
+        `desk wants to run ${c.toolName} ${JSON.stringify(c.input)}`,
+      );
+      o.emit({
+        type: "permission",
+        tool: c.toolName,
+        decision: decision.allow ? "allow" : "deny",
+        reason: decision.reason,
+      });
       let content: string;
       let isError = false;
       if (!decision.allow) {

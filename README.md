@@ -77,13 +77,13 @@ flowchart LR
 
 ## The parts
 
-| Part | You build | Steps | Minutes |
-|---|---|---|---|
-| [Start here](00-orientation/README.md) | Meet the newsroom and the finished desk | `meet-the-desk` | 15 |
-| [Run the loop](parts/01-run-the-loop/README.md) | Call, tools, the loop, caps, streaming, any provider | `call-the-model`, `read-a-draft`, `close-the-loop`, `cap-the-loop`, `stream-the-reply`, `swap-the-model` | 85 |
-| [Touch the world safely](parts/02-touch-the-world-safely/README.md) | Tool design, safe edits, commands, the permission gate | `shape-the-tools`, `edit-drafts-safely`, `run-commands`, `ask-before-acting` | 85 |
-| [Keep the context clean](parts/03-keep-the-context-clean/README.md) | Todo list, desk rules, trimming, compaction, a subagent | `plan-with-a-todo-list`, `load-the-desk-rules`, `trim-old-results`, `compact-the-conversation`, `delegate-to-a-subagent` | 90 |
-| [Extend and ship](parts/04-extend-and-ship/README.md) | Hooks, an MCP client, sessions, headless runs, a score | `add-hooks`, `connect-a-wire-server`, `resume-a-session`, `run-headless`, `score-the-agent`, `rebuild-on-the-agent-sdk` | 125 |
+| Part                                                                | You build                                               | Steps                                                                                                                    | Minutes |
+| ------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------- |
+| [Start here](00-orientation/README.md)                              | Meet the newsroom and the finished desk                 | `meet-the-desk`                                                                                                          | 15      |
+| [Run the loop](parts/01-run-the-loop/README.md)                     | Call, tools, the loop, caps, streaming, any provider    | `call-the-model`, `read-a-draft`, `close-the-loop`, `cap-the-loop`, `stream-the-reply`, `swap-the-model`                 | 85      |
+| [Touch the world safely](parts/02-touch-the-world-safely/README.md) | Tool design, safe edits, commands, the permission gate  | `shape-the-tools`, `edit-drafts-safely`, `run-commands`, `ask-before-acting`                                             | 85      |
+| [Keep the context clean](parts/03-keep-the-context-clean/README.md) | Todo list, desk rules, trimming, compaction, a subagent | `plan-with-a-todo-list`, `load-the-desk-rules`, `trim-old-results`, `compact-the-conversation`, `delegate-to-a-subagent` | 90      |
+| [Extend and ship](parts/04-extend-and-ship/README.md)               | Hooks, an MCP client, sessions, headless runs, a score  | `add-hooks`, `connect-a-wire-server`, `resume-a-session`, `run-headless`, `score-the-agent`, `rebuild-on-the-agent-sdk`  | 125     |
 
 `swap-the-model`, `trim-old-results` and `rebuild-on-the-agent-sdk` are deeper steps; skip them on a first pass.
 Every step names its outcome and has one command that checks it: `bun run verify <step-name>`. How the parts
@@ -111,16 +111,16 @@ Each item is graded by a yes or no question a script can answer; the questions a
 
 ## How the course works
 
-| Command | What it does |
-|---|---|
-| `bun run doctor` | Checks Bun, the model setting and the ports, in plain sentences |
-| `bun run world` | Starts the CMS on http://localhost:4020; `bun run world reset` starts the night again; `bun run world status` prints what the CMS holds |
-| `bun run demo` | Runs the finished desk on the practice model |
-| `bun run try <step-name> -p "..."` | Runs your desk for one step by hand, in the newsroom, against the practice model |
-| `bun run verify <step-name>` | Checks your work on one step, then shows your progress |
-| `bun run verify part <part-name>` | Checks every step in a part |
-| `bun run models` | One tiny call per model role on the chosen provider: pass or fail, and the cost |
-| `bun run check` | The repo standard and every check (CI runs this) |
+| Command                            | What it does                                                                                                                            |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run doctor`                   | Checks Bun, the model setting and the ports, in plain sentences                                                                         |
+| `bun run world`                    | Starts the CMS on http://localhost:4020; `bun run world reset` starts the night again; `bun run world status` prints what the CMS holds |
+| `bun run demo`                     | Runs the finished desk on the practice model                                                                                            |
+| `bun run try <step-name> -p "..."` | Runs your desk for one step by hand, in the newsroom, against the practice model                                                        |
+| `bun run verify <step-name>`       | Checks your work on one step, then shows your progress                                                                                  |
+| `bun run verify part <part-name>`  | Checks every step in a part                                                                                                             |
+| `bun run models`                   | One tiny call per model role on the chosen provider: pass or fail, and the cost                                                         |
+| `bun run check`                    | The repo standard and every check (CI runs this)                                                                                        |
 
 You work in each step's `problem/` folder. Its `solution/` is a sample answer to compare with once your check
 passes. The rules every course repo follows are in [STANDARD.md](STANDARD.md).

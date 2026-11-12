@@ -13,12 +13,16 @@ export function systemPrompt(root: string): string {
   ];
   // Standing rules, nearest file last so it wins.
   for (const p of [join(root, "DESK.md"), join(root, "drafts", "DESK.md")])
-    if (existsSync(p)) parts.push(`\n<desk-rules file="${p.slice(root.length + 1)}">\n${readFileSync(p, "utf8").trim()}\n</desk-rules>`);
+    if (existsSync(p))
+      parts.push(
+        `\n<desk-rules file="${p.slice(root.length + 1)}">\n${readFileSync(p, "utf8").trim()}\n</desk-rules>`,
+      );
   return parts.join("\n");
 }
 
 // A rough size: about four characters a token. Good enough to decide when to compact.
-export const estimateTokens = (system: string, messages: ModelMessage[]) => Math.ceil((system.length + JSON.stringify(messages).length) / 4);
+export const estimateTokens = (system: string, messages: ModelMessage[]) =>
+  Math.ceil((system.length + JSON.stringify(messages).length) / 4);
 
 export function render(messages: ModelMessage[]): string {
   const out: string[] = [];
@@ -30,7 +34,8 @@ export function render(messages: ModelMessage[]): string {
     for (const p of m.content as any[]) {
       if (p.type === "text") out.push(`${m.role.toUpperCase()}: ${p.text}`);
       if (p.type === "tool-call") out.push(`TOOL ${p.toolName} ${JSON.stringify(p.input)}`);
-      if (p.type === "tool-result") out.push(`RESULT ${String(p.output?.value ?? "").slice(0, 300)}`);
+      if (p.type === "tool-result")
+        out.push(`RESULT ${String(p.output?.value ?? "").slice(0, 300)}`);
     }
   }
   return out.join("\n");
@@ -42,7 +47,10 @@ export const SUMMARY_SYSTEM =
 
 // Replace older messages with one summary, keeping the most recent turns as they are.
 // Returns the new messages and what the summary cost.
-export async function compact(messages: ModelMessage[], keepLast = 4): Promise<{ messages: ModelMessage[]; cost: number }> {
+export async function compact(
+  messages: ModelMessage[],
+  keepLast = 4,
+): Promise<{ messages: ModelMessage[]; cost: number }> {
   let cutAt = Math.max(0, messages.length - keepLast);
   // Never split a tool call from its result: start the kept part on an assistant message.
   while (cutAt > 0 && messages[cutAt].role !== "assistant") cutAt--;
@@ -54,6 +62,9 @@ export async function compact(messages: ModelMessage[], keepLast = 4): Promise<{
     messages: [{ role: "user", content: `Summarise this session:\n\n${render(old)}` }],
     maxOutputTokens: 2048,
   });
-  const summary: ModelMessage = { role: "user", content: `<session-summary>\n${r.text}\n</session-summary>\nCarry on from here.` };
+  const summary: ModelMessage = {
+    role: "user",
+    content: `<session-summary>\n${r.text}\n</session-summary>\nCarry on from here.`,
+  };
   return { messages: [summary, ...messages.slice(cutAt)], cost: costUsd("fast", r.usage) ?? 0 };
 }

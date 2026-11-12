@@ -2,19 +2,25 @@
 // never names a provider or a model, so LLM_PROVIDER=openrouter (or anthropic, openai, ollama) needs no code change.
 // Run from the newsroom folder: bun src/main.ts -p "check every draft" --max-turns 5 --max-budget-usd 0.50
 // Exit codes: 0 the model finished, 3 a cap stopped it.
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";
-import { jsonSchema, streamText, tool, type ModelMessage } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { jsonSchema, type ModelMessage, streamText, tool } from "ai";
 import { costUsd } from "#models";
 
 // Mistake: desk picks the provider and names the models itself. It runs, but config/models.ts is
 // no longer the one place to change a model, and the next provider means another branch here.
 const model = (_role: "smart") =>
   process.env.LLM_PROVIDER === "openrouter"
-    ? createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY, baseURL: process.env.OPENROUTER_BASE_URL })("practice-smart")
-    : createAnthropic({ baseURL: `${process.env.REPLAY_URL ?? "http://localhost:4010"}/v1`, apiKey: "practice" })("practice-smart");
+    ? createOpenRouter({
+        apiKey: process.env.OPENROUTER_API_KEY,
+        baseURL: process.env.OPENROUTER_BASE_URL,
+      })("practice-smart")
+    : createAnthropic({
+        baseURL: `${process.env.REPLAY_URL ?? "http://localhost:4010"}/v1`,
+        apiKey: "practice",
+      })("practice-smart");
 
 const i = process.argv.indexOf("-p");
 const prompt = i >= 0 ? process.argv[i + 1] : undefined;
@@ -34,19 +40,31 @@ const root = process.cwd();
 const pathSchema = (example: string) =>
   jsonSchema<{ path: string }>({
     type: "object",
-    properties: { path: { type: "string", description: `A path inside the newsroom folder, such as ${example}` } },
+    properties: {
+      path: {
+        type: "string",
+        description: `A path inside the newsroom folder, such as ${example}`,
+      },
+    },
     required: ["path"],
     additionalProperties: false,
   });
 
 const tools = {
-  read_file: tool({ description: "Read a text file from the newsroom.", inputSchema: pathSchema("drafts/bridge-repairs.md") }),
-  list_files: tool({ description: "List the files in a newsroom folder.", inputSchema: pathSchema("drafts") }),
+  read_file: tool({
+    description: "Read a text file from the newsroom.",
+    inputSchema: pathSchema("drafts/bridge-repairs.md"),
+  }),
+  list_files: tool({
+    description: "List the files in a newsroom folder.",
+    inputSchema: pathSchema("drafts"),
+  }),
 };
 
 function inside(path: string): string {
   const full = resolve(root, path);
-  if (relative(root, full).startsWith("..")) throw new Error(`"${path}" is outside the newsroom folder.`);
+  if (relative(root, full).startsWith(".."))
+    throw new Error(`"${path}" is outside the newsroom folder.`);
   return full;
 }
 
@@ -54,7 +72,8 @@ function inside(path: string): string {
 const runners: Record<string, (input: { path: string }) => string> = {
   read_file: ({ path }) => {
     const full = inside(path);
-    if (!existsSync(full) || statSync(full).isDirectory()) throw new Error(`There is no file "${path}". Use list_files to see what is there.`);
+    if (!existsSync(full) || statSync(full).isDirectory())
+      throw new Error(`There is no file "${path}". Use list_files to see what is there.`);
     return readFileSync(full, "utf8");
   },
   list_files: ({ path }) => readdirSync(inside(path)).sort().join("\n"),
@@ -102,7 +121,12 @@ while (true) {
     } catch (e) {
       output = { type: "error-text", value: (e as Error).message };
     }
-    return { type: "tool-result" as const, toolCallId: call.toolCallId, toolName: call.toolName, output };
+    return {
+      type: "tool-result" as const,
+      toolCallId: call.toolCallId,
+      toolName: call.toolName,
+      output,
+    };
   });
   messages.push({ role: "tool", content: results });
 }

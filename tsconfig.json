@@ -9,5 +9,14 @@
     "allowImportingTsExtensions": true,
     "types": ["bun"]
   },
-  "include": ["config", "checks", "finished", "scripts", "tests", "world", "parts/**/solution", "00-orientation"]
+  "include": [
+    "config",
+    "checks",
+    "finished",
+    "scripts",
+    "tests",
+    "world",
+    "parts/**/solution",
+    "00-orientation"
+  ]
 }

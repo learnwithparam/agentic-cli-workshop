@@ -51,12 +51,12 @@ Expect: `Done. All 4 rules pass.`
 
 ## If you get stuck
 
-| What you see | Fix |
-|---|---|
-| `FAIL The first request offers a read_file tool whose schema needs a string path` | Put `read_file: tool({ description, inputSchema: jsonSchema({...}) })` in `tools` and list `path` in `required`. |
-| `FAIL The second request sends the file text back as a tool result paired with the call's id` | Send a `tool` message, not a user message. Copy `call.toolCallId` and `call.toolName` into each result. |
-| `FAIL It prints the model's final answer` | Print the second call's text. The first call's text is often empty when it asks for a tool. |
-| `FAIL A path outside the newsroom comes back as an error, and the file is not read` | `relative(root, resolve(root, path))` starts with `..` for a path that escapes. Return an error for it. |
+| What you see                                                                                  | Fix                                                                                                              |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `FAIL The first request offers a read_file tool whose schema needs a string path`             | Put `read_file: tool({ description, inputSchema: jsonSchema({...}) })` in `tools` and list `path` in `required`. |
+| `FAIL The second request sends the file text back as a tool result paired with the call's id` | Send a `tool` message, not a user message. Copy `call.toolCallId` and `call.toolName` into each result.          |
+| `FAIL It prints the model's final answer`                                                     | Print the second call's text. The first call's text is often empty when it asks for a tool.                      |
+| `FAIL A path outside the newsroom comes back as an error, and the file is not read`           | `relative(root, resolve(root, path))` starts with `..` for a path that escapes. Return an error for it.          |
 
 ## Words you will use
 

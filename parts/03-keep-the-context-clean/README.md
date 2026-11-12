@@ -36,13 +36,13 @@ flowchart TB
 
 ## Steps
 
-| Step | Minutes | You build | The check reads |
-|---|---|---|---|
-| `plan-with-a-todo-list` | 15 | A `todo_write` tool (the full list on every call, one item in progress) and a reminder when the list goes stale | Error results for two items in progress, the reminder in the request after 3 turns with no update |
-| `load-the-desk-rules` | 10 | `DESK.md` and `drafts/DESK.md` loaded into the system prompt, nearest last | The system prompt of the recorded request, before and after an edit to `DESK.md` |
-| `trim-old-results` (deeper) | 15 | Old tool results replaced by a stub that says where the full text is | Request size on a 30-turn script (at least 50% smaller), every call still paired with a result |
-| `compact-the-conversation` | 25 | Compaction at a token threshold on the fast role, the full transcript saved first | The request after the threshold: a summary, under the target size, open todo items and the desk rules still present |
-| `delegate-to-a-subagent` | 25 | `ask_researcher`: a child loop on the fast role with a fresh context, read-only tools and a turn cap | The parent's next request grows by the answer only (under 2,000 characters), the child cannot file or edit, its cost is in the total |
+| Step                        | Minutes | You build                                                                                                       | The check reads                                                                                                                      |
+| --------------------------- | ------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `plan-with-a-todo-list`     | 15      | A `todo_write` tool (the full list on every call, one item in progress) and a reminder when the list goes stale | Error results for two items in progress, the reminder in the request after 3 turns with no update                                    |
+| `load-the-desk-rules`       | 10      | `DESK.md` and `drafts/DESK.md` loaded into the system prompt, nearest last                                      | The system prompt of the recorded request, before and after an edit to `DESK.md`                                                     |
+| `trim-old-results` (deeper) | 15      | Old tool results replaced by a stub that says where the full text is                                            | Request size on a 30-turn script (at least 50% smaller), every call still paired with a result                                       |
+| `compact-the-conversation`  | 25      | Compaction at a token threshold on the fast role, the full transcript saved first                               | The request after the threshold: a summary, under the target size, open todo items and the desk rules still present                  |
+| `delegate-to-a-subagent`    | 25      | `ask_researcher`: a child loop on the fast role with a fresh context, read-only tools and a turn cap            | The parent's next request grows by the answer only (under 2,000 characters), the child cannot file or edit, its cost is in the total |
 
 Minutes in this part: 90, of which 15 are the deeper step.
 

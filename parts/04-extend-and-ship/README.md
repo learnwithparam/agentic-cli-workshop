@@ -32,14 +32,14 @@ flowchart LR
 
 ## Steps
 
-| Step | Minutes | You build | The check reads |
-|---|---|---|---|
-| `add-hooks` | 20 | `pre_tool` and `post_tool` hooks run as shell commands from config; exit 2 blocks with a reason | The CMS after an embargoed filing (refused by the hook), the audit JSONL (one line per call), a hung hook killed after 10 seconds |
-| `connect-a-wire-server` | 20 | An MCP client over stdio with `@modelcontextprotocol/client`; wire tools appear as `wire__search_wire` | The tool list in the recorded request, the wire server's own call log, an error result when the server dies |
-| `resume-a-session` | 15 | An append-only JSONL session file, `--resume <id>` and `--continue` | The first request after a resume (history equal to the saved one), the CMS after a stopped and resumed run (no story filed twice) |
-| `run-headless` | 15 | `-p` with `--output-format text`, `json` and `stream-json`, and the exit codes | Every stdout line against `checks/lib/contract.schema.json`, exit codes 0, 1, 3 and 4 |
-| `score-the-agent` | 25 | `bun run score` over the 12 drafts: faults caught, false flags, rule breaks, turns, cost | The scorer's JSON against the answer key, `notes/failures.md` with a session line per missed fault |
-| `rebuild-on-the-agent-sdk` (deeper) | 30 | `desk-sdk/`: the same tools under the Claude Agent SDK | The same contract run and score, and `notes/sdk-compare.md` with its four headings |
+| Step                                | Minutes | You build                                                                                              | The check reads                                                                                                                   |
+| ----------------------------------- | ------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `add-hooks`                         | 20      | `pre_tool` and `post_tool` hooks run as shell commands from config; exit 2 blocks with a reason        | The CMS after an embargoed filing (refused by the hook), the audit JSONL (one line per call), a hung hook killed after 10 seconds |
+| `connect-a-wire-server`             | 20      | An MCP client over stdio with `@modelcontextprotocol/client`; wire tools appear as `wire__search_wire` | The tool list in the recorded request, the wire server's own call log, an error result when the server dies                       |
+| `resume-a-session`                  | 15      | An append-only JSONL session file, `--resume <id>` and `--continue`                                    | The first request after a resume (history equal to the saved one), the CMS after a stopped and resumed run (no story filed twice) |
+| `run-headless`                      | 15      | `-p` with `--output-format text`, `json` and `stream-json`, and the exit codes                         | Every stdout line against `checks/lib/contract.schema.json`, exit codes 0, 1, 3 and 4                                             |
+| `score-the-agent`                   | 25      | `bun run score` over the 12 drafts: faults caught, false flags, rule breaks, turns, cost               | The scorer's JSON against the answer key, `notes/failures.md` with a session line per missed fault                                |
+| `rebuild-on-the-agent-sdk` (deeper) | 30      | `desk-sdk/`: the same tools under the Claude Agent SDK                                                 | The same contract run and score, and `notes/sdk-compare.md` with its four headings                                                |
 
 Minutes in this part: 125, of which 30 are the deeper step.
 

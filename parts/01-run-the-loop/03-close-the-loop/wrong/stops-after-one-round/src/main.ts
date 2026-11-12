@@ -1,9 +1,9 @@
 // desk, third version: the agent loop. Call the model, run every tool it asks for, send the results back,
 // and call again, until the model answers with no tool call.
 // Run from the newsroom folder: bun src/main.ts -p "list the drafts and read the first one"
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";
-import { generateText, jsonSchema, tool, type ModelMessage } from "ai";
+import { generateText, jsonSchema, type ModelMessage, tool } from "ai";
 import { model } from "#models";
 
 const i = process.argv.indexOf("-p");
@@ -17,19 +17,31 @@ const root = process.cwd();
 const pathSchema = (example: string) =>
   jsonSchema<{ path: string }>({
     type: "object",
-    properties: { path: { type: "string", description: `A path inside the newsroom folder, such as ${example}` } },
+    properties: {
+      path: {
+        type: "string",
+        description: `A path inside the newsroom folder, such as ${example}`,
+      },
+    },
     required: ["path"],
     additionalProperties: false,
   });
 
 const tools = {
-  read_file: tool({ description: "Read a text file from the newsroom.", inputSchema: pathSchema("drafts/bridge-repairs.md") }),
-  list_files: tool({ description: "List the files in a newsroom folder.", inputSchema: pathSchema("drafts") }),
+  read_file: tool({
+    description: "Read a text file from the newsroom.",
+    inputSchema: pathSchema("drafts/bridge-repairs.md"),
+  }),
+  list_files: tool({
+    description: "List the files in a newsroom folder.",
+    inputSchema: pathSchema("drafts"),
+  }),
 };
 
 function inside(path: string): string {
   const full = resolve(root, path);
-  if (relative(root, full).startsWith("..")) throw new Error(`"${path}" is outside the newsroom folder.`);
+  if (relative(root, full).startsWith(".."))
+    throw new Error(`"${path}" is outside the newsroom folder.`);
   return full;
 }
 
@@ -37,7 +49,8 @@ function inside(path: string): string {
 const runners: Record<string, (input: { path: string }) => string> = {
   read_file: ({ path }) => {
     const full = inside(path);
-    if (!existsSync(full) || statSync(full).isDirectory()) throw new Error(`There is no file "${path}". Use list_files to see what is there.`);
+    if (!existsSync(full) || statSync(full).isDirectory())
+      throw new Error(`There is no file "${path}". Use list_files to see what is there.`);
     return readFileSync(full, "utf8");
   },
   list_files: ({ path }) => readdirSync(inside(path)).sort().join("\n"),
@@ -62,7 +75,12 @@ for (let round = 0; round < 2; round++) {
     } catch (e) {
       output = { type: "error-text", value: (e as Error).message };
     }
-    return { type: "tool-result" as const, toolCallId: call.toolCallId, toolName: call.toolName, output };
+    return {
+      type: "tool-result" as const,
+      toolCallId: call.toolCallId,
+      toolName: call.toolName,
+      output,
+    };
   });
   messages.push({ role: "tool", content: results });
 }

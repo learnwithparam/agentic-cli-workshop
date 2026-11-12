@@ -10,9 +10,19 @@ const file = (d: string) => join(d, "first-look.md");
 const text = (d: string) => (existsSync(file(d)) ? readFileSync(file(d), "utf8") : "");
 const section = (d: string, heading: string) => text(d).split(heading)[1]?.split(/\n## /)[0] ?? "";
 const drafts = () => Object.entries(answerKey().drafts);
-const held = () => drafts().filter(([, v]) => v.outcome === "hold").map(([k]) => k);
-const filed = () => drafts().filter(([, v]) => v.outcome === "file").map(([k]) => k);
-const words = (s: string) => s.replace(/[#*`_-]/g, " ").split(/\s+/).filter((w) => w && !/^todo$/i.test(w)).length;
+const held = () =>
+  drafts()
+    .filter(([, v]) => v.outcome === "hold")
+    .map(([k]) => k);
+const filed = () =>
+  drafts()
+    .filter(([, v]) => v.outcome === "file")
+    .map(([k]) => k);
+const words = (s: string) =>
+  s
+    .replace(/[#*`_-]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w && !/^todo$/i.test(w)).length;
 
 export default [
   {
@@ -27,20 +37,26 @@ export default [
   },
   {
     says: "Held stories names no story the desk filed",
-    test: (d) => section(d, "## Held stories").trim().length > 0 && !filed().some((slug) => section(d, "## Held stories").includes(slug)),
+    test: (d) =>
+      section(d, "## Held stories").trim().length > 0 &&
+      !filed().some((slug) => section(d, "## Held stories").includes(slug)),
     tryNext: "List only the Held column. A story in the Filed column went to the website.",
   },
   {
     says: "Why each was held gives a reason for each held story",
     test: (d) => {
       const lines = section(d, "## Why each was held").split("\n");
-      return held().every((slug) => lines.some((l) => l.includes(slug) && words(l.replace(slug, "")) >= 4));
+      return held().every((slug) =>
+        lines.some((l) => l.includes(slug) && words(l.replace(slug, "")) >= 4),
+      );
     },
-    tryNext: "Write one line per held story: its slug, then the rule it would break, in your own words.",
+    tryNext:
+      "Write one line per held story: its slug, then the rule it would break, in your own words.",
   },
   {
     says: "One thing I want to understand has a real question",
     test: (d) => words(section(d, "## One thing I want to understand")) >= 5,
-    tryNext: "Write one sentence about the run you cannot explain yet, such as why it read a file twice.",
+    tryNext:
+      "Write one sentence about the run you cannot explain yet, such as why it read a file twice.",
   },
 ] satisfies Rule[];

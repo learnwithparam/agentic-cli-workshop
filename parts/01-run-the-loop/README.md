@@ -29,14 +29,14 @@ flowchart LR
 
 ## Steps
 
-| Step | Minutes | You build | The check reads |
-|---|---|---|---|
-| `call-the-model` | 10 | One prompt to the smart role, the reply printed | The request the practice model got: the prompt, the role, no temperature |
-| `read-a-draft` | 15 | A `read_file` tool, its schema, and one round trip | The tool schema, the result paired to its call id, a path outside the newsroom refused |
-| `close-the-loop` | 20 | The `while` loop, with errors sent back, not thrown | Four calls, two results in one message, an error result, every call paired once |
-| `cap-the-loop` | 10 | `--max-turns` and `--max-budget-usd`, the cost from `config/models.ts` | The number of calls, exit code 3, the cost printed within one cent |
-| `stream-the-reply` | 15 | Streaming text to the terminal as it arrives | `stream: true`, the time between the first and last piece on screen |
-| `swap-the-model` | 15 | The same loop on a second provider with one setting | Requests in OpenRouter's shape, no provider import in `src/` |
+| Step               | Minutes | You build                                                              | The check reads                                                                        |
+| ------------------ | ------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `call-the-model`   | 10      | One prompt to the smart role, the reply printed                        | The request the practice model got: the prompt, the role, no temperature               |
+| `read-a-draft`     | 15      | A `read_file` tool, its schema, and one round trip                     | The tool schema, the result paired to its call id, a path outside the newsroom refused |
+| `close-the-loop`   | 20      | The `while` loop, with errors sent back, not thrown                    | Four calls, two results in one message, an error result, every call paired once        |
+| `cap-the-loop`     | 10      | `--max-turns` and `--max-budget-usd`, the cost from `config/models.ts` | The number of calls, exit code 3, the cost printed within one cent                     |
+| `stream-the-reply` | 15      | Streaming text to the terminal as it arrives                           | `stream: true`, the time between the first and last piece on screen                    |
+| `swap-the-model`   | 15      | The same loop on a second provider with one setting                    | Requests in OpenRouter's shape, no provider import in `src/`                           |
 
 Every step starts from `problem/src/main.ts`, which is the last step's answer with the new part marked `TODO`.
 You work in the step's `problem/` folder. `bun run try <step-name> -p "..."` runs your desk by hand in the
