@@ -224,9 +224,10 @@ function openaiStream(req: Request, turn: Turn): ReadableStream {
   });
 }
 
-export type Options = { scenario: Scenario; port?: number; onRequest?: (r: Request) => void };
+// maxRequests protects a laptop from a loop with no stop rule: past it, every call gets an error.
+export type Options = { scenario: Scenario; port?: number; onRequest?: (r: Request) => void; maxRequests?: number };
 
-export function startPracticeModel({ scenario, port = 0, onRequest }: Options): PracticeModel {
+export function startPracticeModel({ scenario, port = 0, onRequest, maxRequests = 200 }: Options): PracticeModel {
   const requests: Request[] = [];
   const server = Bun.serve({
     port,
@@ -239,6 +240,10 @@ export function startPracticeModel({ scenario, port = 0, onRequest }: Options): 
       const isOpenAI = url.pathname.endsWith("/chat/completions");
       if (httpReq.method !== "POST" || (!isAnthropic && !isOpenAI))
         return Response.json({ error: { message: `The practice model does not serve ${httpReq.method} ${url.pathname}` } }, { status: 404 });
+      if (requests.length >= maxRequests) {
+        const message = `The practice model stopped answering after ${maxRequests} calls in one run. Your loop has no stop rule.`;
+        return Response.json(isAnthropic ? { type: "error", error: { type: "rate_limit_error", message } } : { error: { message } }, { status: 400 });
+      }
       const body = await httpReq.json();
       const req = isAnthropic ? fromAnthropic(body) : fromOpenAI(body);
       requests.push(req);

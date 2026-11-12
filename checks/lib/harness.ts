@@ -46,7 +46,7 @@ export type Run = {
 export type RunOptions = {
   args: string[];
   scenario: (w: World) => Scenario;
-  env?: Record<string, string>;
+  env?: Record<string, string> | ((w: World, modelUrl: string) => Record<string, string>);
   setup?: (w: World) => void;
   timeoutMs?: number;
   // Keep the world for the caller to inspect; the caller must call run.world.cleanup().
@@ -77,7 +77,7 @@ export async function runDesk(dir: string, o: RunOptions): Promise<Run> {
         REPLAY_URL: model.url,
         CMS_URL: world.cms.url,
         NO_COLOR: "1",
-        ...o.env,
+        ...(typeof o.env === "function" ? o.env(world, model.url) : o.env),
       },
     });
     const timer = setTimeout(() => {
