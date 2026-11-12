@@ -3,20 +3,37 @@
 ## The problem
 
 Twelve drafts wait on the Millbrook Herald night desk. The night editor wants an agent that reads them, checks
-them and files them. Before it can do any of that, it needs the one thing every agent harness is built around:
-a loop that calls the model, runs the tools the model asks for, sends the results back, and stops at the right time.
+them and files them. First, the agent needs a loop. The loop is the center of every agent harness. It calls the
+model and runs the tools the model asks for. It sends the results back to the model. And it stops at the
+right time.
 
-Get the loop wrong and the agent is useless or expensive. It stops after the first tool call and says nothing.
-It sends a result the model cannot match to its call and the API refuses the request. It never stops, and spends
-money all night on a question it answered an hour ago.
+For example, here are five lines from the finished desk at work on the river story. Each line is one tool
+call that the model asked for:
+
+```text
+  > read_file drafts/river-levels.md
+  > read_file sources/river-levels.csv
+  > edit_file drafts/river-levels.md
+  > log_correction river-levels
+  > file_story river-levels
+```
+
+Between those lines, the loop sends each result back, and the model picks the next step. When the model asks
+for no more tools, the loop ends.
+
+If you get the loop wrong, the agent is useless or costs too much. Here are three ways it goes wrong:
+
+- It stops after the first tool call and says nothing.
+- It sends a result the model cannot match to its call, and the API refuses the request.
+- It never stops. It keeps spending money on a question it answered long ago.
 
 ## Why it matters
 
-The loop is small, and it is enough. Anthropic's own coding agent was a model in a loop with two tools, a shell
-and a file editor, and they let it "sample until the model decides that it is finished". It scored 49% on
-SWE-bench Verified, ahead of the previous best of 45%
-([Anthropic, read today](https://www.anthropic.com/engineering/swe-bench-sonnet)).
-Everything later in this course (permissions, compaction, subagents, hooks) is added around this loop.
+The loop is small, and it is enough. Anthropic built a coding agent from a model in a loop with two tools: a
+shell and a file editor. They let it "sample until the model decides that it is finished". It scored 49% on
+SWE-bench Verified, a public test of coding agents. The best score before it was 45%
+([Anthropic, read today](https://www.anthropic.com/engineering/swe-bench-sonnet)). Everything later in this
+course is built around this loop: permissions, compaction, helper agents and hooks.
 
 ```mermaid
 flowchart LR
@@ -38,14 +55,14 @@ flowchart LR
 | `stream-the-reply` | 15      | Streaming text to the terminal as it arrives                           | `stream: true`, the time between the first and last piece on screen                    |
 | `swap-the-model`   | 15      | The same loop on a second provider with one setting                    | Requests in OpenRouter's shape, no provider import in `src/`                           |
 
-Every step starts from `problem/src/main.ts`, which is the last step's answer with the new part marked `TODO`.
-You work in the step's `problem/` folder. `bun run try <step-name> -p "..."` runs your desk by hand in the
-newsroom, against the practice model. `bun run verify <step-name>` checks it.
+Every step starts from `problem/src/main.ts`. That file is the answer to the step before, with the new part
+marked `TODO`. You work in the `problem/` folder of the step. `bun run try <step-name> -p "..."` runs your desk
+by hand in the newsroom, on the practice model. `bun run verify <step-name>` checks your work.
 
 ## Walkthrough
 
-The whole part from start to finish. Each check starts your `src/main.ts` three times in a fresh copy of the
-newsroom, with the practice model, and reads what the model received.
+Here is the whole part from start to finish. Each check runs your `src/main.ts` three times. Every run gets a
+fresh copy of the newsroom and the practice model. Then the check reads what the model received.
 
 ```bash
 bun run try call-the-model solution -p "say ready"

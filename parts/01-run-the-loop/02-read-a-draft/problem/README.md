@@ -2,10 +2,10 @@
 
 ## The problem
 
-desk can talk, but it cannot see the newsroom. Ask it what the bridge draft says and it guesses. A model never
-reads a file itself: it asks your program to run a tool, and your program sends the result back. If the result
-is not paired with the call that asked for it, the model API refuses the request. If the tool reads any path it
-is given, the model can read files that were never meant for it.
+desk can talk, but it cannot see the newsroom, so it guesses. A model never reads a file itself. It asks your
+program to run a tool, and your program sends back the result. Each result must be paired with the call that
+asked for it, or the model API refuses the request. And a tool that reads every path lets the model see files
+that are not meant for it.
 
 ```mermaid
 sequenceDiagram
@@ -21,13 +21,16 @@ sequenceDiagram
 
 ## Your challenge
 
+For example, you ask about the bridge draft. The model asks for the tool `read_file` with the input
+`{ "path": "drafts/bridge-repairs.md" }` and an id. Your program sends the file's text back with that id.
+
 In `src/main.ts`:
 
 1. Describe a `read_file` tool: a description and a JSON schema with one required string, `path`.
-2. Write `readFile(path)`. Resolve the path against the newsroom folder. Refuse it if it leaves the folder, and
-   say so in words the model can read. Say so too when the file does not exist.
-3. If the model asked for tools, add one message with role `tool` that holds a `tool-result` for each call,
-   with the call's `toolCallId`. A good read is `{ type: "text", value }`; a problem is `{ type: "error-text", value }`.
+2. Write `readFile(path)`. Resolve the path against the newsroom folder. If the path leaves the folder, refuse
+   it, and say so in words the model can read. Do the same when the file does not exist.
+3. If the model asked for tools, add one message with role `tool`. It holds a `tool-result` for each call,
+   with the call's `toolCallId`. A good read is `{ type: "text", value }`. A problem is `{ type: "error-text", value }`.
 4. Call the model again with the longer message list and print its answer.
 
 ```bash
@@ -61,6 +64,6 @@ Expect: `Done. All 4 rules pass.`
 ## Words you will use
 
 - **Tool**: a function your program runs when the model asks. The model sees only its name, description and schema.
-- **Schema**: a JSON description of a tool's input, so the model knows what to send.
-- **Tool call id**: the label on each call. The result must carry the same id so the model can match them.
+- **Schema**: a JSON description of a tool's input. It tells the model what to send.
+- **Tool call id**: the label on each call. The result carries the same id, so the model can match them.
 - **Path jail**: a check that every path stays inside one folder.

@@ -1,7 +1,17 @@
 # When something goes wrong
 
-Every message a script prints on failure is in this table. Check lines are printed by `bun run verify`; the
-`Try next:` line under each one says what to change.
+When a script fails, it prints a message. You find every one of those messages in the tables below. Look for
+the words you see in the first column. Then read what they mean and how to fix them.
+
+For example, you run `bun run verify call-the-model` before you write any code. It prints this line:
+
+```text
+  FAIL  It sends no temperature
+        Try next: Remove temperature from the call. Newer models can answer it with an error, and old tutorials still set it.
+```
+
+The `FAIL` line names a rule of the check that your work does not meet yet. The `Try next:` line under it says
+what to change. The same words are in the "Check lines" table at the end of this page.
 
 ## Setup and scripts
 
@@ -10,17 +20,17 @@ Every message a script prints on failure is in this table. Check lines are print
 | `bun: command not found`                                                                       | Bun is not installed.                                                                                       | Install it from bun.sh, then open a new terminal.                                                     |
 | `Bun ... is too old. Run bun upgrade, then open a new terminal.`                               | `bun run doctor` found a Bun older than 1.4.                                                                | Run `bun upgrade`.                                                                                    |
 | `Cannot find module '#models'` or `Cannot find package 'ai'`                                   | The packages are not installed, or you ran from outside the repo.                                           | Run `bun install` at the repo root.                                                                   |
-| `Port 4020 is used by another program.`                                                        | Something else listens where the CMS wants to run.                                                          | Stop it, or run `CMS_PORT=4021 bun run world` and set `CMS_URL=http://localhost:4021`.                |
-| `Port 4010 is used by another program.`                                                        | Something else listens where the practice model wants to run.                                               | Stop it, or run `REPLAY_PORT=4011 bun run practice-model` and set `REPLAY_URL=http://localhost:4011`. |
+| `Port 4020 is used by another program.`                                                        | Another program already uses port 4020, the address the CMS needs.                                          | Stop it, or run `CMS_PORT=4021 bun run world` and set `CMS_URL=http://localhost:4021`.                |
+| `Port 4010 is used by another program.`                                                        | Another program already uses port 4010, the address the practice model needs.                               | Stop it, or run `REPLAY_PORT=4011 bun run practice-model` and set `REPLAY_URL=http://localhost:4011`. |
 | `Port 4020 is in use by another program. Stop it, or run with CMS_PORT=4021 bun run world.`    | `bun run world` could not start the CMS.                                                                    | As above.                                                                                             |
 | `The CMS is already running at http://localhost:4020. Open it in your browser.`                | `bun run world` is already running in another terminal.                                                     | Use that one.                                                                                         |
 | `There is no world command "..."`                                                              | A typo after `bun run world`.                                                                               | Use `bun run world`, `bun run world reset` or `bun run world status`.                                 |
 | `There is no step called "..."`                                                                | The step name is misspelled.                                                                                | Copy a name from the list it prints.                                                                  |
 | `There is no part called "..."`                                                                | The part name is misspelled.                                                                                | Copy a name from the list it prints.                                                                  |
-| `... has no problem/src/main.ts to run.`                                                       | `bun run try` was given a step that is a notes file, not code.                                              | Use `bun run verify <step-name>` for that step.                                                       |
+| `... has no problem/src/main.ts to run.`                                                       | You gave `bun run try` a step where you write notes, not code.                                              | Use `bun run verify <step-name>` for that step.                                                       |
 | `ERROR  the check for ... could not load`                                                      | The check itself is broken, not your work.                                                                  | Open an issue with the full output.                                                                   |
 | `LLM_PROVIDER is "..." Use one of: replay, anthropic, openrouter, openai, ollama.`             | The provider setting has a typo.                                                                            | Fix `LLM_PROVIDER` in `.env`, or remove it to use the practice model.                                 |
-| `LLM_PROVIDER is anthropic but ANTHROPIC_API_KEY is not set.`                                  | A live provider is chosen without its key. The same message names `OPENROUTER_API_KEY` or `OPENAI_API_KEY`. | Add the key to `.env` (never on the command line), or remove `LLM_PROVIDER`.                          |
+| `LLM_PROVIDER is anthropic but ANTHROPIC_API_KEY is not set.`                                  | You chose a live provider but gave no key. The message can also name `OPENROUTER_API_KEY` or `OPENAI_API_KEY`. | Add the key to `.env` (never on the command line), or remove `LLM_PROVIDER`.                          |
 | `LLM_PROVIDER is ollama but OLLAMA_MODEL is not set.`                                          | Ollama needs to know which model you pulled.                                                                | Set `OLLAMA_MODEL` in `.env`.                                                                         |
 | `fail` on a line of `bun run models`                                                           | That role could not answer on the chosen provider. The rest of the line says why.                           | Check the key, the provider's status page, and `config/models.ts` for the model it maps to.           |
 | `The practice model stopped answering after 200 calls in one run. Your loop has no stop rule.` | Your loop kept calling the model.                                                                           | Finish `cap-the-loop`, or check that the loop breaks when there are no tool calls.                    |

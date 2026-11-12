@@ -2,9 +2,9 @@
 
 ## The problem
 
-The night editor types a question and nothing answers. Before desk can read a single draft it has to do the
-smallest useful thing: send a prompt to a model and print the reply. Old tutorials make this harder than it is,
-and many of them still send settings that newer models answer with an error.
+The night editor types a question, and nothing answers. Before desk can read a single draft, it must do the
+smallest useful thing. It must send a prompt to a model and print the reply. Old tutorials make this look
+harder than it is. Many of them also send settings that newer models answer with an error.
 
 ```mermaid
 sequenceDiagram
@@ -22,11 +22,15 @@ sequenceDiagram
 ## Your challenge
 
 Open `src/main.ts` in this folder. It already reads the text after `-p`. Send that text to the model with
-`generateText` from `ai`, and print the reply.
+`generateText` from `ai`. Then print the reply.
 
-Ask `config/models.ts` for the model by its role, never by its name: `model("smart")` from `"#models"`. The main
-loop does the hard reasoning, so it uses the smart role. With no setting, the smart role is the practice model:
-a local server that answers like a real model API, with no key and no cost.
+Ask `config/models.ts` for the model by its role, never by its name. A role says what a call is for. Use
+`model("smart")` from `"#models"`. The main loop does the hard thinking, so it uses the smart role. With no
+setting, the smart role is the practice model. The practice model is a small server on your computer. It
+answers like a real model API, with no key and no cost.
+
+For example, you type `bun run try call-the-model -p "say ready"`. Desk sends the words `say ready` to the
+practice model. The model sends back one line of text, and desk prints it:
 
 ```bash
 bun run try call-the-model -p "say ready"
@@ -53,7 +57,7 @@ Expect: `Done. All 4 rules pass.` and a `Progress:` line.
 
 | What you see                                                      | Fix                                                                                                                    |
 | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `FAIL It prints the practice model's reply and exits with code 0` | Print `result.text` from `generateText`. A string you type yourself will not match: each check run gets a fresh reply. |
+| `FAIL It prints the practice model's reply and exits with code 0` | Print the `text` that `generateText` returns. A string you type yourself will not match: each check run gets a fresh reply. |
 | `FAIL It sends one request with your prompt as the user message`  | Pass the `-p` text as `prompt`, and call the model once.                                                               |
 | `FAIL It asks config/models.ts for the smart role`                | Use `model("smart")`. The fast role is for cheap side calls, such as summaries.                                        |
 | `FAIL It sends no temperature`                                    | Delete `temperature`. Newer models can reject it, and copied examples often set it.                                    |
