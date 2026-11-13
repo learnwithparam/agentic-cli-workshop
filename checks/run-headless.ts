@@ -54,7 +54,7 @@ export default [
       "Write questions and the todo list to stderr.",
   },
   {
-    says: "stream-json starts with init, has a tool_call and tool_result per call, and ends with result",
+    says: "stream-json opens with init, has a call and a result per tool call, ends with result",
     test: (folder) =>
       every(success(folder), (desk) => {
         const types = (contractEvents(desk.stdout) ?? []).map((event) => event.type);
