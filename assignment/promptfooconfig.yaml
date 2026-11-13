@@ -1,0 +1,6 @@
+# Starter: score desk with promptfoo: one task per draft. The assertion is the hand-built scorer's rule.
+prompts: ["{{slug}}"]
+providers: ["file://provider.mjs"]
+tests:
+  # Add one task per draft in world/seed/answer-key.json, then add assertions.
+  - vars: { slug: bridge-repairs }
