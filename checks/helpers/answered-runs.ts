@@ -20,6 +20,14 @@ export type AnsweredOptions = Omit<RunOptions, "keep"> & {
   answers?: string;
 };
 
+// The running desk of each world, so a scenario can stop it in the middle of a run.
+const runningDesks = new Map<string, { kill: (signal?: number | NodeJS.Signals) => void }>();
+
+// Send SIGTERM to the desk that runs in this world, as a crash or a closed laptop would.
+export function stopDesk(world: World): void {
+  runningDesks.get(world.nonce)?.kill("SIGTERM");
+}
+
 // Every world made here is removed when the check process ends.
 const keptWorlds: World[] = [];
 process.on("exit", () => {
@@ -60,6 +68,7 @@ async function runCli(
     stderr: "pipe",
     env: environmentFor(world, model, options),
   });
+  runningDesks.set(world.nonce, desk);
   let timedOut = false;
   const timer = setTimeout(() => {
     timedOut = true;
@@ -79,6 +88,15 @@ async function runOnce(folder: string, options: AnsweredOptions): Promise<Run> {
   const world = makeWorld();
   keptWorlds.push(world);
   options.setup?.(world);
+  return runInWorld(folder, options, world);
+}
+
+// Run desk in a world that already exists, such as a second run that resumes the first.
+export async function runInWorld(
+  folder: string,
+  options: AnsweredOptions,
+  world: World,
+): Promise<Run> {
   const model = startPracticeModel({ scenario: options.scenario(world) });
   const started = Date.now();
   try {

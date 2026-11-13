@@ -17,6 +17,7 @@
     "try": "bun scripts/try.ts",
     "desk": "bun finished/desk/src/main.ts",
     "models": "bun config/models-check.ts",
+    "score": "bun parts/04-extend-and-ship/05-score-the-agent/score.ts",
     "doctor": "bun scripts/doctor.ts",
     "practice-model": "bun world/practice-model/serve.ts",
     "shots": "node images/shots.mjs",
@@ -25,6 +26,8 @@
   "dependencies": {
     "@ai-sdk/anthropic": "4.0.103",
     "@ai-sdk/openai": "4.0.116",
+    "@modelcontextprotocol/client": "2.4.0",
+    "@modelcontextprotocol/server": "2.4.0",
     "@openrouter/ai-sdk-provider": "3.1.0",
     "ai": "7.0.171",
     "zod": "4.6.7"

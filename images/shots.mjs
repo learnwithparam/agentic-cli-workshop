@@ -170,5 +170,27 @@ await shootTerminal(
   ["  ...", ...aroundCompaction, "  ..."].join("\n"),
 );
 
+// extend-and-ship: a short stream-json run, and the score of the sample solution.
+const headlessFlags = '-p "check tonight\'s drafts" --output-format stream-json --max-turns 3';
+const headlessRun = run(
+  "bun world/world.ts reset >/dev/null && " +
+    `bun scripts/try.ts run-headless solution ${headlessFlags} < /dev/null 2>/dev/null`,
+);
+// Long tool results would fill the picture, so each line is cut to 150 characters.
+const shortLines = withoutBunNoise(headlessRun)
+  .split("\n")
+  .map((line) => (line.length > 150 ? `${line.slice(0, 147)}...` : line));
+await shootTerminal(
+  "parts/04-extend-and-ship/04-run-headless/images/expected.png",
+  `bun run try run-headless ${headlessFlags}`,
+  shortLines.join("\n"),
+);
+const scoreFolder = "parts/04-extend-and-ship/05-score-the-agent/solution";
+await shootTerminal(
+  "parts/04-extend-and-ship/05-score-the-agent/images/expected.png",
+  "bun run score",
+  withoutBunNoise(run(`bun parts/04-extend-and-ship/05-score-the-agent/score.ts ${scoreFolder}`)),
+);
+
 await browser.close();
 run("bun world/world.ts reset");

@@ -50,27 +50,89 @@ flowchart LR
 
 ## Steps
 
-| Step                                | Minutes | You build                                                                                              | The check reads                                                                                                                   |
-| ----------------------------------- | ------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `add-hooks`                         | 20      | `pre_tool` and `post_tool` hooks run as shell commands from config; exit 2 blocks with a reason        | The CMS after an embargoed filing (refused by the hook), the audit JSONL (one line per call), a hung hook killed after 10 seconds |
-| `connect-a-wire-server`             | 20      | An MCP client over stdio with `@modelcontextprotocol/client`; wire tools appear as `wire__search_wire` | The tool list in the recorded request, the wire server's own call log, an error result when the server dies                       |
-| `resume-a-session`                  | 15      | An append-only JSONL session file, `--resume <id>` and `--continue`                                    | The first request after a resume (history equal to the saved one), the CMS after a stopped and resumed run (no story filed twice) |
-| `run-headless`                      | 15      | `-p` with `--output-format text`, `json` and `stream-json`, and the exit codes                         | Every stdout line against `checks/lib/contract.schema.json`, exit codes 0, 1, 3 and 4                                             |
-| `score-the-agent`                   | 25      | `bun run score` over the 12 drafts: faults caught, false flags, rule breaks, turns, cost               | The scorer's JSON against the answer key, `notes/failures.md` with a session line per missed fault                                |
-| `rebuild-on-the-agent-sdk` (deeper) | 30      | `desk-sdk/`: the same tools under the Claude Agent SDK                                                 | The same contract run and score, and `notes/sdk-compare.md` with its four headings                                                |
+| Step                    | Minutes | You build                                                                                              | The check reads                                                                                                                   |
+| ----------------------- | ------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `add-hooks`             | 20      | `pre_tool` and `post_tool` hooks run as shell commands from config; exit 2 blocks with a reason        | The CMS after an embargoed filing (refused by the hook), the audit JSONL (one line per call), a hung hook killed after 10 seconds |
+| `connect-a-wire-server` | 20      | An MCP client over stdio with `@modelcontextprotocol/client`; wire tools appear as `wire__search_wire` | The tool list in the recorded request, the wire server's own call log, an error result when the server dies                       |
+| `resume-a-session`      | 15      | An append-only JSONL session file, `--resume <id>` and `--continue`                                    | The first request after a resume (history equal to the saved one), the CMS after a stopped and resumed run (no story filed twice) |
+| `run-headless`          | 15      | `-p` with `--output-format text`, `json` and `stream-json`, and the exit codes                         | Every stdout line against `checks/lib/contract.schema.json`, exit codes 0, 1, 3 and 4                                             |
+| `score-the-agent`       | 25      | `bun run score` over the 12 drafts: faults caught, false flags, rule breaks, turns, cost               | The scorer's JSON against the answer key, `notes/failures.md` with a session line per missed fault                                |
 
-This part takes 125 minutes. The deeper step is 30 of them.
+This part takes 95 minutes. A deeper step that rebuilds desk on the Claude Agent SDK is not in the repo yet.
+
+Every step starts from `problem/src/`. The first step starts from your part three desk, with three new files
+left empty until their step: `src/wire.ts`, `src/session.ts` and `src/output.ts`.
 
 ## Walkthrough
 
-TODO(part session): write the step folders, then replace this block with one `bun run verify <step-name>`
-command per step, each with its Expect line.
+Here is the whole part from start to finish. Each check runs your desk three times on the practice model, in a
+fresh newsroom with its own CMS. Then it reads the CMS, the files desk wrote, and the exit codes.
+
+```bash
+bun run verify add-hooks
+```
+
+Expect: `Done. All 4 rules pass.` once the embargo hook blocks a filing and the audit hook logs every call.
+
+```bash
+bun run verify connect-a-wire-server
+```
+
+Expect: `Done. All 4 rules pass.` once the wire tools come from the MCP server and pass the same gate.
+
+```bash
+bun run verify resume-a-session
+```
+
+Expect: `Done. All 4 rules pass.` once a stopped run carries on with `--resume` and files nothing twice.
+
+```bash
+bun run verify run-headless
+```
+
+Expect: `Done. All 5 rules pass.` once every stream-json line fits the contract and the exit codes are right.
+
+```bash
+bun run score
+```
+
+Expect: a JSON score. On the starter of `score-the-agent` it shows `"caught": 6`.
+
+```bash
+bun run verify score-the-agent
+```
+
+Expect: `Done. All 3 rules pass.` once desk catches all 13 faults and `notes/failures.md` explains the misses.
 
 ```bash
 bun run verify part extend-and-ship
 ```
 
-Expect: TODO(part session). Until the steps exist it prints `0/0 steps pass`.
+Expect: `Part extend-and-ship is done: 5/5 steps pass.`
+
+## Assignment
+
+The problem: the editor wants the run to happen with nobody watching, survive a crash, leave an audit trail,
+and prove it is good enough.
+
+Hand in your `src/` folder with hooks, the MCP client, sessions and headless mode, and `notes/failures.md`.
+Then add `scorecard.md`: one table with your desk's score from `bun run score`, and a second column for a
+real harness on the same drafts. For example, run the same 12 drafts with `claude -p` and score the CMS.
+
+| Question (yes or no)                                                 | How it is checked                     |
+| -------------------------------------------------------------------- | ------------------------------------- |
+| Does `bun run verify part extend-and-ship` pass?                     | The verifier                          |
+| Does the score catch 13 of 13 faults on the practice model?          | `bun run score`                       |
+| Are there zero false flags and zero rule breaks?                     | `bun run score`                       |
+| Does `notes/failures.md` name each missed fault with a session line? | A rule of the `score-the-agent` check |
+| Does `scorecard.md` have a second column for a real harness?         | A heading and a row in the file       |
+
+## Finished
+
+desk is now a harness you can ship. Hooks guard the tools, a wire service plugs in over MCP, and a stopped run
+carries on where it was. A script can read every event and every exit code. And a score says how good it is,
+read from the CMS, not from the agent's own words. You built every part of it, from one model call in part
+one to a scored night run here.
 
 ## Read
 
