@@ -70,8 +70,8 @@ export default [
     says: "Past the threshold, desk asks the fast role for a summary",
     test: (folder) => every(compacting(folder), (desk) => aroundTheSummary(desk) !== null),
     tryNext:
-      "Before each call, compare estimateTokens(messages) with compactAtTokens(). " +
-      'Above it, call generateText with model("fast") to write the summary.',
+      'In compact() in src/context.ts, call generateText with model("fast") and SUMMARY_RULES. ' +
+      "main.ts already calls compact() when the conversation passes the limit.",
   },
   {
     says: "The first request after the summary is under the threshold and starts with the summary",
@@ -85,8 +85,8 @@ export default [
         );
       }),
     tryNext:
-      "Replace the messages with one user message holding the summary, " +
-      "then the last two messages. Use messages.splice so the loop keeps the same list.",
+      "Make compact() return one user message with the summary first, " +
+      "then the last two messages. main.ts puts them in place of the old ones.",
   },
   {
     says: "The open todo items are still in the request after the summary",
@@ -107,7 +107,9 @@ export default [
         const after = aroundTheSummary(desk)?.after;
         return after?.system.includes("under 18") === true;
       }),
-    tryNext: "Keep passing systemPrompt() as instructions. Compaction changes messages only.",
+    tryNext:
+      "Finish compact() first: this rule needs a summary to happen. Then leave the system " +
+      "prompt alone, because compaction changes the messages only.",
   },
   {
     says: "The saved transcript holds every tool call from before the summary",
