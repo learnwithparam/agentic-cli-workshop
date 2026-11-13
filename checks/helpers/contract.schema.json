@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "desk stream-json event",
+  "description": "One line of desk -p ... --output-format stream-json. Any harness that prints these lines can be checked and scored.",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "type": { "const": "init" },
+        "session_id": { "type": "string" },
+        "tools": { "type": "array" }
+      },
+      "required": ["type", "session_id", "tools"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "type": { "const": "text" }, "text": { "type": "string" } },
+      "required": ["type", "text"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": { "const": "tool_call" },
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "input": {}
+      },
+      "required": ["type", "id", "name", "input"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": { "const": "tool_result" },
+        "id": { "type": "string" },
+        "is_error": { "type": "boolean" },
+        "content": { "type": "string" }
+      },
+      "required": ["type", "id", "is_error", "content"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": { "const": "permission" },
+        "tool": { "type": "string" },
+        "decision": { "enum": ["allow", "deny"] },
+        "reason": { "type": "string" }
+      },
+      "required": ["type", "tool", "decision", "reason"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": { "const": "compact" },
+        "before_tokens": { "type": "number" },
+        "after_tokens": { "type": "number" }
+      },
+      "required": ["type", "before_tokens", "after_tokens"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": { "const": "result" },
+        "subtype": {
+          "enum": ["success", "error_max_turns", "error_max_budget", "error_permission", "error"]
+        },
+        "turns": { "type": "number" },
+        "cost_usd": { "type": "number" },
+        "session_id": { "type": "string" }
+      },
+      "required": ["type", "subtype", "turns", "cost_usd", "session_id"],
+      "additionalProperties": false
+    }
+  ]
+}
