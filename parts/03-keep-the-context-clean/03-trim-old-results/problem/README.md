@@ -1,0 +1,73 @@
+# Trim old results
+
+This is a deeper step. You can skip it: the next step's starter already has the answer.
+
+## The problem
+
+Every tool result stays in the conversation, and the whole conversation goes out on every call. After desk
+reads thirty drafts, it sends all thirty drafts again on call thirty-one. The model needs only the last few.
+The rest costs money and pushes the rules out of view.
+
+Anthropic tested this on a search task of 100 turns. Clearing old tool results let agents finish work that
+would fail without it, "while reducing token consumption by 84%".
+
+For example, here is an old result before and after trimming:
+
+```text
+before: ---\nslug: bridge-repairs\nheadline: Bridge repairs to cost ... (620 characters)
+after:  [trimmed: 620 characters, in .desk/results/toolu_abc123.txt]
+```
+
+The stub keeps the call paired with its result, so the API still accepts the request. And it says where the
+full text is, so the model can read it again with `read_file` if it must.
+
+```mermaid
+flowchart LR
+  subgraph Before
+    R1[result 1, full] --> R2[result 2, full] --> R3[...] --> R30[result 30, full]
+  end
+  subgraph After
+    S1[result 1, stub] --> S2[result 2, stub] --> S3[...] --> K[last 3 results, full]
+  end
+  Before --> After
+```
+
+## Your challenge
+
+In `src/context.ts`, write `trimOldResults(messages)`. `src/main.ts` already calls it before every call.
+
+1. Find the tool messages: the messages with `role: "tool"`.
+2. Leave the last `KEEP_FULL` (3) alone. They are the ones the model is working on.
+3. In each older one, look at every `tool-result` part. Skip a part that is already a stub.
+4. Save its full text to `.desk/results/<toolCallId>.txt`.
+5. Change its `output` to a text stub that gives the length and the saved path.
+
+Change the parts in place. Never delete a part or a message: a tool call with no result is an error.
+
+```bash
+bun run verify trim-old-results
+```
+
+Expect: `Done. All 4 rules pass.`
+
+## Done when
+
+- By the last request, the tool results take at least 50% less room than the files read.
+- Every tool call still has exactly one result.
+- The last 3 tool results are still whole.
+- Each stub names a saved file that holds the full text.
+
+## If you get stuck
+
+| What you see                                                  | Fix                                                           |
+| ------------------------------------------------------------- | ------------------------------------------------------------- |
+| `FAIL  By the last request, the tool results take ...`        | Check that `main.ts` calls `trimOldResults` before each call. |
+| `FAIL  Every tool call still has exactly one result`          | Change `part.output`. Do not remove parts.                    |
+| `FAIL  The last 3 tool results are still whole`               | Use `toolMessages.slice(0, -KEEP_FULL)` for the old ones.     |
+| `FAIL  Each stub names a saved file that holds the full text` | Write the file before you change the part.                    |
+
+## Words you will use
+
+- **Stub**: a short stand-in for a long text. It says what was there and where to find it.
+- **Tool result**: the text desk sends back for one tool call, paired with the call's id.
+- **Token consumption**: how many tokens a run sends and receives. It is what you pay for.

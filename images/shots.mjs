@@ -124,5 +124,32 @@ await shootTerminal(
   ),
 );
 
+// keep-the-context-clean: the todo list at the start of the night, and the compaction line.
+const tonightPrompt = '"check tonight\'s drafts"';
+const todoFlags = `-p ${tonightPrompt} --max-turns 3`;
+const todoRun = run(
+  "bun world/world.ts reset >/dev/null && " +
+    `bun scripts/try.ts plan-with-a-todo-list solution ${todoFlags} < /dev/null`,
+);
+await shootTerminal(
+  "parts/03-keep-the-context-clean/01-plan-with-a-todo-list/images/expected.png",
+  `bun run try plan-with-a-todo-list ${todoFlags}`,
+  withoutBunNoise(todoRun),
+);
+const compactFlags = `-p ${tonightPrompt} --permission-mode accept-edits --max-turns 80`;
+const compactRun = run(
+  "bun world/world.ts reset >/dev/null && " +
+    "cp finished/desk.config.json world/newsroom/desk.config.json && " +
+    `bun scripts/try.ts compact-the-conversation solution ${compactFlags} < /dev/null`,
+);
+const compactLines = withoutBunNoise(compactRun).split("\n");
+const compactedAt = compactLines.findIndex((line) => line.includes("~ compacted"));
+const aroundCompaction = compactLines.slice(compactedAt - 8, compactedAt + 6);
+await shootTerminal(
+  "parts/03-keep-the-context-clean/04-compact-the-conversation/images/expected.png",
+  `bun run try compact-the-conversation ${compactFlags}`,
+  ["  ...", ...aroundCompaction, "  ..."].join("\n"),
+);
+
 await browser.close();
 run("bun world/world.ts reset");
