@@ -20,7 +20,8 @@ if (process.env.CI) browserCommand.push("--with-deps");
 const install = Bun.spawnSync(browserCommand, { cwd: ROOT });
 if (packages.exitCode !== 0 || install.exitCode !== 0) {
   console.error(
-    "Could not get the packages or the browser. Try next: run bun install, then bunx playwright install chromium.",
+    "Could not get the packages or the browser. " +
+      "Try next: run bun install, then bunx playwright install chromium.",
   );
   process.exit(2);
 }
