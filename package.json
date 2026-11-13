@@ -17,6 +17,7 @@
     "try": "bun scripts/try.ts",
     "desk": "bun finished/desk/src/main.ts",
     "models": "bun config/models-check.ts",
+    "score": "bun parts/04-extend-and-ship/05-score-the-agent/score.ts",
     "doctor": "bun scripts/doctor.ts",
     "practice-model": "bun world/practice-model/serve.ts",
     "shots": "node images/shots.mjs",
