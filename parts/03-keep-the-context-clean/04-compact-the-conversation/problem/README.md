@@ -44,12 +44,16 @@ passed.
 Keep the line format of `render()` and the first words of `SUMMARY_RULES`. The practice model reads them to
 write its summary.
 
+Run `bun run world reset` first. A `try` run changes the newsroom.
+
 ```bash
 cp finished/desk.config.json world/newsroom/desk.config.json
 bun run try compact-the-conversation solution -p "check tonight's drafts" --permission-mode accept-edits --max-turns 80 < /dev/null
 ```
 
 Expect: a line that starts with `  ~ compacted the conversation: about`.
+
+With `< /dev/null`, every prompt gets no. So the CMS files nothing, even when the last line says `Filed 9`.
 
 ![The compaction line in a night desk run](../images/expected.png)
 

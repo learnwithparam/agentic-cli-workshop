@@ -73,5 +73,7 @@ Expect: `Done. All 5 rules pass.`
 ## Words you will use
 
 - **Headless**: a run with no person at the terminal.
+- **stdout and stderr**: the two places a program prints to. A script reads stdout, so prompts go to stderr.
+- **stdin**: where a program reads what you type. In a headless run, it is often empty.
 - **Event**: one thing that happened in a run, printed as one JSON object.
 - **Contract**: the fixed names and fields a program can count on.

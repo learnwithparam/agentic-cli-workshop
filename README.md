@@ -112,22 +112,21 @@ flowchart LR
 | [Run the loop](parts/01-run-the-loop/README.md)                     | Call, tools, the loop, caps, streaming, any provider    | `call-the-model`, `read-a-draft`, `close-the-loop`, `cap-the-loop`, `stream-the-reply`, `swap-the-model`                 | 85      |
 | [Touch the world safely](parts/02-touch-the-world-safely/README.md) | Tool design, safe edits, commands, the permission gate  | `shape-the-tools`, `edit-drafts-safely`, `run-commands`, `ask-before-acting`                                             | 85      |
 | [Keep the context clean](parts/03-keep-the-context-clean/README.md) | Todo list, desk rules, trimming, compaction, a subagent | `plan-with-a-todo-list`, `load-the-desk-rules`, `trim-old-results`, `compact-the-conversation`, `delegate-to-a-subagent` | 90      |
-| [Extend and ship](parts/04-extend-and-ship/README.md)               | Hooks, an MCP client, sessions, headless runs, a score  | `add-hooks`, `connect-a-wire-server`, `resume-a-session`, `run-headless`, `score-the-agent`, `rebuild-on-the-agent-sdk`  | 125     |
+| [Extend and ship](parts/04-extend-and-ship/README.md)               | Hooks, an MCP client, sessions, headless runs, a score  | `add-hooks`, `connect-a-wire-server`, `resume-a-session`, `run-headless`, `score-the-agent`                              | 95      |
 
-Three steps go deeper: `swap-the-model`, `trim-old-results` and `rebuild-on-the-agent-sdk`. You can skip them
-the first time through. Each step says what you will make. Each step also has one command that checks your
-work: `bun run verify <step-name>`. The file [schedules.toml](schedules.toml) shows how to fit the parts into
-one long session or into several shorter ones. The steps of parts two to four are listed in [PARTS.md](PARTS.md).
-We are still building them.
+Two steps go deeper: `swap-the-model` and `trim-old-results`. You can skip them the first time through. A
+third deeper step, `rebuild-on-the-agent-sdk`, is not in the repo yet. Each step says what you will make. Each
+step also has one command that checks your work: `bun run verify <step-name>`. The file
+[schedules.toml](schedules.toml) shows how to fit the parts into one long session or into several shorter ones.
 
 ## The project
 
 At the end, you put four things in your own public repo:
 
 1. Your `desk` code. `bun run verify` passes every step on the practice model.
-2. A file called `scorecard.md`, made by `bun run score --live`. It shows the faults caught out of 13, the false
-   flags, the rules broken, the turns and the cost. A second column shows a real harness (`claude -p`) on the
-   same drafts.
+2. A file called `scorecard.md`. It is a table of what `bun run score` prints for your desk: the faults caught
+   out of 13, the false flags, the rules broken, the turns and the cost. A second column shows a real harness
+   (`claude -p`) on the same drafts.
 3. A screen recording of one run, shorter than two minutes. It shows the todo list, a permission prompt before
    a filing, the compaction notice and the result line.
 4. A file called `notes/failures.md`. It lists the faults your desk missed and why. It quotes the session file.
