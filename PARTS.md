@@ -104,3 +104,12 @@ desk -p "<prompt>" [--output-format text|json|stream-json] [--permission-mode as
 `compact {before_tokens, after_tokens}`, `result {subtype, turns, cost_usd, session_id}`. Result subtypes:
 `success`, `error_max_turns`, `error_max_budget`, `error_permission`, `error`. Exit codes: 0 success, 1 error,
 3 a cap, 4 a permission denied in `never-ask` mode. `finished/desk/src/main.ts` follows it today.
+
+## run-the-desk-with-the-agents-sdk
+
+Folder: `parts/06-run-the-desk-with-the-agents-sdk/`. 25 minutes. The desk moves from its hand-built loop to the
+OpenAI Agents SDK. The practice model answers the chat completions shape, so no key is needed.
+
+| Step                                      | Min | The check reads                                                                                                                                                                                         |
+| ----------------------------------------- | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `run-the-desk-with-the-openai-agents-sdk` | 25  | At least four requests with every tool call paired to a result; 9 filed and 3 held as in the answer key; the last line shows the counts; a planted line the desk read; a held story refused at approval |
