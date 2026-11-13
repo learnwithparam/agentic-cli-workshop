@@ -27,10 +27,10 @@ of three things: allow the tool, ask the night editor, or deny the tool.
 ## Why it matters
 
 Asking is not enough on its own. Anthropic reports that people who use Claude Code "accept 93% of" its
-permission prompts anyway ([Anthropic, read today](https://www.anthropic.com/research/claude-code-auto-mode)).
+permission prompts anyway ([Anthropic, read in November 2026](https://www.anthropic.com/research/claude-code-auto-mode)).
 Good tools matter too. Anthropic shows the same tool answer in 206 tokens and in 72 tokens, and says errors
 should give "specific and actionable improvements"
-([Anthropic, read today](https://www.anthropic.com/engineering/writing-tools-for-agents)).
+([Anthropic, read in November 2026](https://www.anthropic.com/engineering/writing-tools-for-agents)).
 A gate that asks about everything teaches people to say yes. A useful gate does three things:
 
 - It allows safe work without asking.
@@ -122,8 +122,9 @@ you approved.
 | Does `desk.config.json` allow the read-only tools and leave `file_story` to ask?              | Read the file           |
 | Does `notes/approvals.md` give the number of prompts and the number approved?                 | Two numbers in the note |
 
-Going further: Anthropic stops a run after "3 consecutive denials or 20 total" and hands it to a person. Add
-the same rule to your gate.
+Going further: Anthropic stops a run after "3 consecutive denials or 20 total" and hands it to a person
+([Anthropic, read in November 2026](https://www.anthropic.com/research/claude-code-auto-mode)). Add the same
+rule to your gate.
 
 ## Finished
 

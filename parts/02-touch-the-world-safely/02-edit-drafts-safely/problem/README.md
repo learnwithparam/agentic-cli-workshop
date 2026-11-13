@@ -13,10 +13,10 @@ Four things can go wrong:
 
 - The old text is not in the file. The model copied it wrong.
 - The old text is in the file twice. `metres` is in the river draft two times, so which one?
-- The model never read the file. It is guessing what is there.
-- A reporter changed the file after the model read it. The model's copy is out of date.
+- The model never read the file, so it guesses.
+- A reporter changed the file after the model read it, so its copy is out of date.
 
-In each of these four cases, desk must refuse and say why.
+In each case, desk must refuse and say why.
 
 ```mermaid
 flowchart TD
@@ -43,6 +43,8 @@ In `src/tools.ts`:
 
 Tip: split the text on `old_text`, then join the two pieces with `new_text`. `text.replace()` treats `$&` in
 the new text as a code.
+
+Run `bun run world reset` first. A `try` run changes the newsroom.
 
 ```bash
 bun run try edit-drafts-safely solution -p "check tonight's drafts" --max-turns 9

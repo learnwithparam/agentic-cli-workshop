@@ -9,7 +9,7 @@ Right now desk has two tools. It cannot search the sources or file a story. And 
 helpful. For example, the model asks `list_files` for `drafts/bridge-repairs.md`, which is a file. desk
 sends back `ENOTDIR: not a directory, scandir ...`. The model cannot tell what to do next.
 
-There is a second trap. A model can send the same `file_story` call twice. Without care, the second call
+Second trap: a model can send the same `file_story` call twice. Without care, the second call
 is refused, or the story goes out twice.
 
 ```mermaid
@@ -23,8 +23,8 @@ flowchart LR
 
 ## Your challenge
 
-This step starts from your part one desk, split in two files. `src/main.ts` holds the loop. `src/tools.ts`
-holds the tools. You work in `src/tools.ts`.
+This step starts from your part one desk. `src/main.ts` holds the loop. You work in `src/tools.ts`, which
+holds the tools.
 
 1. Add `search_files { pattern, path }`. It looks in one file, or in every file of a folder. It returns each
    match as `path:line number: text`.
@@ -42,11 +42,15 @@ For example, a good error for the call above reads:
 "drafts/bridge-repairs.md" is not a folder. Use read_file for a file, or list_files with path "." to see the folders.
 ```
 
+Run `bun run world reset` first. A `try` run changes the newsroom.
+
 ```bash
 bun run try shape-the-tools solution -p "check tonight's drafts" --max-turns 6
 ```
 
 Expect: lines such as `  > file_story allotment-waiting-list`, then `Stopped: error_max_turns after 6 turns`.
+
+Lines such as `error: There is no tool "todo_write"` are fine. You build those tools later.
 
 ![The sample solution at work in the newsroom](../images/expected.png)
 
@@ -75,5 +79,4 @@ Expect: `Done. All 5 rules pass.`
 ## Words you will use
 
 - **Schema**: the shape of a tool's input, written as JSON Schema. The model reads it to build a call.
-- **Idempotency key**: a label on a request. The same label twice means "the same request", so it runs once.
 - **Slug**: the short name of a story, such as `bridge-repairs`.

@@ -26,12 +26,12 @@ You get this line from `bun run demo --output-format json`. The `subtype` says h
 
 Newsrooms already run agents this way. Katadata's news analysis system "scales to process over 10,000 articles
 daily". Its analysis time fell "from 3 hours to 15 minutes"
-([Google Cloud customer story, read today](https://cloud.google.com/customers/katadata)).
+([Google Cloud customer story, read in November 2026](https://cloud.google.com/customers/katadata)).
 
 FUNKE Mediengruppe runs its tools through "a central registry on the Model Context Protocol with more than 20
 MCP servers". The Model Context Protocol, or MCP, is a standard way to plug outside tools into an agent. One of
 those servers is for Germany's national news agency
-([Google Cloud customer story, read today](https://cloud.google.com/customers/funkemediengruppe)).
+([Google Cloud customer story, read in November 2026](https://cloud.google.com/customers/funkemediengruppe)).
 
 Both stories come from a company that sells to these newsrooms. The numbers are the claims of the newsrooms, as
 that company published them.

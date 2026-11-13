@@ -5,8 +5,8 @@
 desk can now edit drafts, run commands and file stories, and nothing stops it.
 
 Asking about every call does not help either. Anthropic reports that people "accept 93% of" Claude Code's
-permission prompts anyway. A gate that asks too often teaches people to say yes without reading. So the gate
-allows safe work, denies what must never happen, and asks only about the rest.
+permission prompts anyway. So a good gate allows safe work, denies what must never happen, and asks only about
+the rest.
 
 For example, with no rules desk asks before it files a story:
 
@@ -49,6 +49,8 @@ flowchart TD
    Treat `null` as no. "Always" lasts until the run ends.
 
 The order is the lesson. A deny rule must win over an allow rule. Plan mode must win over "always".
+
+Run `bun run world reset` first. A `try` run changes the newsroom.
 
 ```bash
 bun run try ask-before-acting solution -p "check tonight's drafts" --max-turns 9

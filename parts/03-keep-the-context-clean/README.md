@@ -32,11 +32,11 @@ context shrinks to about one sixth of its size.
 
 Anthropic measured this on a web search task of 100 turns. Clearing old tool results let agents finish work
 that would fail without it, "while reducing token consumption by 84%"
-([Anthropic, read today](https://claude.com/blog/context-management)).
+([Anthropic, read in November 2026](https://claude.com/blog/context-management)).
 
 A helper agent with its own clean context also helps. Anthropic's research system with helper agents beat a
 single agent by 90.2% on their own research test
-([Anthropic, read today](https://www.anthropic.com/engineering/built-multi-agent-research-system)). But it
+([Anthropic, read in November 2026](https://www.anthropic.com/engineering/built-multi-agent-research-system)). But it
 used many more tokens. In this part, you measure both of these trade-offs on the newsroom.
 
 ```mermaid

@@ -43,6 +43,8 @@ it changes nothing in the newsroom.
 
 `src/main.ts` already calls `reminderAfterTurn` after each turn. It adds the reminder as a user message.
 
+Run `bun run world reset` first. A `try` run changes the newsroom.
+
 ```bash
 bun run try plan-with-a-todo-list solution -p "check tonight's drafts" --max-turns 3
 ```

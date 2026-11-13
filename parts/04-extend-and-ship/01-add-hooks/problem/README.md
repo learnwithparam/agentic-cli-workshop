@@ -21,8 +21,7 @@ stderr: Embargoed until 2026-11-13T09:00:00Z. It cannot go out tonight. Use hold
 exit code: 2
 ```
 
-A hook can also hang. A hook that never ends must not stop the whole night, so desk stops it after 10
-seconds and denies the call, to be safe.
+A hook can also hang. So desk stops a hook after 10 seconds and denies the call, to be safe.
 
 ```mermaid
 flowchart LR
@@ -80,5 +79,6 @@ Expect: `Done. All 4 rules pass.` One rule waits for a hung hook, so the check t
 ## Words you will use
 
 - **Hook**: a program desk runs before or after a tool call.
+- **stdin, stderr**: where a program reads input, and where it prints errors.
 - **Audit log**: a file with one line per action, so someone can check the night later.
 - **Embargo**: the time before which a story must not be published.
