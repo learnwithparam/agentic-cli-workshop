@@ -64,8 +64,8 @@ export default [
         return neverSent && result?.is_error === true && result.content.includes("Embargoed");
       }),
     tryNext:
-      "Run each matching pre_tool hook before the tool. When it exits with code 2, throw an " +
-      "Error with what it printed on stderr, and do not run the tool.",
+      "In blockedByHook, run each matching pre_tool hook. When it exits with code 2, return " +
+      "what it printed on stderr. main.ts then blocks the call.",
   },
   {
     says: "A story with no embargo still files",
@@ -84,8 +84,8 @@ export default [
         return JSON.stringify(tools) === JSON.stringify(["read_file", "file_story", "file_story"]);
       }),
     tryNext:
-      "After every call, blocked or not, run each matching post_tool hook with the call and its " +
-      "result as JSON on stdin: tool_name, tool_input, is_error, tool_result.",
+      "In recordAfterTool, run each matching post_tool hook with the call and its result " +
+      "as JSON on stdin: tool_name, tool_input, is_error, tool_result.",
   },
   {
     says: "A hook that hangs is stopped within 15 seconds and the call is denied",
