@@ -8,7 +8,7 @@ sessions = [
   { label = "morning one", parts = ["orientation", "run-the-loop"], minutes = 110 },
   { label = "morning two", parts = ["touch-the-world-safely"], minutes = 95 },
   { label = "afternoon one", parts = ["keep-the-context-clean"], minutes = 100 },
-  { label = "afternoon two", parts = ["extend-and-ship", "do-it-with-the-tools-teams-run"], minutes = 135 },
+  { label = "afternoon two", parts = ["extend-and-ship", "do-it-with-the-tools-teams-run", "run-the-desk-with-the-agents-sdk"], minutes = 160 },
 ]
 
 # Four evenings, one part each, with the orientation at the start of the first.
@@ -17,7 +17,7 @@ sessions = [
   { label = "evening 1", parts = ["orientation", "run-the-loop"], minutes = 110 },
   { label = "evening 2", parts = ["touch-the-world-safely"], minutes = 95 },
   { label = "evening 3", parts = ["keep-the-context-clean"], minutes = 100 },
-  { label = "evening 4", parts = ["extend-and-ship", "do-it-with-the-tools-teams-run"], minutes = 135 },
+  { label = "evening 4", parts = ["extend-and-ship", "do-it-with-the-tools-teams-run", "run-the-desk-with-the-agents-sdk"], minutes = 160 },
 ]
 
 # A graded cohort over four weeks: one live session a week; the deeper step of each part is homework.
@@ -26,5 +26,5 @@ sessions = [
   { label = "week 1", parts = ["orientation", "run-the-loop"], minutes = 120 },
   { label = "week 2", parts = ["touch-the-world-safely"], minutes = 120 },
   { label = "week 3", parts = ["keep-the-context-clean"], minutes = 120 },
-  { label = "week 4", parts = ["extend-and-ship", "do-it-with-the-tools-teams-run"], minutes = 150 },
+  { label = "week 4", parts = ["extend-and-ship", "do-it-with-the-tools-teams-run", "run-the-desk-with-the-agents-sdk"], minutes = 175 },
 ]
