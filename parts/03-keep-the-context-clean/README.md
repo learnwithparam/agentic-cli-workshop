@@ -69,16 +69,77 @@ flowchart TB
 
 This part takes 90 minutes. The deeper step is 15 of them.
 
+Every step starts from `problem/src/`. The first step starts from your part two desk. This part adds three
+files: `src/todos.ts`, `src/context.ts` and `src/researcher.ts`.
+
 ## Walkthrough
 
-TODO(part session): write the step folders, then replace this block with one `bun run verify <step-name>`
-command per step, each with its Expect line.
+Here is the whole part from start to finish. Each check runs your desk three times on the practice model, in a
+fresh newsroom. Then it reads the requests the model received and the files desk saved.
+
+```bash
+bun run verify plan-with-a-todo-list
+```
+
+Expect: `Done. All 4 rules pass.` once `todo_write` keeps one item in progress and a stale list gets a reminder.
+
+```bash
+bun run verify load-the-desk-rules
+```
+
+Expect: `Done. All 4 rules pass.` once `DESK.md` and then `drafts/DESK.md` are in every system prompt.
+
+```bash
+bun run verify trim-old-results
+```
+
+Expect: `Done. All 4 rules pass.` once old tool results become stubs that name a saved file.
+
+```bash
+bun run verify compact-the-conversation
+```
+
+Expect: `Done. All 5 rules pass.` once a long run is summarised on the fast role with the todo items kept.
+
+```bash
+bun run verify delegate-to-a-subagent
+```
+
+Expect: `Done. All 5 rules pass.` once `ask_researcher` sends back one short answer and its cost counts.
 
 ```bash
 bun run verify part keep-the-context-clean
 ```
 
-Expect: TODO(part session). Until the steps exist it prints `0/0 steps pass`.
+Expect: `Part keep-the-context-clean is done: 5/5 steps pass.`
+
+## Assignment
+
+The problem: the 400,000-character council transcript blows the context, and the agent forgets "never name a
+minor".
+
+Hand in your `src/` folder with the todo tool, the rules loader, compaction and `ask_researcher`. Add
+`notes/context.md` with one table. It compares request size and cost on one night desk run in three ways: no
+trimming or compaction, trimming only, and trimming with compaction. For example, set `compact_at_tokens` to a
+very large number in `desk.config.json` to switch compaction off.
+
+| Question (yes or no)                                                           | How it is checked              |
+| ------------------------------------------------------------------------------ | ------------------------------ |
+| Does `bun run verify compact-the-conversation` pass?                           | The verifier                   |
+| Does `bun run verify delegate-to-a-subagent` pass?                             | The verifier                   |
+| Is "never name a person under 18" in the request after compaction?             | A rule of the compaction check |
+| Does the parent request grow by under 2,000 characters after `ask_researcher`? | A rule of the subagent check   |
+| Does `notes/context.md` give request size and cost for all three ways?         | Six numbers in the table       |
+
+Going further: do `trim-old-results`, then turn on the API's own compaction on a live model and add it as a
+fourth row.
+
+## Finished
+
+desk can now run a whole night without losing its plan or its rules. It keeps a todo list and loads the desk
+rules on every call. It trims old results and compacts a long conversation. And it hands big questions to a
+cheap helper. The next part, `extend-and-ship`, adds hooks and a wire service over MCP.
+It also adds sessions you can resume, a headless mode for scripts, and a score for the whole run.
 
 ## Read
 
