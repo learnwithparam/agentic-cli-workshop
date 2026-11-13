@@ -196,9 +196,13 @@ function storyCard(story: Story): string {
   return `<article>${headline}${details}${heldReason}${checkNote}</article>`;
 }
 
+const START_HINT = "Run <code>bun run desk</code> to start the agent.";
+const EMPTY_COLUMN = `<p data-empty-state>No stories here yet. ${START_HINT}</p>`;
+const EMPTY_CORRECTIONS = `<p data-empty-state>No corrections logged tonight. ${START_HINT}</p>`;
+
 function storyColumn(state: CmsState, status: Story["status"], title: string): string {
   const stories = Object.values(state.stories).filter((story) => story.status === status);
-  const cards = stories.map(storyCard).join("");
+  const cards = stories.map(storyCard).join("") || EMPTY_COLUMN;
   return (
     `<section class="col ${status}"><h2>${title} <span>${stories.length}</span></h2>` +
     `${cards}</section>`
@@ -231,7 +235,8 @@ function page(state: CmsState, newsroom: string, earlierCorrections: number): st
       `<p>Night desk &middot; ${escapeHtml(statusLine(counts))}</p></header>`,
     `<main>${columns}</main>`,
     `<section class="corr"><h2>Corrections logged tonight (${tonight.length})</h2>` +
-      `<ul>${tonight.map(correctionItem).join("")}</ul></section></body></html>`,
+      (tonight.length ? `<ul>${tonight.map(correctionItem).join("")}</ul>` : EMPTY_CORRECTIONS) +
+      "</section></body></html>",
   ].join("\n");
 }
 
