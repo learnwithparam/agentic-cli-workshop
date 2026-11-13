@@ -124,6 +124,25 @@ await shootTerminal(
   ),
 );
 
+// touch-the-world-safely: the sample solutions on the night desk run, cut short with --max-turns.
+const nightDeskPrompt = '"check tonight\'s drafts"';
+async function shootTry(stepFolder, stepName, turns, answers = "") {
+  const deskFlags = `-p ${nightDeskPrompt} --max-turns ${turns}`;
+  const tryCommand = `bun scripts/try.ts ${stepName} solution ${deskFlags}`;
+  // The night editor's answers arrive on stdin. With none, stdin is empty and every prompt is a no.
+  let withAnswers = `${tryCommand} < /dev/null`;
+  if (answers) withAnswers = `printf '${answers}' | ${tryCommand}`;
+  const output = run(`bun world/world.ts reset >/dev/null && ${withAnswers}`);
+  await shootTerminal(
+    `parts/02-touch-the-world-safely/${stepFolder}/images/expected.png`,
+    `bun run try ${stepName} ${deskFlags}`,
+    withoutBunNoise(output),
+  );
+}
+await shootTry("01-shape-the-tools", "shape-the-tools", 6);
+await shootTry("02-edit-drafts-safely", "edit-drafts-safely", 9);
+await shootTry("04-ask-before-acting", "ask-before-acting", 9, "y\\ny\\nn\\n");
+
 // keep-the-context-clean: the todo list at the start of the night, and the compaction line.
 const tonightPrompt = '"check tonight\'s drafts"';
 const todoFlags = `-p ${tonightPrompt} --max-turns 3`;

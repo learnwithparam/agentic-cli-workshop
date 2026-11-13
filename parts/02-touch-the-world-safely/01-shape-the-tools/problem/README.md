@@ -1,0 +1,79 @@
+# Shape the tools
+
+## The problem
+
+The model acts only through tools. It reads each tool's schema and every error that comes back. So a tool
+is a contract, errors included.
+
+Right now desk has two tools. It cannot search the sources or file a story. And its errors are not
+helpful. For example, the model asks `list_files` for `drafts/bridge-repairs.md`, which is a file. desk
+sends back `ENOTDIR: not a directory, scandir ...`. The model cannot tell what to do next.
+
+There is a second trap. A model can send the same `file_story` call twice. Without care, the second call
+is refused, or the story goes out twice.
+
+```mermaid
+flowchart LR
+  M[Model] -->|file_story bridge-repairs| D[desk]
+  D -->|note + idempotency_key| C[(CMS)]
+  M -->|same call again| D
+  D -->|same key| C
+  C -->|200: already filed with this key| D
+```
+
+## Your challenge
+
+This step starts from your part one desk, split in two files. `src/main.ts` holds the loop. `src/tools.ts`
+holds the tools. You work in `src/tools.ts`.
+
+1. Add `search_files { pattern, path }`. It looks in one file, or in every file of a folder. It returns each
+   match as `path:line number: text`.
+2. Add `file_story { slug, note }` and `hold_story { slug, reason }`. They POST to the CMS at
+   `process.env.CMS_URL`. Read the CMS API list at the top of `world/cms/server.ts`.
+3. Give every schema `required` with every field, and `additionalProperties: false`. Then the model cannot
+   invent a field.
+4. Make every error name a tool the model can call next.
+5. Send an `idempotency_key` with each filing: one id per run, plus the slug. An idempotency key is a label
+   that makes a repeated request safe. The CMS files a story once per key.
+
+For example, a good error for the call above reads:
+
+```text
+"drafts/bridge-repairs.md" is not a folder. Use read_file for a file, or list_files with path "." to see the folders.
+```
+
+```bash
+bun run try shape-the-tools solution -p "check tonight's drafts" --max-turns 6
+```
+
+Expect: lines such as `  > file_story allotment-waiting-list`, then `Stopped: error_max_turns after 6 turns`.
+
+![The sample solution at work in the newsroom](../images/expected.png)
+
+## Done when
+
+- desk offers read_file, list_files, search_files, file_story and hold_story.
+- Every tool schema lists its fields as required and sets `additionalProperties` to false.
+- search_files finds a planted line and says which file it is in.
+- Each planted bad call comes back as an error that names a tool to try next.
+- Two identical file_story calls file the story once: the CMS answers both with 200.
+
+```bash
+bun run verify shape-the-tools
+```
+
+Expect: `Done. All 5 rules pass.`
+
+## If you get stuck
+
+| What you see                                                               | Fix                                                               |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `FAIL  Every tool schema lists its fields as required ...`                 | Write one helper that builds every schema the same strict way.    |
+| `FAIL  Each planted bad call comes back as an error that names a tool ...` | Check for the problem before Node does, and throw your own error. |
+| `FAIL  Two identical file_story calls file the story once ...`             | Make the id once, at the top of the file, not inside `fileStory`. |
+
+## Words you will use
+
+- **Schema**: the shape of a tool's input, written as JSON Schema. The model reads it to build a call.
+- **Idempotency key**: a label on a request. The same label twice means "the same request", so it runs once.
+- **Slug**: the short name of a story, such as `bridge-repairs`.
