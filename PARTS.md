@@ -36,45 +36,45 @@ part: `bun run demo` must keep printing `Filed 9, held 3, waiting 0. Corrections
 
 Folder: `00-orientation/`. 15 minutes.
 
-| Step | Min | The check reads |
-|---|---|---|
-| `meet-the-desk` | 15 | `first-look.md`: three headings; every held slug from the answer key under Held stories and none of the filed ones; a reason line per held slug; a question of five words or more |
+| Step            | Min | The check reads                                                                                                                                                                   |
+| --------------- | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `meet-the-desk` | 15  | `first-look.md`: three headings; every held slug from the answer key under Held stories and none of the filed ones; a reason line per held slug; a question of five words or more |
 
 ## run-the-loop (built)
 
 Folder: `parts/01-run-the-loop/`. 85 minutes, 15 of them the deeper step.
 
-| Step | Min | The check reads |
-|---|---|---|
-| `call-the-model` | 10 | One recorded request: the prompt as the user message, role `practice-smart`, no `temperature`; stdout has the fresh reply; exit 0 |
-| `read-a-draft` | 15 | Request 1 offers `read_file` with a string `path` in its schema; request 2 carries a tool result paired by id with a planted line; a path outside the newsroom comes back `is_error` without the secret |
-| `close-the-loop` | 20 | Exactly 4 requests; request 3 has two results paired with two calls; request 4 has an error result; every call in the last request has exactly one result |
-| `cap-the-loop` | 10 | `--max-turns 5` gives 5 requests and exit 3 with `error_max_turns`; `--max-budget-usd 0.05` gives 2 requests and exit 3 with `error_max_budget`; a `$` cost within one cent of the price in `config/models.ts` |
-| `stream-the-reply` | 15 | `stream: true` on every request; the first and last piece of the reply reach stdout at least 400 ms apart; the reply printed once; the tool result still sent |
-| `swap-the-model` (deeper) | 15 | With `LLM_PROVIDER=openrouter` pointed at the practice model every request is in the chat completions shape and the run finishes; no provider import or model name in `src/`; the default still works |
+| Step                      | Min | The check reads                                                                                                                                                                                                |
+| ------------------------- | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `call-the-model`          | 10  | One recorded request: the prompt as the user message, role `practice-smart`, no `temperature`; stdout has the fresh reply; exit 0                                                                              |
+| `read-a-draft`            | 15  | Request 1 offers `read_file` with a string `path` in its schema; request 2 carries a tool result paired by id with a planted line; a path outside the newsroom comes back `is_error` without the secret        |
+| `close-the-loop`          | 20  | Exactly 4 requests; request 3 has two results paired with two calls; request 4 has an error result; every call in the last request has exactly one result                                                      |
+| `cap-the-loop`            | 10  | `--max-turns 5` gives 5 requests and exit 3 with `error_max_turns`; `--max-budget-usd 0.05` gives 2 requests and exit 3 with `error_max_budget`; a `$` cost within one cent of the price in `config/models.ts` |
+| `stream-the-reply`        | 15  | `stream: true` on every request; the first and last piece of the reply reach stdout at least 400 ms apart; the reply printed once; the tool result still sent                                                  |
+| `swap-the-model` (deeper) | 15  | With `LLM_PROVIDER=openrouter` pointed at the practice model every request is in the chat completions shape and the run finishes; no provider import or model name in `src/`; the default still works          |
 
 ## touch-the-world-safely
 
 Folder: `parts/02-touch-the-world-safely/`. 85 minutes. The CLI grows `--permission-mode` and reads `desk.config.json`.
 
-| Step | Min | The check reads |
-|---|---|---|
-| `shape-the-tools` | 15 | Each tool schema sets `additionalProperties: false`; the error text for a list of planted bad calls names what to try next; the CMS log shows two identical `file_story` calls filed once (idempotency key) |
-| `edit-drafts-safely` | 25 | The draft on disk after a planted fix: one line changed, the rest byte for byte the same; error results for 0 matches, 2 matches, a file not read first, a file changed since it was read |
-| `run-commands` | 15 | A planted `sleep 60` returns `is_error` within the timeout; output over 20,000 characters is cut with a note; the model's `awk` sum over `sources/school-results.csv` comes back correct |
-| `ask-before-acting` | 30 | With the prompt answered "n" (stdin), the CMS is unchanged and the result says denied; a `deny` rule beats an `allow`; `plan` mode leaves files and CMS untouched; `never-ask` denies every prompt |
+| Step                 | Min | The check reads                                                                                                                                                                                             |
+| -------------------- | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shape-the-tools`    | 15  | Each tool schema sets `additionalProperties: false`; the error text for a list of planted bad calls names what to try next; the CMS log shows two identical `file_story` calls filed once (idempotency key) |
+| `edit-drafts-safely` | 25  | The draft on disk after a planted fix: one line changed, the rest byte for byte the same; error results for 0 matches, 2 matches, a file not read first, a file changed since it was read                   |
+| `run-commands`       | 15  | A planted `sleep 60` returns `is_error` within the timeout; output over 20,000 characters is cut with a note; the model's `awk` sum over `sources/school-results.csv` comes back correct                    |
+| `ask-before-acting`  | 30  | With the prompt answered "n" (stdin), the CMS is unchanged and the result says denied; a `deny` rule beats an `allow`; `plan` mode leaves files and CMS untouched; `never-ask` denies every prompt          |
 
 ## keep-the-context-clean
 
 Folder: `parts/03-keep-the-context-clean/`. 90 minutes, 15 of them the deeper step.
 
-| Step | Min | The check reads |
-|---|---|---|
-| `plan-with-a-todo-list` | 15 | An error result for two items in progress; a reminder text in the request after 3 turns with no `todo_write` |
-| `load-the-desk-rules` | 10 | The recorded system prompt holds `DESK.md` then `drafts/DESK.md`; an edit to `DESK.md` between runs shows in the next request |
-| `trim-old-results` (deeper) | 15 | Request size on a 30-turn script falls by at least 50%; every call in every request still has its result |
-| `compact-the-conversation` | 25 | On the council transcript script, the first request after the threshold is under the target and starts with a summary; the summary request used `practice-fast`; the rule "never name a person under 18" and the open todo items are still in the request; the saved transcript has every original message |
-| `delegate-to-a-subagent` | 25 | The parent's request after `ask_researcher` grows by under 2,000 characters; the child's requests use `practice-fast`, offer no `edit_file` or `file_story`, and stop at the child's turn cap; the reported cost includes the child |
+| Step                        | Min | The check reads                                                                                                                                                                                                                                                                                            |
+| --------------------------- | --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plan-with-a-todo-list`     | 15  | An error result for two items in progress; a reminder text in the request after 3 turns with no `todo_write`                                                                                                                                                                                               |
+| `load-the-desk-rules`       | 10  | The recorded system prompt holds `DESK.md` then `drafts/DESK.md`; an edit to `DESK.md` between runs shows in the next request                                                                                                                                                                              |
+| `trim-old-results` (deeper) | 15  | Request size on a 30-turn script falls by at least 50%; every call in every request still has its result                                                                                                                                                                                                   |
+| `compact-the-conversation`  | 25  | On the council transcript script, the first request after the threshold is under the target and starts with a summary; the summary request used `practice-fast`; the rule "never name a person under 18" and the open todo items are still in the request; the saved transcript has every original message |
+| `delegate-to-a-subagent`    | 25  | The parent's request after `ask_researcher` grows by under 2,000 characters; the child's requests use `practice-fast`, offer no `edit_file` or `file_story`, and stop at the child's turn cap; the reported cost includes the child                                                                        |
 
 ## extend-and-ship
 
@@ -83,14 +83,14 @@ Folder: `parts/04-extend-and-ship/`. 125 minutes, 30 of them the deeper step. Th
 `get_wire_story`, a call log) and `world/hooks/embargo-check.ts`, and adds hooks and the MCP client to the
 finished desk.
 
-| Step | Min | The check reads |
-|---|---|---|
-| `add-hooks` | 20 | The CMS after the model tries to file `new-clinic-opening` (no filing, the hook's reason in the tool result); the audit JSONL has one line per call; a hook that sleeps is killed after 10 seconds and the call is denied |
-| `connect-a-wire-server` | 20 | The recorded request lists `wire__search_wire` and `wire__get_wire_story`; the wire server's call log; an error result, not a crash, when the server is killed |
-| `resume-a-session` | 15 | After SIGTERM at turn 5 and `--resume <id>`, the first request's history equals the saved session; the CMS after the resumed run equals an uninterrupted one; no story filed twice |
-| `run-headless` | 15 | Every stdout line of `--output-format stream-json` validates against `checks/lib/contract.schema.json`; exit codes 0, 1, 3 and 4 on planted runs; no prompt with no TTY |
-| `score-the-agent` | 25 | `bun run score` JSON against `world/seed/answer-key.json` on the practice model; `notes/failures.md` names each missed fault with a quoted session line |
-| `rebuild-on-the-agent-sdk` (deeper) | 30 | `desk-sdk/` passes the same headless contract and score; `notes/sdk-compare.md` has `What the SDK did for me`, `What I lost`, `Lines of code`, `Cost on the eval` |
+| Step                                | Min | The check reads                                                                                                                                                                                                           |
+| ----------------------------------- | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add-hooks`                         | 20  | The CMS after the model tries to file `new-clinic-opening` (no filing, the hook's reason in the tool result); the audit JSONL has one line per call; a hook that sleeps is killed after 10 seconds and the call is denied |
+| `connect-a-wire-server`             | 20  | The recorded request lists `wire__search_wire` and `wire__get_wire_story`; the wire server's call log; an error result, not a crash, when the server is killed                                                            |
+| `resume-a-session`                  | 15  | After SIGTERM at turn 5 and `--resume <id>`, the first request's history equals the saved session; the CMS after the resumed run equals an uninterrupted one; no story filed twice                                        |
+| `run-headless`                      | 15  | Every stdout line of `--output-format stream-json` validates against `checks/lib/contract.schema.json`; exit codes 0, 1, 3 and 4 on planted runs; no prompt with no TTY                                                   |
+| `score-the-agent`                   | 25  | `bun run score` JSON against `world/seed/answer-key.json` on the practice model; `notes/failures.md` names each missed fault with a quoted session line                                                                   |
+| `rebuild-on-the-agent-sdk` (deeper) | 30  | `desk-sdk/` passes the same headless contract and score; `notes/sdk-compare.md` has `What the SDK did for me`, `What I lost`, `Lines of code`, `Cost on the eval`                                                         |
 
 ## The contract every part builds toward
 

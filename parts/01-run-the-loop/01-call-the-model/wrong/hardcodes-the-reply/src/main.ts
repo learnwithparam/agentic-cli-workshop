@@ -3,13 +3,15 @@
 import { generateText } from "ai";
 import { model } from "#models";
 
-const i = process.argv.indexOf("-p");
-const prompt = i >= 0 ? process.argv[i + 1] : undefined;
+const promptFlagPosition = process.argv.indexOf("-p");
+const prompt = promptFlagPosition >= 0 ? process.argv[promptFlagPosition + 1] : undefined;
 if (!prompt) {
   console.log('Usage: bun src/main.ts -p "your prompt"');
   process.exit(1);
 }
 
 // The main loop uses the smart role. config/models.ts decides which provider and model that means.
-void generateText; void model; const text = "Ready.";
+void generateText;
+void model;
+const text = "Ready.";
 console.log(text);

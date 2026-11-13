@@ -2,10 +2,10 @@
 
 ## The problem
 
-A loop with no stop rule can run all night. A model that keeps asking for the same file, or a task with no end,
-turns into hundreds of calls and a bill nobody approved. The night editor wants two limits on every run: a number
-of turns and a budget in dollars. When one is hit, desk stops and says which, so a script can tell a capped
-run from a finished one.
+A loop with no stop rule may never end. A model may keep asking for the same file. That turns into hundreds
+of calls and a bill nobody agreed to. The night editor wants two limits on every run: a number of turns, and a
+budget in dollars. When desk hits one, it stops and says which. Then a script can tell a stopped run from a
+finished one.
 
 ```mermaid
 flowchart TD
@@ -29,13 +29,20 @@ In `src/main.ts`:
    `error_max_budget` with the turns and the cost as `$0.0000`, and exit with code 3.
 4. When the model finishes, print a last line with the turns and the cost.
 
-One call can take the cost past the budget. That is expected; the next call must never start.
+One call can take the cost past the budget. That is fine, but the next call must never start.
+
+Models charge by the token, a small piece of a word. For example, the smart role costs $2 per million input
+tokens and $10 per million output tokens. A call with 10,000 input tokens and 1,000 output tokens costs
+$0.02 + $0.01 = $0.03. With a budget of $0.05, the second call takes the cost to $0.06. So desk stops before a
+third call.
 
 ```bash
 bun run try cap-the-loop -p "check every draft" --max-turns 2
 ```
 
 Expect: `Stopped: error_max_turns after 2 turns, $0.00...` once the cap works.
+
+The solution prints `Stopped: error_max_turns after 2 turns, $0.0014.` and exits with code 3.
 
 ## Done when
 
@@ -52,12 +59,12 @@ Expect: `Done. All 4 rules pass.`
 
 ## If you get stuck
 
-| What you see | Fix |
-|---|---|
-| `FAIL With --max-turns 5 it stops after exactly 5 model calls` | Check the cap at the top of the loop, before the call, with `>=`. |
-| `FAIL At the turn cap it exits with code 3 and prints error_max_turns` | `process.exit(3)` after printing. Code 0 tells a script the run went fine. |
-| `FAIL With --max-budget-usd 0.05 it stops after the call that crosses it, exits 3 and prints error_max_budget` | Add the cost after every call and compare before the next one. |
-| `FAIL It prints the cost, priced from config/models.ts, within one cent` | Use `costUsd` from `"#models"` and print `$` with the number. |
+| What you see                                                                                                   | Fix                                                                        |
+| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `FAIL With --max-turns 5 it stops after exactly 5 model calls`                                                 | Check the cap at the top of the loop, before the call, with `>=`.          |
+| `FAIL At the turn cap it exits with code 3 and prints error_max_turns`                                         | `process.exit(3)` after printing. Code 0 tells a script the run went fine. |
+| `FAIL With --max-budget-usd 0.05 it stops after the call that crosses it, exits 3 and prints error_max_budget` | Add the cost after every call and compare before the next one.             |
+| `FAIL It prints the cost, priced from config/models.ts, within one cent`                                       | Use `costUsd` from `"#models"` and print `$` with the number.              |
 
 ## Words you will use
 

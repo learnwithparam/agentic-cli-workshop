@@ -19,9 +19,9 @@
 
 These words take sides or overstate. Replace them with a plain verb.
 
-| Banned | Use |
-|---|---|
-| slammed | criticised |
-| blasted | criticised |
-| chaos | disruption |
-| shock | (leave it out) |
+| Banned  | Use            |
+| ------- | -------------- |
+| slammed | criticised     |
+| blasted | criticised     |
+| chaos   | disruption     |
+| shock   | (leave it out) |

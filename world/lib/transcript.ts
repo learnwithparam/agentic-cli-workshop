@@ -1,14 +1,19 @@
 // The full council meeting transcript: about 400,000 characters, the same every time.
-// It is too long to read in one go, which is the point: the agent must search it or hand it to a helper.
-// One passage holds the car park vote the council-meeting-recap draft gets wrong.
+// It is too long to read in one go, which is the point: the agent must search it or hand it
+// to a helper. One passage holds the car park vote the council-meeting-recap draft gets wrong.
 
-function rng(seed: number) {
+type RandomSource = () => number;
+
+// A small seeded random number generator (mulberry32). The same seed always gives the same
+// transcript, so every learner searches the same text.
+function seededRandom(seed: number): RandomSource {
+  let state = seed;
   return () => {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    state |= 0;
+    state = (state + 0x6d2b79f5) | 0;
+    let mixed = Math.imul(state ^ (state >>> 15), 1 | state);
+    mixed = (mixed + Math.imul(mixed ^ (mixed >>> 7), 61 | mixed)) ^ mixed;
+    return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
   };
 }
 
@@ -71,53 +76,98 @@ const CLOSERS = [
   "I cannot support it as it stands.",
 ];
 
-function speech(r: () => number): string {
-  const pick = <T,>(a: T[]) => a[Math.floor(r() * a.length)];
-  const n = 2 + Math.floor(r() * 4);
-  const parts = [pick(OPENERS)];
-  for (let i = 0; i < n; i++) parts.push(`${pick(MIDDLES)}.`.replace(/^./, (c) => (i === 0 && parts[0].endsWith(",") ? c : c.toUpperCase())));
-  parts.push(pick(CLOSERS));
+function pickOne<T>(choices: T[], random: RandomSource): T {
+  return choices[Math.floor(random() * choices.length)];
+}
+
+// "Through you, chair, the figures..." carries on the opening sentence, so it stays lower case.
+function capitaliseUnlessContinuing(sentence: string, continuesOpener: boolean): string {
+  return sentence.replace(/^./, (firstLetter) =>
+    continuesOpener ? firstLetter : firstLetter.toUpperCase(),
+  );
+}
+
+function speech(random: RandomSource): string {
+  const middleCount = 2 + Math.floor(random() * 4);
+  const parts = [pickOne(OPENERS, random)];
+  for (let i = 0; i < middleCount; i++) {
+    const continuesOpener = i === 0 && parts[0].endsWith(",");
+    parts.push(capitaliseUnlessContinuing(`${pickOne(MIDDLES, random)}.`, continuesOpener));
+  }
+  parts.push(pickOne(CLOSERS, random));
   return parts.join(" ");
 }
 
 const KEY_PASSAGE = [
-  "THE CHAIR (Councillor Ruth Ellery): We now come to the vote on the amendment from Councillor Cole to delay the car park charges by a year.",
-  "THE MONITORING OFFICER: Votes for the amendment, nine. Votes against, six. The amendment is carried... I am sorry, chair, I have that wrong. Votes for the amendment, four. Votes against, eleven. The amendment falls.",
-  "THE CHAIR (Councillor Ruth Ellery): Thank you. We move to the substantive motion: to approve the new car park charges at the Market Square car park from next year, with the income to support the bus network.",
+  "THE CHAIR (Councillor Ruth Ellery): We now come to the vote on the amendment from " +
+    "Councillor Cole to delay the car park charges by a year.",
+  "THE MONITORING OFFICER: Votes for the amendment, nine. Votes against, six. " +
+    "The amendment is carried... I am sorry, chair, I have that wrong. " +
+    "Votes for the amendment, four. Votes against, eleven. The amendment falls.",
+  "THE CHAIR (Councillor Ruth Ellery): Thank you. We move to the substantive motion: " +
+    "to approve the new car park charges at the Market Square car park from next year, " +
+    "with the income to support the bus network.",
   "THE MONITORING OFFICER: Votes for the motion, eleven. Votes against, four. No abstentions.",
-  "THE CHAIR (Councillor Ruth Ellery): The motion is carried, eleven votes to four. The new car park charges are approved.",
+  "THE CHAIR (Councillor Ruth Ellery): The motion is carried, eleven votes to four. " +
+    "The new car park charges are approved.",
   "COUNCILLOR TOM BARKER: Thank you, chair. The money will go to the bus network, as I said.",
 ];
 
+const CHAIR = "THE CHAIR (Councillor Ruth Ellery)";
+
+// Collects numbered paragraphs and keeps a running count of the characters so far.
+class TranscriptWriter {
+  lines: string[];
+  size: number;
+  private paragraphNumber = 1;
+
+  constructor(heading: string[]) {
+    this.lines = heading;
+    this.size = heading.join("\n").length;
+  }
+
+  add(line: string): void {
+    const paragraph = `[${this.paragraphNumber++}] ${line}`;
+    this.lines.push(paragraph, "");
+    this.size += paragraph.length + 2;
+  }
+}
+
+// The agenda moves on evenly through the meeting, one item for each equal slice of the text.
+function agendaItemAt(size: number, agendaItem: number, target: number): number {
+  const nextItemStartsAt = (agendaItem + 1) * (target / ITEMS.length);
+  const isLastItem = agendaItem >= ITEMS.length - 1;
+  if (size > nextItemStartsAt && !isLastItem) return agendaItem + 1;
+  return agendaItem;
+}
+
 export function councilTranscript(target = 400_000): string {
-  const r = rng(20261110);
-  const out: string[] = [
+  const random = seededRandom(20261110);
+  const writer = new TranscriptWriter([
     "MILLBROOK COUNCIL",
     "Full council meeting: verbatim transcript",
     "Paragraph numbers are given in square brackets.",
     "",
-  ];
-  let para = 1;
-  let size = out.join("\n").length;
-  let item = 0;
-  const keyAt = Math.floor(target * 0.71);
-  let keyDone = false;
-  const push = (line: string) => {
-    const l = `[${para++}] ${line}`;
-    out.push(l, "");
-    size += l.length + 2;
-  };
-  while (size < target) {
-    if (size > (item + 1) * (target / ITEMS.length) && item < ITEMS.length - 1) item++;
-    if (r() < 0.04) push(`THE CHAIR (Councillor Ruth Ellery): We are on item ${item + 1}, ${ITEMS[item]}. Who wants to speak?`);
-    if (!keyDone && size >= keyAt) {
-      for (const k of KEY_PASSAGE) push(k);
-      keyDone = true;
+  ]);
+  let agendaItem = 0;
+  const keyPassageAt = Math.floor(target * 0.71);
+  let keyPassageWritten = false;
+  while (writer.size < target) {
+    agendaItem = agendaItemAt(writer.size, agendaItem, target);
+    if (random() < 0.04) {
+      writer.add(
+        `${CHAIR}: We are on item ${agendaItem + 1}, ${ITEMS[agendaItem]}. Who wants to speak?`,
+      );
+    }
+    if (!keyPassageWritten && writer.size >= keyPassageAt) {
+      for (const line of KEY_PASSAGE) writer.add(line);
+      keyPassageWritten = true;
       continue;
     }
-    const who = SPEAKERS[1 + Math.floor(r() * (SPEAKERS.length - 2))];
-    push(`${who}: ${speech(r)}`);
+    // Anyone but the chair (first) and the monitoring officer (last) may speak.
+    const speaker = SPEAKERS[1 + Math.floor(random() * (SPEAKERS.length - 2))];
+    writer.add(`${speaker}: ${speech(random)}`);
   }
-  push("THE CHAIR (Councillor Ruth Ellery): That concludes the business. The meeting is closed.");
-  return out.join("\n");
+  writer.add(`${CHAIR}: That concludes the business. The meeting is closed.`);
+  return writer.lines.join("\n");
 }

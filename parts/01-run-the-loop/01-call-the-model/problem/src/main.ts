@@ -3,8 +3,8 @@
 import { generateText } from "ai";
 import { model } from "#models";
 
-const i = process.argv.indexOf("-p");
-const prompt = i >= 0 ? process.argv[i + 1] : undefined;
+const promptFlagPosition = process.argv.indexOf("-p");
+const prompt = promptFlagPosition >= 0 ? process.argv[promptFlagPosition + 1] : undefined;
 if (!prompt) {
   console.log('Usage: bun src/main.ts -p "your prompt"');
   process.exit(1);

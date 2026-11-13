@@ -1,12 +1,13 @@
 // desk, second version: the model can ask to read a file. desk reads it and sends the text back.
-// Run from the newsroom folder: bun src/main.ts -p "what does the bridge-repairs draft say?"
+// Run from the newsroom folder:
+//   bun src/main.ts -p "what does the bridge-repairs draft say?"
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";
-import { generateText, jsonSchema, tool, type ModelMessage } from "ai";
+import { generateText, jsonSchema, type ModelMessage, tool } from "ai";
 import { model } from "#models";
 
-const i = process.argv.indexOf("-p");
-const prompt = i >= 0 ? process.argv[i + 1] : undefined;
+const promptFlagPosition = process.argv.indexOf("-p");
+const prompt = promptFlagPosition >= 0 ? process.argv[promptFlagPosition + 1] : undefined;
 if (!prompt) {
   console.log('Usage: bun src/main.ts -p "your prompt"');
   process.exit(1);
@@ -16,9 +17,12 @@ if (!prompt) {
 const root = process.cwd();
 
 // What the model sees: a name, what the tool does, and a JSON schema for its input.
+// biome-ignore-start lint/style/useNamingConvention: the model calls the tool by this exact name
 const tools = {
   read_file: tool({
-    description: "Read a text file from the newsroom, such as drafts/bridge-repairs.md or sources/council-budget.csv.",
+    description:
+      "Read a text file from the newsroom, such as drafts/bridge-repairs.md or " +
+      "sources/council-budget.csv.",
     inputSchema: jsonSchema<{ path: string }>({
       type: "object",
       properties: { path: { type: "string", description: "A path inside the newsroom folder" } },
@@ -27,35 +31,41 @@ const tools = {
     }),
   }),
 };
+// biome-ignore-end lint/style/useNamingConvention: back to our own names
 
 // What desk does when the model asks. A problem becomes an error the model can read, never a crash.
 function readFile(path: string): { ok: boolean; text: string } {
-  const full = resolve(root, path);
-  if (relative(root, full).startsWith("..")) return { ok: false, text: `"${path}" is outside the newsroom folder.` };
-  if (!existsSync(full) || statSync(full).isDirectory()) return { ok: false, text: `There is no file "${path}".` };
-  return { ok: true, text: readFileSync(full, "utf8") };
+  const fullPath = resolve(root, path);
+  if (relative(root, fullPath).startsWith(".."))
+    return { ok: false, text: `"${path}" is outside the newsroom folder.` };
+  if (!existsSync(fullPath) || statSync(fullPath).isDirectory())
+    return { ok: false, text: `There is no file "${path}".` };
+  return { ok: true, text: readFileSync(fullPath, "utf8") };
 }
 
 const messages: ModelMessage[] = [{ role: "user", content: prompt }];
-const first = await generateText({ model: model("smart"), messages, tools });
-messages.push(...first.responseMessages);
+const firstReply = await generateText({ model: model("smart"), messages, tools });
+messages.push(...firstReply.responseMessages);
 
-if (first.toolCalls.length > 0) {
+if (firstReply.toolCalls.length > 0) {
   // One tool message holds every result, each paired with the id of the call it answers.
   messages.push({
     role: "tool",
-    content: first.toolCalls.map((call) => {
-      const r = readFile((call.input as { path: string }).path);
+    content: firstReply.toolCalls.map((call) => {
+      const { path } = call.input as { path: string };
+      const file = readFile(path);
       return {
         type: "tool-result" as const,
         toolCallId: call.toolCallId,
         toolName: call.toolName,
-        output: r.ok ? { type: "text" as const, value: r.text } : { type: "error-text" as const, value: r.text },
+        output: file.ok
+          ? { type: "text" as const, value: file.text }
+          : { type: "error-text" as const, value: file.text },
       };
     }),
   });
-  const second = await generateText({ model: model("smart"), messages, tools });
-  console.log(second.text);
+  const secondReply = await generateText({ model: model("smart"), messages, tools });
+  console.log(secondReply.text);
 } else {
-  console.log(first.text);
+  console.log(firstReply.text);
 }
