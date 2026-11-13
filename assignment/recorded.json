@@ -1,0 +1,69 @@
+{
+  "handBuilt": {
+    "caught": 13,
+    "faults": 13,
+    "draftsClean": 12
+  },
+  "drafts": {
+    "allotment-waiting-list": {
+      "status": "filed",
+      "filedText": "The council will add 24 new allotment plots at Fenwick Road at a cost of £38,000.\n\nThere are 156 people on the waiting list. Councillor Priya Natt said: \"This will cut the wait, but it will not end it.\"",
+      "corrections": []
+    },
+    "bridge-repairs": {
+      "status": "filed",
+      "filedText": "Millbrook Council will spend £420,000 repairing the Mill Lane bridge, which has been closed to lorries since the spring.\n\nThe work is part of the highways budget approved by councillors. Station Road will also be resurfaced at a cost of £185,000.\n\nDrivers will be sent along Fenwick Road while the bridge is closed.",
+      "corrections": ["£4.2m"]
+    },
+    "bus-route-cuts": {
+      "status": "filed",
+      "filedText": "Routes 12 and 41 will run every 30 minutes instead of every 20 minutes from January.\n\nPassenger groups criticised the change, saying it would make journeys to the hospital harder.\n\nCouncillor Tom Barker, cabinet member for transport, said: \"We have kept every route running, which many councils could not.\"",
+      "corrections": ["Routes 12 and 14"]
+    },
+    "care-home-inspection": {
+      "status": "held",
+      "filedText": "",
+      "corrections": []
+    },
+    "council-meeting-recap": {
+      "status": "filed",
+      "filedText": "Councillors voted 11 to 4 to approve new car park charges at the full council meeting.\n\nCharges at the Market Square car park will rise from next year. Councillor Tom Barker said the money would support the bus network.\n\nThe meeting ran for more than five hours.",
+      "corrections": ["voted 9 to 4"]
+    },
+    "library-hours": {
+      "status": "filed",
+      "filedText": "Millbrook Library will open until 8pm on weekday evenings from 1 December.\n\nThe change costs £46,000 a year. The library currently closes at 6pm.\n\nCouncillor Priya Natt, cabinet member for culture, said: \"Evening hours mean people who work can use the library too.\"",
+      "corrections": []
+    },
+    "market-traders": {
+      "status": "filed",
+      "filedText": "Stall fees at Millbrook market will not rise next year.\n\nCouncillor Dev Ranasinghe, chair of the markets committee, said: \"We will not raise stall fees this year. Traders have had a hard enough time.\"\n\nA repair to the market hall roof, costing £92,000, was not approved.",
+      "corrections": ["Mayor Helen Okafor said:"]
+    },
+    "new-clinic-opening": {
+      "status": "held",
+      "filedText": "",
+      "corrections": []
+    },
+    "pool-reopening": {
+      "status": "filed",
+      "filedText": "Millbrook Leisure Pool will reopen on 8 December after a refit.\n\nThe refit cost £1,380,000, which is 15% more than planned, because of a delay in parts.\n\nCouncillor Priya Natt said: \"The pool will be warmer, brighter and open longer.\"",
+      "corrections": ["on 1 December"]
+    },
+    "river-levels": {
+      "status": "filed",
+      "filedText": "The River Brook peaked at 3.4 metres at Brook Bridge on 10 November after heavy rain.\n\nThe level has since fallen to 2.1 metres. Residents on Brook Lane were told to move cars away from the bank.\n\nThe Environment Agency said no homes were flooded.",
+      "corrections": ["on 9 November"]
+    },
+    "school-results": {
+      "status": "filed",
+      "filedText": "The pass rate at Millbrook Academy has risen to 65%, figures show.\n\nOf the 180 pupils entered for exams, 117 passed. Last year the pass rate was 61%.\n\nThe head teacher said the school would look closely at the results.",
+      "corrections": ["has fallen to 58.5%"]
+    },
+    "shop-break-in": {
+      "status": "held",
+      "filedText": "",
+      "corrections": []
+    }
+  }
+}

@@ -106,13 +106,14 @@ flowchart LR
 
 ## The parts
 
-| Part                                                                | You build                                               | Steps                                                                                                                    | Minutes |
-| ------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------- |
-| [Start here](00-orientation/README.md)                              | Meet the newsroom and the finished desk                 | `meet-the-desk`                                                                                                          | 15      |
-| [Run the loop](parts/01-run-the-loop/README.md)                     | Call, tools, the loop, caps, streaming, any provider    | `call-the-model`, `read-a-draft`, `close-the-loop`, `cap-the-loop`, `stream-the-reply`, `swap-the-model`                 | 85      |
-| [Touch the world safely](parts/02-touch-the-world-safely/README.md) | Tool design, safe edits, commands, the permission gate  | `shape-the-tools`, `edit-drafts-safely`, `run-commands`, `ask-before-acting`                                             | 85      |
-| [Keep the context clean](parts/03-keep-the-context-clean/README.md) | Todo list, desk rules, trimming, compaction, a subagent | `plan-with-a-todo-list`, `load-the-desk-rules`, `trim-old-results`, `compact-the-conversation`, `delegate-to-a-subagent` | 90      |
-| [Extend and ship](parts/04-extend-and-ship/README.md)               | Hooks, an MCP client, sessions, headless runs, a score  | `add-hooks`, `connect-a-wire-server`, `resume-a-session`, `run-headless`, `score-the-agent`                              | 95      |
+| Part                                                                                | You build                                                 | Steps                                                                                                                    | Minutes |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------- |
+| [Start here](00-orientation/README.md)                                              | Meet the newsroom and the finished desk                   | `meet-the-desk`                                                                                                          | 15      |
+| [Run the loop](parts/01-run-the-loop/README.md)                                     | Call, tools, the loop, caps, streaming, any provider      | `call-the-model`, `read-a-draft`, `close-the-loop`, `cap-the-loop`, `stream-the-reply`, `swap-the-model`                 | 85      |
+| [Touch the world safely](parts/02-touch-the-world-safely/README.md)                 | Tool design, safe edits, commands, the permission gate    | `shape-the-tools`, `edit-drafts-safely`, `run-commands`, `ask-before-acting`                                             | 85      |
+| [Keep the context clean](parts/03-keep-the-context-clean/README.md)                 | Todo list, desk rules, trimming, compaction, a subagent   | `plan-with-a-todo-list`, `load-the-desk-rules`, `trim-old-results`, `compact-the-conversation`, `delegate-to-a-subagent` | 90      |
+| [Extend and ship](parts/04-extend-and-ship/README.md)                               | Hooks, an MCP client, sessions, headless runs, a score    | `add-hooks`, `connect-a-wire-server`, `resume-a-session`, `run-headless`, `score-the-agent`                              | 95      |
+| [Do it with the tools teams run](parts/05-do-it-with-the-tools-teams-run/README.md) | Redo the scorer with promptfoo, the eval runner teams use | `score-with-promptfoo`                                                                                                   | 25      |
 
 Two steps go deeper: `swap-the-model` and `trim-old-results`. You can skip them the first time through. A
 third deeper step, `rebuild-on-the-agent-sdk`, is not in the repo yet. Each step says what you will make. Each

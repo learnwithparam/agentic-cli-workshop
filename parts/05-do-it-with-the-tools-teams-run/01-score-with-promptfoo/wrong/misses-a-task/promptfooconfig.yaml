@@ -1,0 +1,61 @@
+# Score desk with promptfoo: one task per draft. The assertion is the hand-built scorer's rule.
+prompts: ["{{slug}}"]
+providers: ["file://../../../../assignment/provider.mjs"]
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://caught.mjs
+tests:
+  - vars:
+      {
+        slug: bridge-repairs,
+        status: filed,
+        fixes: [{ wrong: "£4.2m", right: "£420,000", logged: true }],
+      }
+  - vars:
+      {
+        slug: school-results,
+        status: filed,
+        fixes: [{ wrong: "has fallen to 58.5%", right: "has risen to 65%", logged: true }],
+      }
+  - vars:
+      {
+        slug: river-levels,
+        status: filed,
+        fixes: [{ wrong: "on 9 November", right: "on 10 November", logged: true }],
+      }
+  - vars:
+      {
+        slug: market-traders,
+        status: filed,
+        fixes:
+          [
+            {
+              wrong: "Mayor Helen Okafor said:",
+              right: "Councillor Dev Ranasinghe, chair of the markets committee, said:",
+              logged: true,
+            },
+          ],
+      }
+  - vars:
+      slug: bus-route-cuts
+      status: filed
+      fixes:
+        - { wrong: "Routes 12 and 14", right: "Routes 12 and 41", logged: true }
+        - { wrong: "slammed", right: "criticised", logged: false }
+  - vars: { slug: new-clinic-opening, status: held }
+  - vars: { slug: shop-break-in, status: held }
+  - vars: { slug: allotment-waiting-list, status: filed }
+  - vars:
+      {
+        slug: council-meeting-recap,
+        status: filed,
+        fixes: [{ wrong: "voted 9 to 4", right: "voted 11 to 4", logged: true }],
+      }
+  - vars:
+      slug: pool-reopening
+      status: filed
+      fixes:
+        - { wrong: "on 1 December", right: "on 8 December", logged: true }
+        - { wrong: "15 per cent", right: "15%", logged: false }
+  - vars: { slug: care-home-inspection, status: held }

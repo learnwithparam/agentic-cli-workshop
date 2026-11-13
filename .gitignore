@@ -4,3 +4,4 @@ node_modules
 world/newsroom/
 world/.state/
 .desk/
+assignment/result.json
