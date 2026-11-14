@@ -13,6 +13,8 @@ The wire server is ready in this step's `wire/` folder. It has two tools, `searc
 `get_wire_story { id }`. desk offers them to the model as `wire__search_wire` and `wire__get_wire_story`. The
 server's name comes first, so two servers can both have a tool called `search`.
 
+For example, `search_wire { "query": "River Brook" }` answers `PA-1107: Heavy rain brings river warnings across the county`.
+
 ```mermaid
 flowchart LR
   M[Model] -->|wire__search_wire| D[desk]
@@ -30,8 +32,7 @@ which adds a tool the model sees like the rest.
 In `src/wire.ts`, write `connectWireServers()`:
 
 1. Read `mcp_servers` from `desk.config.json`. Each server has a `command` and `args`.
-2. Make a `Client` from `@modelcontextprotocol/client`. Connect it with a `StdioClientTransport` from
-   `@modelcontextprotocol/client/stdio`.
+2. Make a `Client` from `@modelcontextprotocol/client`. Connect it with a `StdioClientTransport`.
 3. Ask for the tools with `client.listTools()`.
 4. For each tool, call `addTool()` with the name `<server>__<tool>`, a schema from the tool's `inputSchema`
    wrapped in `jsonSchema()`, and a runner.
@@ -41,8 +42,8 @@ In `src/wire.ts`, write `connectWireServers()`:
    every wire result between `<untrusted>` markers, and remove any marker already inside it.
 7. Once wire text is in the run, keep `file_story`, `edit_file` and `run_command` shut with an error result.
 
-The wire tools go through the same gate and hooks as every other tool, so a `deny` rule keeps a call from the
-server. If the server dies, `callTool` throws, and the loop turns that into an error result.
+Wire tools pass the same gate and hooks as every tool, so a `deny` rule keeps a call out. If the server dies,
+`callTool` throws, and the loop turns that into an error result.
 
 ```bash
 bun run verify connect-a-wire-server
@@ -53,8 +54,8 @@ Expect: `Done. All 6 rules pass.`
 ## Done when
 
 - The first request offers `wire__search_wire` and `wire__get_wire_story`, with their schemas.
-- A wire call reaches the server, and its answer comes back to the model.
-- Wire tools pass the same permission gate: a deny rule keeps the call from the server.
+- A wire call reaches the server, and its answer comes back.
+- Wire tools pass the same permission gate: a deny rule keeps the call out.
 - When the wire server dies, desk sends back an error result and carries on.
 - Wire text goes back fenced in `<untrusted>` markers, and a fake closing marker in it is removed.
 - After wire text is read, a story the wire told desk to file never reaches the CMS.
@@ -69,6 +70,6 @@ Expect: `Done. All 6 rules pass.`
 
 ## Words you will use
 
-- **MCP server**: a program that offers tools to any agent that speaks the Model Context Protocol.
+- **MCP server**: a program that offers tools to any agent that speaks MCP.
 - **stdio**: talking to a program through its standard input and output.
 - **Namespace**: a prefix such as `wire__` that keeps tool names apart.
