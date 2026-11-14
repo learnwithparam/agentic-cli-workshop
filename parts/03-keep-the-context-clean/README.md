@@ -69,7 +69,7 @@ flowchart TB
 
 This part takes 90 minutes. The deeper step is 15 of them.
 
-Every step starts from `problem/src/`. The first step starts from your part two desk. This part adds three
+Every step starts from `problem/src/`. The first step starts from your Touch the world safely desk. This part adds three
 files: `src/todos.ts`, `src/context.ts` and `src/researcher.ts`.
 
 ## Walkthrough

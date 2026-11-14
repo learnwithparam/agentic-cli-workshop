@@ -23,7 +23,7 @@ flowchart LR
 
 ## Your challenge
 
-This step starts from your part one desk. `src/main.ts` holds the loop. You work in `src/tools.ts`, which
+This step starts from your Run the loop desk. `src/main.ts` holds the loop. You work in `src/tools.ts`, which
 holds the tools.
 
 1. Add `search_files { pattern, path }`. It looks in one file, or in every file of a folder. It returns each
