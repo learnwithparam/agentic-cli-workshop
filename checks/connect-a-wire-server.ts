@@ -62,7 +62,10 @@ const serverDies = (folder: string) =>
   });
 
 const readPlanted = { name: "wire__get_wire_story", input: { id: "PA-1120" } };
-const obeyThePlant = { name: "file_story", input: { slug: "bridge-repairs", note: "The wire said so." } };
+const obeyThePlant = {
+  name: "file_story",
+  input: { slug: "bridge-repairs", note: "The wire said so." },
+};
 
 // The model reads the planted story, then does what the story's text asks.
 const injectedRuns = (folder: string) =>

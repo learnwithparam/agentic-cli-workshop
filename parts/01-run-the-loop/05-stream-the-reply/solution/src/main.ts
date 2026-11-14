@@ -107,28 +107,38 @@ function worthRetrying(error: unknown): boolean {
   return status === 429 || (status !== undefined && status >= 500);
 }
 
+// Print each piece of text the moment it arrives. An error piece is thrown so the retry code sees it.
+async function printStream(reply: ReturnType<typeof streamText>): Promise<void> {
+  let printedText = false;
+  for await (const piece of reply.fullStream) {
+    if (piece.type === "error") throw piece.error;
+    if (piece.type !== "text-delta") continue;
+    process.stdout.write(piece.text);
+    printedText = true;
+  }
+  if (printedText) process.stdout.write("\n");
+}
+
+// After a failure: stop for good, or print the wait and sleep through it.
+async function waitOrStop(error: unknown, attempt: number): Promise<void> {
+  if (!worthRetrying(error) || attempt >= RETRIES) {
+    console.log(`Stopped: the model service failed: ${(error as Error).message}`);
+    process.exit(1);
+  }
+  const waitMs = firstWaitMs * 2 ** attempt;
+  console.log(`Retrying in ${waitMs} ms (retry ${attempt + 1} of ${RETRIES}).`);
+  await Bun.sleep(waitMs);
+}
+
 // One streamed call. The SDK's own retries are off, so every wait is ours and is printed.
 async function streamWithRetries() {
   for (let attempt = 0; ; attempt++) {
     const reply = streamText({ model: model("smart"), messages, tools, maxRetries: 0 });
     try {
-      let printedText = false;
-      for await (const piece of reply.fullStream) {
-        if (piece.type === "error") throw piece.error;
-        if (piece.type !== "text-delta") continue;
-        process.stdout.write(piece.text);
-        printedText = true;
-      }
-      if (printedText) process.stdout.write("\n");
+      await printStream(reply);
       return reply;
     } catch (error) {
-      if (!worthRetrying(error) || attempt >= RETRIES) {
-        console.log(`Stopped: the model service failed: ${(error as Error).message}`);
-        process.exit(1);
-      }
-      const waitMs = firstWaitMs * 2 ** attempt;
-      console.log(`Retrying in ${waitMs} ms (retry ${attempt + 1} of ${RETRIES}).`);
-      await Bun.sleep(waitMs);
+      await waitOrStop(error, attempt);
     }
   }
 }

@@ -42,7 +42,11 @@ if (format !== "text" && mode === "ask") mode = "never-ask";
 const rules = loadRules(process.cwd());
 const instructions = systemPrompt();
 const compactAt = compactAtTokens();
-const session = openSession(flagValue("--resume"), process.argv.includes("--continue"));
+const session = openSession(
+  flagValue("--resume"),
+  process.argv.includes("--continue"),
+  Number(flagValue("--rewind") ?? 0),
+);
 await connectWireServers();
 
 type ToolCall = { toolCallId: string; toolName: string; input: unknown };
@@ -140,16 +144,44 @@ async function runToolCalls(toolCalls: ToolCall[]): Promise<void> {
   addMessages({ role: "tool", content: toolResults });
 }
 
+// Ctrl-C (Esc in a terminal app) asks desk to stop. It finishes the step it is in, gives every
+// pending tool call an error result so the saved session stays valid, says how to resume, and
+// exits 130, the code a shell uses for Ctrl-C.
+let interrupted = false;
+process.on("SIGINT", () => {
+  interrupted = true;
+});
+
+function stopForInterrupt(pending: ToolCall[]): never {
+  const toolResults = pending.map(({ toolCallId, toolName }) => ({
+    type: "tool-result" as const,
+    toolCallId,
+    toolName,
+    output: { type: "error-text" as const, value: "The night editor interrupted before this ran." },
+  }));
+  if (toolResults.length > 0) addMessages({ role: "tool", content: toolResults });
+  console.log(`Interrupted. Resume with: --resume ${session.id}`);
+  process.exit(130);
+}
+
+// Check the caps before every call. One call can go past the budget; the next never starts.
+function capReached(): Subtype | null {
+  if (turns >= maxTurns) return "error_max_turns";
+  if (totalCost() >= maxBudgetUsd) return "error_max_budget";
+  return null;
+}
+
 // The loop. Returns how the run ended.
 async function runTheLoop(): Promise<Subtype> {
   while (true) {
-    // Check the caps before every call. One call can go past the budget; the next never starts.
-    if (turns >= maxTurns) return "error_max_turns";
-    if (totalCost() >= maxBudgetUsd) return "error_max_budget";
+    const capped = capReached();
+    if (capped) return capped;
     await keepContextSmall();
     const toolCalls = await oneTurn();
+    if (interrupted) stopForInterrupt(toolCalls);
     if (toolCalls.length === 0) return "success";
     await runToolCalls(toolCalls);
+    if (interrupted) stopForInterrupt([]);
     const reminder = reminderAfterTurn(toolCalls.map((call) => call.toolName));
     if (reminder) addMessages({ role: "user", content: reminder });
   }

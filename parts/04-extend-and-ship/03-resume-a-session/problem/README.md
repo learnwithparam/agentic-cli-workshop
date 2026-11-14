@@ -45,13 +45,21 @@ sequenceDiagram
 4. `save()` appends each message with `appendFileSync`, at once.
 5. A new session gets a short id, such as `crypto.randomUUID().slice(0, 8)`.
 
+Two more moves, because a run can be stopped in the middle:
+
+6. Listen for `SIGINT`, the signal Ctrl-C sends. Set a flag, finish the step, give each pending tool call an
+   error result, print `Interrupted. Resume with: --resume <id>`, and exit 130.
+7. When you load a history, a last assistant message whose tool call has no result is cut off. Drop it. This
+   is the repair after a crash. Then add `--rewind <n>`: drop the last `n` turns, and rewrite the file from
+   what is left. Rewind undoes the talk, not the work: a story already filed stays filed.
+
 desk prints the id on its first line, such as `desk session 3f9a1c2e`. Keep it to resume later.
 
 ```bash
 bun run verify resume-a-session
 ```
 
-Expect: `Done. All 4 rules pass.`
+Expect: `Done. All 8 rules pass.`
 
 ## Done when
 
@@ -59,6 +67,10 @@ Expect: `Done. All 4 rules pass.`
 - `--resume <id>` sends the saved history in its first request.
 - After the resumed run, each story was filed once, never twice.
 - `--continue` picks up the newest session.
+- Ctrl-C stops desk with exit 130 and prints how to resume the session.
+- After Ctrl-C every tool call in the saved session has a result.
+- A session cut off between a tool call and its result is repaired when it is resumed.
+- `--rewind 1` drops the last turn from what the model sees and from the saved file.
 
 ## If you get stuck
 

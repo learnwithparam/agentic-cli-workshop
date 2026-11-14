@@ -31,6 +31,7 @@ function firstSeen(desk: Run, text: string): number | null {
 const flaky = (folder: string, name: string, failures: number, status: number) =>
   runs(folder, name, {
     args: ["-p", "Check the bridge draft."],
+    // biome-ignore lint/style/useNamingConvention: the shell fixes this name
     env: { DESK_RETRY_MS: "40" },
     scenario: (world) => (_request, all) => {
       if (all.length <= failures) return { status, error: "The service is busy." };
@@ -108,6 +109,7 @@ export default [
     says: "Our own mistake (400) is not retried",
     test: (folder) =>
       every(ourMistake(folder), (desk) => desk.requests.length === 1 && desk.code === 1),
-    tryNext: "Retry only 429 and 500 or more. A 400 means the request is wrong, so asking again fails.",
+    tryNext:
+      "Retry only 429 and 500 or more. A 400 means the request is wrong, so asking again fails.",
   },
 ] satisfies Rule[];
