@@ -1,4 +1,4 @@
-// desk, part four: the night desk agent, ready to run with nobody watching. Hooks run around
+// desk, Extend and ship: the night desk agent, ready to run with nobody watching. Hooks run around
 // every tool call, a wire service joins over MCP, every message is saved so a run can resume,
 // and the output can be plain text or JSON for a script.
 // Run from the newsroom folder:

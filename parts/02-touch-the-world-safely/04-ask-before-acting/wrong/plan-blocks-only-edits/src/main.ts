@@ -1,4 +1,5 @@
-// desk, part two: the loop from part one, with tools that change the newsroom and the CMS, and a
+// desk, Touch the world safely: the loop from Run the loop, with tools that change the newsroom
+// and the CMS, and a
 // permission gate in front of every tool call.
 // Run from the newsroom folder:
 //   bun src/main.ts -p "check the river-levels draft" --permission-mode ask

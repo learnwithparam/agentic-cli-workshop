@@ -2,7 +2,7 @@
 
 ## The problem
 
-After part one, desk can read the newsroom. Now it must also change things. It must fix a figure in a draft,
+After Run the loop, desk can read the newsroom. Now it must also change things. It must fix a figure in a draft,
 add up numbers in a CSV file, and file a story to the CMS. Each of these can go wrong, and then a person must
 clean up. A style fix can wipe out a whole paragraph. A command can hang. A story can go to the website before
 its embargo, the time before which it must not be published.

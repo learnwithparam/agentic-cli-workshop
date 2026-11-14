@@ -1,4 +1,5 @@
-// desk, part two: the loop from part one, with tools that change the newsroom and the CMS.
+// desk, Touch the world safely: the loop from Run the loop, with tools that change the newsroom
+// and the CMS.
 // The tools live in tools.ts. This file reads the flags and runs the loop.
 // Run from the newsroom folder:
 //   bun src/main.ts -p "check the river-levels draft" --max-turns 10

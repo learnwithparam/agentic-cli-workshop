@@ -1,4 +1,5 @@
-// desk, part three: the loop and the gate from part two, now careful with the context window. It
+// desk, Keep the context clean: the loop and the gate from Touch the world safely, now careful
+// with the context window. It
 // keeps a todo list, loads the desk rules, trims old results, compacts a long conversation and
 // hands big questions to a researcher.
 // Run from the newsroom folder:

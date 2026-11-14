@@ -36,7 +36,7 @@ flowchart LR
 
 ## Your challenge
 
-This step starts from your part three desk. It now has more files, and some of them are empty until a
+This step starts from your Keep the context clean desk. It now has more files, and some of them are empty until a
 later step. `src/main.ts` already calls the two functions you write.
 
 In `src/hooks.ts`:
