@@ -46,6 +46,8 @@ flowchart LR
 | ----------------------------------------- | ------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `run-the-desk-with-the-openai-agents-sdk` | 25      | An `Agent` with tools, a `needsApproval` rule and a `run()` loop | The desk files 9 and holds 3, a held story stops at approval, and the last line shows the counts |
 
+| `point-desk-at-your-own-files` | 15 | A rules file, a permission file and a run record for a folder of your own | Your three files and your own folder, never the course world |
+
 The step's starter is in the [step folder](01-run-the-desk-with-the-openai-agents-sdk/problem/README.md).
 The sample answer is in its `solution/` folder. No key is needed, and no Docker container is needed.
 
