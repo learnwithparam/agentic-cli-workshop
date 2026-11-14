@@ -161,10 +161,10 @@ function minutesProblems(file: string, markdown: string): Problem[] {
 // Lockfiles already pin versions. A page that repeats one goes out of date.
 const TOOLS = "Bun|Node|Node\\.js|Python|Go|Java|Rust|Deno|npm|React|TypeScript|Docker|Claude|Git";
 const VERSIONS = [
-  /\bv\d+(?:\.\d+)*\b/g,
+  /\bv\d+(?:\.\d+)+\b/g,
   /(?<![\d.-])(?!\d{4}\.)\d{1,3}\.\d+\.\d+(?![\d.]*\d{4})\b/g,
   new RegExp(`\\b(?:${TOOLS})\\s+v?\\d+(?:\\.\\d+)*\\b(?![/%])`, "g"),
-  /\b[A-Z][A-Za-z]+\s+\d+\.\d+(?:\.\d+)*\b(?!%)/g,
+  /\b[A-Z][A-Za-z]+\s+[1-9]\d*\.\d+(?:\.\d+)*\b(?!%)/g,
 ];
 
 function versionProblems(file: string, markdown: string): Problem[] {
