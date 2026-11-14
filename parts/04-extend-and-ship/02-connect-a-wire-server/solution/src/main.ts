@@ -14,7 +14,7 @@ import { researcherCost } from "./researcher";
 import { openSession } from "./session";
 import { reminderAfterTurn } from "./todos";
 import { runTool, tools } from "./tools";
-import { connectWireServers } from "./wire";
+import { blockedAfterWire, connectWireServers } from "./wire";
 
 // The text after a flag, such as "5" after --max-turns, or undefined when the flag is missing.
 function flagValue(name: string): string | undefined {
@@ -69,6 +69,8 @@ async function runGatedTool(call: ToolCall): Promise<string> {
   }
   const blockedBecause = blockedByHook(call.toolName, call.input);
   if (blockedBecause) throw new Error(`Blocked by a hook: ${blockedBecause}`);
+  const shut = blockedAfterWire(call.toolName);
+  if (shut) throw new Error(shut);
   return await runTool(call.toolName, call.input);
 }
 

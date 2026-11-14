@@ -8,8 +8,7 @@ Every tool result stays in the conversation, and the whole conversation goes out
 reads thirty drafts, it sends all thirty drafts again on call thirty-one. The model needs only the last few.
 The rest costs money and pushes the rules out of view.
 
-Anthropic tested this on a search task of 100 turns. Clearing old tool results let agents finish work that
-would fail without it, "while reducing token consumption by 84%".
+## Watch it done
 
 For example, here is an old result before and after trimming:
 
@@ -18,8 +17,7 @@ before: ---\nslug: bridge-repairs\nheadline: Bridge repairs to cost ... (620 cha
 after:  [trimmed: 620 characters, in .desk/results/toolu_abc123.txt]
 ```
 
-The stub keeps the call paired with its result, so the API still accepts the request. And it says where the
-full text is, so the model can read it again with `read_file` if it must.
+The stub keeps the call paired with its result, and says where the full text is.
 
 ```mermaid
 flowchart LR
@@ -32,7 +30,7 @@ flowchart LR
   Before --> After
 ```
 
-## Your challenge
+## Your turn
 
 In `src/context.ts`, write `trimOldResults(messages)`. `src/main.ts` already calls it before every call.
 
@@ -42,13 +40,19 @@ In `src/context.ts`, write `trimOldResults(messages)`. `src/main.ts` already cal
 4. Save its full text to `.desk/results/<toolCallId>.txt`.
 5. Change its `output` to a text stub that gives the length and the saved path.
 
+6. Trim in batches. Model services keep a cache of the start of your conversation, so a repeat call costs far
+   less. The cache only works while that start stays the same. A trim changes old messages. If you trim on every
+   call, the cache never hits. So wait until `BATCH` (8) old results are still whole, then trim them all at once.
+
 Change the parts in place. Never delete a part or a message: a tool call with no result is an error.
+
+## Do it on your work
 
 ```bash
 bun run verify trim-old-results
 ```
 
-Expect: `Done. All 4 rules pass.`
+Expect: `Done. All 5 rules pass.`
 
 ## Done when
 
@@ -56,6 +60,11 @@ Expect: `Done. All 4 rules pass.`
 - Every tool call still has exactly one result.
 - The last 3 tool results are still whole.
 - Each stub names a saved file that holds the full text.
+- Trimming comes in batches, so at least 20 of 29 calls only add to the end of the last one.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

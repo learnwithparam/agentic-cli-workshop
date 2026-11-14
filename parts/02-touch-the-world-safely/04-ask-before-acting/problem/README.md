@@ -2,21 +2,9 @@
 
 ## The problem
 
-desk can now edit drafts, run commands and file stories, and nothing stops it.
-
-Asking about every call does not help either. Anthropic reports that people "accept 93% of" Claude Code's
-permission prompts anyway. So a good gate allows safe work, denies what must never happen, and asks only about
-the rest.
-
-For example, with no rules desk asks before it files a story:
-
-```text
-  > file_story bridge-repairs
-    Allow file_story? [y]es once, [a]lways, [n]o: n
-    error: Denied: The night editor said no to file_story. Do not try it again. Move on.
-```
-
-A "no" goes back to the model as an error result, so it can hold the story instead.
+desk can now edit drafts, run commands and file stories, and nothing stops it. Asking about every call does not
+help. Anthropic reports that people "accept 93% of" Claude Code's permission prompts anyway. So a good
+gate allows safe work, denies what must never happen, and asks only about the rest.
 
 ```mermaid
 flowchart TD
@@ -33,7 +21,27 @@ flowchart TD
   N -->|no| Q[Ask: yes once, always, no]
 ```
 
-## Your challenge
+## Watch it done
+
+For example, with no rules, desk asks before it files a story:
+
+```text
+  > file_story bridge-repairs
+    Allow file_story? [y]es once, [a]lways, [n]o: n
+    error: Denied: The night editor said no to file_story. Do not try it again. Move on.
+```
+
+A "no" goes back to the model as an error, so it can hold the story.
+
+```bash
+bun run try ask-before-acting solution -p "check tonight's drafts" --max-turns 9
+```
+
+Expect: `Allow file_story?` and desk waits for your answer.
+
+![The permission prompt](../images/expected.png)
+
+## Your turn
 
 1. In `src/main.ts`, read `--permission-mode` (default `ask`) and stop with exit code 1 when it is not
    one of `ask`, `accept-edits`, `plan` or `never-ask`.
@@ -45,20 +53,16 @@ flowchart TD
 
 3. Before a tool runs, call `decide()`. When it says no, throw an error that starts with `Denied:`.
 4. In `src/permissions.ts`, write `decide()` in the order of the diagram. The first answer wins.
-5. To ask, call `prompt()`. It reads one line from stdin, and gives `null` when there is nothing to read.
+5. To ask, call `prompt()`. It reads one line from stdin.
    Treat `null` as no. "Always" lasts until the run ends.
 
 The order is the lesson. A deny rule must win over an allow rule. Plan mode must win over "always".
 
 Run `bun run world reset` first. A `try` run changes the newsroom.
 
-```bash
-bun run try ask-before-acting solution -p "check tonight's drafts" --max-turns 9
-```
+## Do it on your work
 
-Expect: `Allow file_story? [y]es once, [a]lways, [n]o:` and desk waits for you to type an answer.
-
-![The permission prompt with the diff of an edit](../images/expected.png)
+Name one action you would never let an assistant take. Make it a deny rule.
 
 ## Done when
 
@@ -84,8 +88,12 @@ Expect: `Done. All 7 rules pass.`
 | `FAIL  Plan mode leaves the files and the CMS untouched ...`    | Plan mode denies every tool that is not read-only, not only `edit_file`. |
 | `FAIL  never-ask mode denies every call that would prompt`      | Deny just before you would call `prompt()`.                              |
 
+## Solution
+
+Open the `solution` folder after your check passes.
+
 ## Words you will use
 
-- **Permission mode**: one setting for the whole run that changes what the gate does.
+- **Permission mode**: one setting that changes what the gate does.
 - **Rule**: a tool name in the `allow`, `ask` or `deny` list of `desk.config.json`.
-- **Read-only tool**: a tool that only looks, such as `read_file`. It changes nothing, so it needs no prompt.
+- **Read-only tool**: a tool that only looks, such as `read_file`.

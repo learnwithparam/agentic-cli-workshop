@@ -2,13 +2,14 @@
 
 ## The problem
 
-The night run takes a while. The laptop can sleep, the network can drop, or someone can press Ctrl+C. Then
-desk stops in the middle of the night, and everything it knew is gone. A new run starts from the first draft.
-Worse, it may file `bridge-repairs` a second time.
+The night run takes a while. The laptop can sleep or someone can press Ctrl+C. Then everything desk knew is
+gone, and a new run may file `bridge-repairs` a second time.
 
-So desk saves every message to a session file the moment the message exists. One run is one file,
-`.desk/sessions/<id>.jsonl`, with one JSON message per line. JSONL means one JSON value on each line. The
-file only grows; desk never rewrites it.
+So desk saves every message to a session file at once.
+
+## Watch it done
+
+One run is one file, `.desk/sessions/<id>.jsonl`, with one JSON message per line.
 
 For example, after two turns a session file starts like this:
 
@@ -18,9 +19,8 @@ For example, after two turns a session file starts like this:
 {"role":"tool","content":[{"type":"tool-result","toolName":"read_file", ...}]}
 ```
 
-To carry on, the night editor runs desk again with `--resume <id>`, or `--continue` for the newest session.
-desk loads the file and sends the whole history first. The model sees the filing it already made, so it does
-not make it again.
+To carry on, run desk with `--resume <id>`, or `--continue` for the newest session. desk sends the saved history
+first, so the model sees the filing it already made.
 
 ```mermaid
 sequenceDiagram
@@ -34,24 +34,33 @@ sequenceDiagram
   D->>D: history first, then the new prompt
 ```
 
-## Your challenge
+## Your turn
 
 `src/main.ts` already calls `openSession()` at the start, starts from `session.history`, and calls
 `session.save()` for every new message. In `src/session.ts`, write `openSession()`:
 
-1. Keep the session files in `.desk/sessions/` in the newsroom folder.
+1. Keep session files in `.desk/sessions/` in the newsroom folder.
 2. With `--resume <id>`, use that id. With `--continue`, use the file that changed last.
 3. A resumed session's history is its file, one `JSON.parse` per line.
 4. `save()` appends each message with `appendFileSync`, at once.
 5. A new session gets a short id, such as `crypto.randomUUID().slice(0, 8)`.
 
-desk prints the id on its first line, such as `desk session 3f9a1c2e`. Keep it to resume later.
+Two more moves, because a run can stop midway:
+
+6. Listen for `SIGINT`, the signal Ctrl-C sends. Set a flag, finish the step, give each pending tool call an
+   error result, print `Interrupted. Resume with: --resume <id>`, and exit 130.
+7. On load, drop a last assistant message whose tool call has no result. That is the repair after a crash. Then
+   add `--rewind <n>`: drop the last `n` turns and rewrite the file. It undoes the talk, not the work.
+
+desk prints the id on its first line, such as `desk session` and a short id. Keep it to resume.
+
+## Do it on your work
 
 ```bash
 bun run verify resume-a-session
 ```
 
-Expect: `Done. All 4 rules pass.`
+Expect: `Done. All 8 rules pass.`
 
 ## Done when
 
@@ -59,6 +68,14 @@ Expect: `Done. All 4 rules pass.`
 - `--resume <id>` sends the saved history in its first request.
 - After the resumed run, each story was filed once, never twice.
 - `--continue` picks up the newest session.
+- Ctrl-C stops desk with exit 130 and prints how to resume the session.
+- After Ctrl-C every tool call in the saved session has a result.
+- A session cut off between a tool call and its result is repaired when it is resumed.
+- `--rewind 1` drops the last turn from what the model sees and from the saved file.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

@@ -1,12 +1,12 @@
 // resume-a-session: desk saves every message to .desk/sessions/<id>.jsonl as it happens. The check
 // stops desk with SIGTERM in the middle of a run, then starts it again with --resume <id> (or
 // --continue) in the same newsroom, and reads what the model and the CMS saw.
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Rule } from "../scripts/verify";
 import type { Request } from "../world/practice-model/server";
-import { cmsLog, runInWorld, stopDesk } from "./helpers/answered-runs";
-import { makeWorld, type Run, toolUses, type World } from "./lib/harness";
+import { answeredRuns, cmsLog, runInWorld, stopDesk } from "./helpers/answered-runs";
+import { every, makeWorld, type Run, toolResults, toolUses, type World } from "./lib/harness";
 
 const NOTE = "Checked against the sources.";
 const read = (slug: string) => ({ name: "read_file", input: { path: `drafts/${slug}.md` } });
@@ -118,6 +118,67 @@ const firstRequestHasHistory = (pair: Pair) => {
   return ids.length >= 4 && ids.every((id) => resumedIds.includes(id));
 };
 
+// Interrupt: the night editor presses Ctrl-C while the model is working on its fourth call.
+const interrupted = (folder: string) =>
+  answeredRuns(folder, "resume-interrupt", {
+    args: ["-p", "Check tonight's drafts.", "--permission-mode", "accept-edits"],
+    scenario: (world) => (request: Request) => {
+      const seen = toolUses(request).length;
+      if (seen === 3) stopDesk(world, "SIGINT");
+      return { tools: [PLAN[seen]] };
+    },
+  });
+
+type Saved = { role: string; content: { type: string; toolCallId?: string }[] | string };
+function savedMessages(world: World): Saved[] {
+  const folder = join(world.newsroom, ".desk", "sessions");
+  const [file] = existsSync(folder) ? readdirSync(folder) : [];
+  if (!file) return [];
+  const lines = readFileSync(join(folder, file), "utf8").split("\n").filter(Boolean);
+  return lines.map((line) => JSON.parse(line));
+}
+const idsIn = (messages: Saved[], role: string, type: string) =>
+  messages
+    .filter((message) => message.role === role && Array.isArray(message.content))
+    .flatMap((message) => message.content as { type: string; toolCallId?: string }[])
+    .filter((part) => part.type === type)
+    .map((part) => part.toolCallId);
+
+// A session written by hand: the prompt, then some finished turns. With dangling, the last turn
+// asked for a tool and never got its result, as when a laptop shuts mid-call.
+function writeSession(world: World, turns: number, dangling: boolean) {
+  const lines: unknown[] = [{ role: "user", content: "Check tonight's drafts." }];
+  for (let i = 1; i <= turns; i++) {
+    const call = { type: "tool-call", toolCallId: `call${i}`, toolName: "read_file" };
+    const input = { path: "drafts/bridge-repairs.md" };
+    lines.push({ role: "assistant", content: [{ ...call, input }] });
+    if (dangling && i === turns) break;
+    const output = { type: "text", value: "A draft." };
+    lines.push({
+      role: "tool",
+      content: [{ type: "tool-result", toolCallId: `call${i}`, toolName: "read_file", output }],
+    });
+  }
+  const folder = join(world.newsroom, ".desk", "sessions");
+  mkdirSync(folder, { recursive: true });
+  const text = lines.map((line) => JSON.stringify(line)).join("\n");
+  writeFileSync(join(folder, "made.jsonl"), `${text}\n`);
+}
+
+const answerOnly = () => () => ({ text: "Carrying on." });
+const danglingRun = (folder: string) =>
+  answeredRuns(folder, "resume-dangling", {
+    args: ["-p", "Carry on.", "--resume", "made"],
+    setup: (world) => writeSession(world, 3, true),
+    scenario: answerOnly,
+  });
+const rewoundRun = (folder: string) =>
+  answeredRuns(folder, "resume-rewind", {
+    args: ["-p", "Try another way.", "--resume", "made", "--rewind", "1"],
+    setup: (world) => writeSession(world, 3, false),
+    scenario: answerOnly,
+  });
+
 export default [
   {
     says: "Each message is saved at once: after the stop, the session file holds the run so far",
@@ -157,5 +218,60 @@ export default [
     tryNext:
       "With --continue, list .desk/sessions/, sort the files by the time they last changed, " +
       "and load the newest one.",
+  },
+  {
+    says: "Ctrl-C stops desk with exit 130 and prints how to resume the session",
+    test: (folder) =>
+      every(interrupted(folder), (desk) => {
+        const [id] = readdirSync(join(desk.world.newsroom, ".desk", "sessions"));
+        const named = id !== undefined && desk.stdout.includes(id.replace(".jsonl", ""));
+        return desk.code === 130 && desk.stdout.includes("Interrupted") && named;
+      }),
+    tryNext:
+      'Listen with process.on("SIGINT"). Set a flag, finish the step, print Interrupted and ' +
+      "the --resume id, and exit with 130.",
+  },
+  {
+    says: "After Ctrl-C every tool call in the saved session has a result",
+    test: (folder) =>
+      every(interrupted(folder), (desk) => {
+        const messages = savedMessages(desk.world);
+        const calls = idsIn(messages, "assistant", "tool-call");
+        const results = idsIn(messages, "tool", "tool-result");
+        return calls.length >= 3 && calls.every((id) => results.includes(id));
+      }),
+    tryNext:
+      "Before you exit, add an error result for each tool call the model just asked for, " +
+      "so the saved session is one the API accepts.",
+  },
+  {
+    says: "A session cut off between a tool call and its result is repaired when it is resumed",
+    test: (folder) =>
+      every(danglingRun(folder), (desk) => {
+        const first = desk.requests[0];
+        if (!first) return false;
+        const answered = toolResults(first).map((result) => result.tool_use_id);
+        return desk.code === 0 && toolUses(first).every((use) => answered.includes(use.id));
+      }),
+    tryNext:
+      "After loading the history, look at the last assistant message. If a tool call in it has " +
+      "no result, drop that message before the first call.",
+  },
+  {
+    says: "--rewind 1 drops the last turn from what the model sees and from the saved file",
+    test: (folder) =>
+      every(rewoundRun(folder), (desk) => {
+        const first = desk.requests[0];
+        if (!first) return false;
+        const ids = toolUses(first).map((use) => use.id);
+        const saved = readFileSync(
+          join(desk.world.newsroom, ".desk", "sessions", "made.jsonl"),
+          "utf8",
+        );
+        return ids.length === 2 && !ids.includes("call3") && !saved.includes("call3");
+      }),
+    tryNext:
+      "Cut the history at the start of the last assistant message, then rewrite the session " +
+      "file from what is left. The next resume must not bring the dropped turn back.",
   },
 ] satisfies Rule[];

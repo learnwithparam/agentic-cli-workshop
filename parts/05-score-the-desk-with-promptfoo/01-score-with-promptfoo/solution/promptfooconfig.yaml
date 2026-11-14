@@ -22,7 +22,7 @@ tests:
       {
         slug: river-levels,
         status: filed,
-        fixes: [{ wrong: "on 9 November", right: "on 10 November", logged: true }],
+        fixes: [{ wrong: "on the ninth", right: "on the tenth", logged: true }],
       }
   - vars: { slug: library-hours, status: filed }
   - vars:
@@ -57,6 +57,6 @@ tests:
       slug: pool-reopening
       status: filed
       fixes:
-        - { wrong: "on 1 December", right: "on 8 December", logged: true }
+        - { wrong: "on the first", right: "on the eighth", logged: true }
         - { wrong: "15 per cent", right: "15%", logged: false }
   - vars: { slug: care-home-inspection, status: held }

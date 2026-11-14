@@ -20,6 +20,27 @@ function loadServers(): Record<string, ServerSettings> {
   return config.mcp_servers ?? {};
 }
 
+// Wire text comes from outside the newsroom, so it is data and never an order. desk fences it in
+// a marker the model is told about, and once any wire text is in the conversation, tools that
+// change something stay shut for the rest of the run.
+let wireTextSeen = false;
+const CHANGING_TOOLS = ["file_story", "edit_file", "run_command"];
+
+export function blockedAfterWire(toolName: string): string | null {
+  if (!wireTextSeen || !CHANGING_TOOLS.includes(toolName)) return null;
+  return (
+    `${toolName} is shut: wire text is in this run, and wire text cannot start a change. ` +
+    "Tell the night editor instead."
+  );
+}
+
+// A closing marker inside the text would end the fence early, so it is taken out first.
+function fenced(text: string): string {
+  wireTextSeen = true;
+  const clean = text.replaceAll(/<\/?untrusted[^>]*>/gi, "[marker removed]");
+  return `<untrusted source="wire">\n${clean}\n</untrusted>`;
+}
+
 // The text of an MCP result. A result the server marks as an error goes back as an error.
 function textOf(result: CallResult): string {
   const parts = result.content ?? [];
@@ -37,7 +58,7 @@ function offerTool(client: Client, serverName: string, serverTool: ServerTool): 
   // If the server has died, callTool throws. The loop turns that into an error result.
   const runner = async (input: Record<string, unknown>) => {
     const result = await client.callTool({ name: serverTool.name, arguments: input });
-    return textOf(result as CallResult);
+    return fenced(textOf(result as CallResult));
   };
   addTool(
     `${serverName}__${serverTool.name}`,

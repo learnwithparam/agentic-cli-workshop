@@ -23,7 +23,7 @@ Push your work on a branch named `assignment`, and submit its URL. The grader ru
 
 ## Done when
 
-- promptfoo reports 0.125.1.
+- promptfoo reports the pinned version.
 - Every course task has at least one assertion.
 - The run exits zero when the desk passes the bar you set. Its pass count matches the hand-built score.
 

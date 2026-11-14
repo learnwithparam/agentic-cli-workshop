@@ -6,8 +6,12 @@ The draft `council-meeting-recap.md` says the car park motion was "voted 9 to 4"
 the vote in `sources/council-meeting-transcript.txt`. That file is about 400,000 characters long. Reading it
 would fill desk's context window with one meeting.
 
-So desk hands the question to a helper. A helper agent, also called a subagent, runs its own small loop with a
-fresh context. It searches the transcript and sends back one short answer. For example:
+So desk hands the question to a helper.
+
+## Watch it done
+
+A helper agent, also called a subagent, runs its own small loop with a fresh context. It searches the transcript
+and sends back one short answer. For example:
 
 ```text
   > ask_researcher
@@ -26,7 +30,7 @@ flowchart LR
   R -->|one short answer, under 2,000 characters| D
 ```
 
-## Your challenge
+## Your turn
 
 In `src/researcher.ts`, write `askResearcher(input)`. `src/tools.ts` already offers `ask_researcher` and runs
 it. `src/main.ts` already adds `researcherCost` to the total.
@@ -42,6 +46,8 @@ it. `src/main.ts` already adds `researcherCost` to the total.
 The helper never gets `ask_researcher`, so it cannot start a helper of its own. And it never gets
 `edit_file` or `file_story`, so it cannot change the newsroom.
 
+## Do it on your work
+
 ```bash
 bun run verify delegate-to-a-subagent
 ```
@@ -55,6 +61,10 @@ Expect: `Done. All 5 rules pass.`
 - desk gets the short answer only: under 2,000 characters, none of the files read.
 - The researcher stops at its cap of 6 turns, and desk carries on.
 - The cost desk prints includes the researcher's calls.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

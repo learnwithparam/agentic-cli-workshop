@@ -32,7 +32,7 @@
     },
     "library-hours": {
       "status": "filed",
-      "filedText": "Millbrook Library will open until 8pm on weekday evenings from 1 December.\n\nThe change costs £46,000 a year. The library currently closes at 6pm.\n\nCouncillor Priya Natt, cabinet member for culture, said: \"Evening hours mean people who work can use the library too.\"",
+      "filedText": "Millbrook Library will open until 8pm on weekday evenings from the first.\n\nThe change costs £46,000 a year. Now the library shuts at 6pm.\n\nCouncillor Priya Natt said: \"Evening hours mean people who work can use the library too.\"",
       "corrections": []
     },
     "market-traders": {
@@ -47,13 +47,13 @@
     },
     "pool-reopening": {
       "status": "filed",
-      "filedText": "Millbrook Leisure Pool will reopen on 8 December after a refit.\n\nThe refit cost £1,380,000, which is 15% more than planned, because of a delay in parts.\n\nCouncillor Priya Natt said: \"The pool will be warmer, brighter and open longer.\"",
-      "corrections": ["on 1 December"]
+      "filedText": "Millbrook Leisure Pool will reopen on the eighth after a refit.\n\nThe refit cost £1,380,000, which is 15% more than planned, because of a delay in parts.\n\nCouncillor Priya Natt said: \"The pool will be warmer, brighter and open longer.\"",
+      "corrections": ["on the first"]
     },
     "river-levels": {
       "status": "filed",
-      "filedText": "The River Brook peaked at 3.4 metres at Brook Bridge on 10 November after heavy rain.\n\nThe level has since fallen to 2.1 metres. Residents on Brook Lane were told to move cars away from the bank.\n\nThe Environment Agency said no homes were flooded.",
-      "corrections": ["on 9 November"]
+      "filedText": "The River Brook peaked at 3.4 metres at Brook Bridge on the tenth after heavy rain.\n\nThe level has since fallen to 2.1 metres. Residents on Brook Lane were told to move cars away from the bank.\n\nThe Environment Agency said no homes were flooded.",
+      "corrections": ["on the ninth"]
     },
     "school-results": {
       "status": "filed",

@@ -1,0 +1,4 @@
+{
+  "root": "../my-project",
+  "permissions": { "allow": ["read_file", "list_files"], "deny": ["run_command", "file_story"] }
+}

@@ -3,9 +3,8 @@
 ## The problem
 
 A provider is a company or server that runs models behind an API. The Herald's owners want a price from a
-second provider before they sign a contract. But a teammate tied desk to one provider to try a feature. They
-also typed the model's name into the code. Now nobody can run desk anywhere else without changing the loop.
-And each place that names a provider or a model is one more place to forget when prices or models change.
+second provider before they sign a contract. But desk is tied to one provider, and its model name is typed into
+the code. Nobody can run desk elsewhere without changing the loop.
 
 ```mermaid
 flowchart LR
@@ -16,15 +15,26 @@ flowchart LR
   C -->|LLM_PROVIDER=openai| P[OpenAI]
 ```
 
-## Your challenge
+## Watch it done
 
-Open `src/main.ts`. It imports a provider package. It builds a model with a name typed into the code.
 For example, the starter has these two lines:
 
 ```ts
 import { createAnthropic } from "@ai-sdk/anthropic";
 const smartModel = anthropic("practice-smart");
 ```
+
+Once your desk asks `config/models.ts` for its model, this command runs it on a second provider:
+
+```bash
+LLM_PROVIDER=openrouter OPENROUTER_API_KEY=practice OPENROUTER_BASE_URL=http://localhost:4010/v1 bun run try swap-the-model -p "what does the library-hours draft say?"
+```
+
+Expect: `I read drafts/library-hours.md. It opens: ...` once desk asks `config/models.ts` for its model.
+
+## Your turn
+
+Open `src/main.ts`. It imports a provider package. It builds a model with a name typed into the code.
 
 1. Delete the provider import and the model name.
 2. Import `model` and `costUsd` from `"#models"` and call `model("smart")`.
@@ -35,14 +45,12 @@ const smartModel = anthropic("practice-smart");
 bun run practice-model
 ```
 
-Expect: `The practice model is running at http://localhost:4010.` Leave it running. Then type this in a second
-terminal:
+Expect: `The practice model is running at http://localhost:4010.` Leave it running. Then run the command from
+the Watch it done section in a second terminal.
 
-```bash
-LLM_PROVIDER=openrouter OPENROUTER_API_KEY=practice OPENROUTER_BASE_URL=http://localhost:4010/v1 bun run try swap-the-model -p "what does the library-hours draft say?"
-```
+## Do it on your work
 
-Expect: `I read drafts/library-hours.md. It opens: ...` once desk asks `config/models.ts` for its model.
+Write down one place at work where a name or price is typed in more than one spot. Say where the one setting could live instead.
 
 ## Done when
 
@@ -65,6 +73,10 @@ Expect: `Done. All 4 rules pass.`
 | `FAIL On the second provider the tool result still goes back, paired with its call`                | Keep the loop as it was; only the source of the model changes.                                  |
 | `FAIL No file in src imports a provider package or names a model`                                  | Search `src/` for `@ai-sdk/`, `@openrouter/` and `practice-` and remove them.                   |
 | `FAIL With no setting it still runs on the practice model`                                         | Unset `LLM_PROVIDER` in your terminal, or leave it empty in `.env`.                             |
+
+## Solution
+
+Open the `solution` folder after your check passes.
 
 ## Words you will use
 
