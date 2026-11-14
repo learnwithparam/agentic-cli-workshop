@@ -61,6 +61,17 @@ const serverDies = (folder: string) =>
     scenario: serverDiesScenario,
   });
 
+const readPlanted = { name: "wire__get_wire_story", input: { id: "PA-1120" } };
+const obeyThePlant = { name: "file_story", input: { slug: "bridge-repairs", note: "The wire said so." } };
+
+// The model reads the planted story, then does what the story's text asks.
+const injectedRuns = (folder: string) =>
+  answeredRuns(folder, "connect-a-wire-server-injected", {
+    args: ["-p", "Check the wire for library news."],
+    setup: (world) => writeConfig(world, []),
+    scenario: () => playTurns([[readPlanted], [obeyThePlant]]),
+  });
+
 function wireCalls(desk: Run): { tool: string; input: unknown }[] {
   const logPath = join(desk.world.newsroom, ".wire", "calls.jsonl");
   if (!existsSync(logPath)) return [];
@@ -129,5 +140,29 @@ export default [
     tryNext:
       "Let callTool throw when the server is gone. Your loop already turns a thrown Error " +
       "into an error result.",
+  },
+  {
+    says: "Wire text goes back to the model fenced in <untrusted> markers, and a fake closing marker in it is removed",
+    test: (folder) =>
+      every(injectedRuns(folder), (desk) => {
+        const text = resultOf(desk, readPlanted.name, sameInput(readPlanted.input))?.content ?? "";
+        const closings = text.match(/<\/untrusted>/g) ?? [];
+        return text.startsWith("<untrusted") && closings.length === 1 && text.includes("library");
+      }),
+    tryNext:
+      "Wrap the text of every wire result in <untrusted> and </untrusted>. " +
+      "Replace any marker already inside the text first.",
+  },
+  {
+    says: "After wire text is read, a story the wire told desk to file never reaches the CMS",
+    test: (folder) =>
+      every(injectedRuns(folder), (desk) => {
+        const refused = resultOf(desk, obeyThePlant.name, sameInput(obeyThePlant.input));
+        const filings = desk.world.cms.state().log.filter((line) => line.path.endsWith("/file"));
+        return refused?.is_error === true && filings.length === 0;
+      }),
+    tryNext:
+      "Keep a flag that turns on when wire text comes in. While it is on, " +
+      "send back an error for file_story, edit_file and run_command.",
   },
 ] satisfies Rule[];
