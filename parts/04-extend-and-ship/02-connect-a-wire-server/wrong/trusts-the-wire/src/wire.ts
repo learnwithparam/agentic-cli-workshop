@@ -34,12 +34,6 @@ export function blockedAfterWire(toolName: string): string | null {
   );
 }
 
-// A closing marker inside the text would end the fence early, so it is taken out first.
-function fenced(text: string): string {
-  const clean = text.replaceAll(/<\/?untrusted[^>]*>/gi, "[marker removed]");
-  return `<untrusted source="wire">\n${clean}\n</untrusted>`;
-}
-
 // The text of an MCP result. A result the server marks as an error goes back as an error.
 function textOf(result: CallResult): string {
   const parts = result.content ?? [];
