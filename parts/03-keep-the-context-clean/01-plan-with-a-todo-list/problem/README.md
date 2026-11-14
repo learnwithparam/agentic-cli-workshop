@@ -32,7 +32,7 @@ flowchart LR
 
 ## Your challenge
 
-This step starts from your part two desk. It adds a new file, `src/todos.ts`. The `todo_write` tool and its
+This step starts from your Touch the world safely desk. It adds a new file, `src/todos.ts`. The `todo_write` tool and its
 schema are there, and `src/tools.ts` already offers it. `src/permissions.ts` counts it as read-only, because
 it changes nothing in the newsroom.
 

@@ -60,7 +60,7 @@ flowchart LR
 
 This part takes 95 minutes. A deeper step that rebuilds desk on the Claude Agent SDK is not in the repo yet.
 
-Every step starts from `problem/src/`. The first step starts from your part three desk, with three new files
+Every step starts from `problem/src/`. The first step starts from your Keep the context clean desk, with three new files
 left empty until their step: `src/wire.ts`, `src/session.ts` and `src/output.ts`.
 
 ## Walkthrough

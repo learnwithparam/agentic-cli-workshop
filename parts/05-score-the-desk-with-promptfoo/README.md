@@ -1,4 +1,4 @@
-# Do it with the tools teams run
+# Score the desk with promptfoo
 
 ## The problem
 
@@ -55,7 +55,7 @@ No Docker container is needed.
 Run the sample answer first, so you see what the finished table looks like. Run these from the repo root.
 
 ```bash
-npx promptfoo@0.125.1 eval -c parts/05-do-it-with-the-tools-teams-run/01-score-with-promptfoo/solution/promptfooconfig.yaml
+npx promptfoo@0.125.1 eval -c parts/05-score-the-desk-with-promptfoo/01-score-with-promptfoo/solution/promptfooconfig.yaml
 ```
 
 Expect: a table with one row per draft, then `12 passed (100%)` and `0 failed (0%)`.

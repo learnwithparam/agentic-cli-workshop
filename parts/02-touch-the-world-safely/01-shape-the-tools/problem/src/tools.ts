@@ -1,5 +1,5 @@
 // The tools desk gives the model. Each tool has a schema the model reads and a runner desk
-// executes. These two come from part one. This step adds three more and better errors.
+// executes. These two come from Run the loop. This step adds three more and better errors.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import { jsonSchema, tool } from "ai";

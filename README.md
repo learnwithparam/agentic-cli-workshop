@@ -88,7 +88,7 @@ flowchart LR
     S[(newsroom/sources: budget, police, schools, river, press releases, council transcript)]
     R[(DESK.md: the standing rules)]
     C[(CMS on :4020: filed, held, corrections)]
-    W[(Wire server, MCP: part 4)]
+    W[(Wire server, MCP: Extend and ship)]
   end
   subgraph You[What you build: desk]
     L[The loop] --> G[Permission gate]
@@ -106,14 +106,15 @@ flowchart LR
 
 ## The parts
 
-| Part                                                                                | You build                                                 | Steps                                                                                                                    | Minutes |
-| ----------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------- |
-| [Start here](00-orientation/README.md)                                              | Meet the newsroom and the finished desk                   | `meet-the-desk`                                                                                                          | 15      |
-| [Run the loop](parts/01-run-the-loop/README.md)                                     | Call, tools, the loop, caps, streaming, any provider      | `call-the-model`, `read-a-draft`, `close-the-loop`, `cap-the-loop`, `stream-the-reply`, `swap-the-model`                 | 85      |
-| [Touch the world safely](parts/02-touch-the-world-safely/README.md)                 | Tool design, safe edits, commands, the permission gate    | `shape-the-tools`, `edit-drafts-safely`, `run-commands`, `ask-before-acting`                                             | 85      |
-| [Keep the context clean](parts/03-keep-the-context-clean/README.md)                 | Todo list, desk rules, trimming, compaction, a subagent   | `plan-with-a-todo-list`, `load-the-desk-rules`, `trim-old-results`, `compact-the-conversation`, `delegate-to-a-subagent` | 90      |
-| [Extend and ship](parts/04-extend-and-ship/README.md)                               | Hooks, an MCP client, sessions, headless runs, a score    | `add-hooks`, `connect-a-wire-server`, `resume-a-session`, `run-headless`, `score-the-agent`                              | 95      |
-| [Do it with the tools teams run](parts/05-do-it-with-the-tools-teams-run/README.md) | Redo the scorer with promptfoo, the eval runner teams use | `score-with-promptfoo`                                                                                                   | 25      |
+| Part                                                                                           | You build                                                 | Steps                                                                                                                    | Minutes |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------- |
+| [Start here](00-orientation/README.md)                                                         | Meet the newsroom and the finished desk                   | `meet-the-desk`                                                                                                          | 15      |
+| [Run the loop](parts/01-run-the-loop/README.md)                                                | Call, tools, the loop, caps, streaming, any provider      | `call-the-model`, `read-a-draft`, `close-the-loop`, `cap-the-loop`, `stream-the-reply`, `swap-the-model`                 | 85      |
+| [Touch the world safely](parts/02-touch-the-world-safely/README.md)                            | Tool design, safe edits, commands, the permission gate    | `shape-the-tools`, `edit-drafts-safely`, `run-commands`, `ask-before-acting`                                             | 85      |
+| [Keep the context clean](parts/03-keep-the-context-clean/README.md)                            | Todo list, desk rules, trimming, compaction, a subagent   | `plan-with-a-todo-list`, `load-the-desk-rules`, `trim-old-results`, `compact-the-conversation`, `delegate-to-a-subagent` | 90      |
+| [Extend and ship](parts/04-extend-and-ship/README.md)                                          | Hooks, an MCP client, sessions, headless runs, a score    | `add-hooks`, `connect-a-wire-server`, `resume-a-session`, `run-headless`, `score-the-agent`                              | 95      |
+| [Score the desk with promptfoo](parts/05-score-the-desk-with-promptfoo/README.md)              | Redo the scorer with promptfoo, the eval runner teams use | `score-with-promptfoo`                                                                                                   | 25      |
+| [Run the desk with the OpenAI Agents SDK](parts/06-run-the-desk-with-the-agents-sdk/README.md) | Move the desk loop onto the OpenAI Agents SDK             | `run-the-desk-with-the-openai-agents-sdk`                                                                                | 25      |
 
 Two steps go deeper: `swap-the-model` and `trim-old-results`. You can skip them the first time through. A
 third deeper step, `rebuild-on-the-agent-sdk`, is not in the repo yet. Each step says what you will make. Each
@@ -132,13 +133,13 @@ At the end, you put four things in your own public repo:
    a filing, the compaction notice and the result line.
 4. A file called `notes/failures.md`. It lists the faults your desk missed and why. It quotes the session file.
 
-A script grades each item with a yes or no question. You find the questions in part four.
+A script grades each item with a yes or no question. You find the questions in Extend and ship.
 
 ## Read before you start
 
 1. [How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works): the words for the loop, tools, sessions, compaction and permission modes.
 2. [Tutorial: build a tool-using agent](https://platform.claude.com/docs/en/agents-and-tools/tool-use/build-a-tool-using-agent), the first two rings: one tool call, then the loop.
-3. [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): the reason part three exists.
+3. [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): the reason Keep the context clean exists.
 
 ## How the course works
 

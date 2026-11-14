@@ -105,6 +105,15 @@ desk -p "<prompt>" [--output-format text|json|stream-json] [--permission-mode as
 `success`, `error_max_turns`, `error_max_budget`, `error_permission`, `error`. Exit codes: 0 success, 1 error,
 3 a cap, 4 a permission denied in `never-ask` mode. `finished/desk/src/main.ts` follows it today.
 
+## score-the-desk-with-promptfoo
+
+Folder: `parts/05-score-the-desk-with-promptfoo/`. 25 minutes. The hand-built scorer's rule becomes one
+promptfoo assertion. The practice model needs no key.
+
+| Step                   | Min | The check reads                                                                          |
+| ---------------------- | --- | ---------------------------------------------------------------------------------------- |
+| `score-with-promptfoo` | 25  | The pinned version, an assertion on every task, and a pass count equal to the hand score |
+
 ## run-the-desk-with-the-agents-sdk
 
 Folder: `parts/06-run-the-desk-with-the-agents-sdk/`. 25 minutes. The desk moves from its hand-built loop to the
