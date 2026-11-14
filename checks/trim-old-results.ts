@@ -46,6 +46,18 @@ function resultsWithFiles(desk: Run) {
 
 const sizeOf = (texts: string[]) => texts.reduce((total, text) => total + text.length, 0);
 
+// How many of the 29 steps from one request to the next only added to the end. When the earlier
+// request is an exact start of the later one, the prompt cache can reuse it.
+function stepsThatOnlyAdd(desk: Run): number {
+  let same = 0;
+  for (let i = 1; i < desk.requests.length; i++) {
+    const before = desk.requests[i - 1].messages.map((message) => JSON.stringify(message));
+    const after = desk.requests[i].messages.map((message) => JSON.stringify(message));
+    if (before.every((text, index) => text === after[index])) same++;
+  }
+  return same;
+}
+
 export default [
   {
     says: "By the last request, the tool results take at least 50% less room than the files read",
@@ -101,5 +113,12 @@ export default [
     tryNext:
       "Write the full text to .desk/results/<toolCallId>.txt first, " +
       "then put that path in the stub, such as [trimmed: 512 characters, in .desk/results/x.txt].",
+  },
+  {
+    says: "Trimming comes in batches, so at least 20 of 29 calls only add to the end of the last one",
+    test: (folder) => every(trimming(folder), (desk) => stepsThatOnlyAdd(desk) >= 20),
+    tryNext:
+      "Trim only when 8 or more old results are still whole, then trim them all at once. " +
+      "A trim on every call changes the start of the conversation and the cache never hits.",
   },
 ] satisfies Rule[];
