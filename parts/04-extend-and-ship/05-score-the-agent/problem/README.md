@@ -55,18 +55,29 @@ Expect: a JSON score with `"caught": 6` and seven ids under `"missed"`.
 4. Fix desk: add the `log_correction { slug, wrong, right, source }` tool in `src/tools.ts`. Its runner POSTs to
    `/api/corrections` on the CMS.
 5. Run `bun run score` again. Expect `"caught": 13`.
+6. One run is one roll of the dice. A real model gives a different answer each time, so run the night five times:
+
+```bash
+bun run score --trials
+```
+
+Expect: five `Trial` lines and a last line such as `Clean in 3 of 5 trials.` The practice model slips on some
+trials on purpose, the way a real model does. Paste the six lines into `notes/trials.md`, and say what one clean
+run hides.
 
 ## Done when
 
 - On the practice model, your desk catches all 13 planted faults.
 - It holds no clean story and breaks no rule.
 - `notes/failures.md` has a heading and a session line for each fault the starter missed.
+- `notes/trials.md` copies the five trial results of your own desk, line for line.
+- `notes/trials.md` says in its own words what one clean run hides.
 
 ```bash
 bun run verify score-the-agent
 ```
 
-Expect: `Done. All 3 rules pass.`
+Expect: `Done. All 5 rules pass.`
 
 ## If you get stuck
 
@@ -77,6 +88,7 @@ Expect: `Done. All 3 rules pass.`
 
 ## Words you will use
 
+- **Trial**: one full run of the same job. Many trials show how often it works, not just whether it can.
 - **Planted fault**: a mistake put in a draft on purpose, so a score can count it.
 - **False flag**: a clean story held for no reason.
 - **Answer key**: the file that says what is wrong in each draft. desk never sees it.

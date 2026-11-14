@@ -11,6 +11,7 @@ import type { Run } from "../../../checks/lib/harness";
 import { ruleBreaks } from "../../../world/cms/server";
 import { answerKey } from "../../../world/lib/newsroom";
 import { nightDesk } from "../../../world/practice-model/night-desk";
+import type { Scenario, Turn } from "../../../world/practice-model/server";
 
 type Fault = ReturnType<typeof answerKey>["drafts"][string]["faults"][number];
 
@@ -90,9 +91,79 @@ export function nightRuns(folder: string) {
   });
 }
 
+// A real model is not the same twice. The practice model can show that: on some trials it holds a
+// clean story it should have filed, as a real model sometimes gets nervous. The trial number picks
+// how many slips happen, so the same desk scores the same on every machine.
+export const TRIALS = 5;
+const SLIPS_BY_TRIAL: Record<number, number> = { 1: 1, 3: 2 };
+
+function slippyNight(trial: number): Scenario {
+  let slipsLeft = SLIPS_BY_TRIAL[trial] ?? 0;
+  return (request, all) => {
+    const turn = nightDesk(request, all) as Turn;
+    for (const call of turn.tools ?? []) {
+      if (call.name !== "file_story" || slipsLeft === 0) continue;
+      slipsLeft--;
+      call.name = "hold_story";
+      call.input = { slug: (call.input as { slug: string }).slug, reason: "Not sure about it." };
+    }
+    return turn;
+  };
+}
+
+// Five runs of the whole night in five fresh worlds, cached per folder.
+export function trialRuns(folder: string) {
+  let next = 0;
+  return answeredRuns(
+    folder,
+    "score-the-agent-trials",
+    {
+      args: [
+        "-p",
+        "Check tonight's drafts.",
+        "--output-format",
+        "stream-json",
+        "--max-turns",
+        "80",
+      ],
+      setup: (world) => {
+        writeFileSync(join(world.newsroom, "desk.config.json"), JSON.stringify(NIGHT_CONFIG));
+      },
+      scenario: () => slippyNight(next++),
+      timeoutMs: 60_000,
+    },
+    TRIALS,
+  );
+}
+
+export type TrialSummary = { flags: number[]; cleanTrials: number; worst: number };
+
+// A trial is clean when it catches every fault, holds no clean story and breaks no rule.
+export function summarize(scores: Score[]): TrialSummary {
+  const flags = scores.map((score) => score.false_flags.length);
+  const isClean = (score: Score) =>
+    score.caught === score.faults && score.false_flags.length === 0 && score.rule_breaks === 0;
+  const worst = Math.max(...flags);
+  return { flags, cleanTrials: scores.filter(isClean).length, worst };
+}
+
 if (import.meta.main) {
-  const named = process.argv[2];
+  const named = process.argv.slice(2).find((word) => !word.startsWith("--"));
   const folder = resolve(named ?? join(import.meta.dir, "problem"));
+  if (process.argv.includes("--trials")) {
+    const scores = (await trialRuns(folder)).map(scoreOf);
+    scores.forEach((score, index) => {
+      const flags = score.false_flags.length;
+      console.log(
+        `Trial ${index + 1}: caught ${score.caught} of ${score.faults}, false flags ${flags}`,
+      );
+    });
+    const { cleanTrials, worst } = summarize(scores);
+    console.log(
+      `Clean in ${cleanTrials} of ${TRIALS} trials. Most false flags in one trial: ${worst}.`,
+    );
+    process.exit(0);
+  }
   const [firstRun] = await nightRuns(folder);
   console.log(JSON.stringify(scoreOf(firstRun), null, 2));
   process.exit(0);
