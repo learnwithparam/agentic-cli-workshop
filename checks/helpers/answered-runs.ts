@@ -24,8 +24,8 @@ export type AnsweredOptions = Omit<RunOptions, "keep"> & {
 const runningDesks = new Map<string, { kill: (signal?: number | NodeJS.Signals) => void }>();
 
 // Send SIGTERM to the desk that runs in this world, as a crash or a closed laptop would.
-export function stopDesk(world: World): void {
-  runningDesks.get(world.nonce)?.kill("SIGTERM");
+export function stopDesk(world: World, signal: NodeJS.Signals = "SIGTERM"): void {
+  runningDesks.get(world.nonce)?.kill(signal);
 }
 
 // Every world made here is removed when the check process ends.

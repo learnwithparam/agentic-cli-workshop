@@ -2,11 +2,15 @@
 
 ## The problem
 
-The night desk has standing rules in `DESK.md`. Rule 2 says: "Never name a person under 18 who appears in a
-police record." desk does not know these rules yet. It only knows what the night editor types after `-p`.
+The night desk has standing rules in `DESK.md`. Rule 2 says: "Never name a person under 18 who appears in a police record."
+desk does not know these rules yet. It only knows what the night editor types after `-p`.
 
-The rules belong in the system prompt. The system prompt is the text that goes out with every request, before
-the conversation. It stays there when old messages are dropped later in this part.
+The rules belong in the system prompt.
+
+## Watch it done
+
+The system prompt is the text that goes out with every request, before the conversation. It stays there when old
+messages are dropped later in this part.
 
 Some rules belong to one folder only. A file `drafts/DESK.md` can add rules for the drafts. The nearest file
 comes last, so it has the last word. Claude Code reads `CLAUDE.md` files and Codex reads `AGENTS.md` files in
@@ -36,7 +40,7 @@ flowchart LR
   S -->|instructions, on every call| M[Model]
 ```
 
-## Your challenge
+## Your turn
 
 In `src/context.ts`, finish `systemPrompt()`:
 
@@ -47,6 +51,8 @@ In `src/context.ts`, finish `systemPrompt()`:
 
 `src/main.ts` already calls `systemPrompt()` once at the start of the run. It passes the result to
 `streamText` as `instructions` on every call. So an edit to `DESK.md` shows up on the next run.
+
+## Do it on your work
 
 ```bash
 bun run verify load-the-desk-rules
@@ -60,6 +66,10 @@ Expect: `Done. All 4 rules pass.`
 - `drafts/DESK.md` comes after `DESK.md`, so the nearest file has the last word.
 - With no `drafts/DESK.md`, desk still runs and loads `DESK.md`.
 - The rules go in the system prompt, not in a user message.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

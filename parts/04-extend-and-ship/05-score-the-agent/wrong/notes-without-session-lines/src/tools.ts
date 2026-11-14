@@ -84,8 +84,8 @@ export const tools = {
     description: "Log a factual correction to the public corrections log, after you fix it.",
     inputSchema: strictSchema({
       slug: "The story's slug, such as river-levels",
-      wrong: "The text that was wrong, such as on 9 November",
-      right: "The text that is right, such as on 10 November",
+      wrong: "The text that was wrong, such as on the ninth",
+      right: "The text that is right, such as on the tenth",
       source: "The file that proves it, such as sources/river-levels.csv",
     }),
   }),

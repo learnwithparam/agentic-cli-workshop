@@ -3,12 +3,14 @@
 ## The problem
 
 The night editor wants desk to run from a script before the 06:00 update, with nobody watching. A run like
-that is called headless. Katadata runs its news analysis this way, over "10,000 articles daily".
+that is called headless.
 
 A script cannot read lines meant for a person. It needs JSON, and an exit code that says how the run ended.
 And it can never answer a permission prompt.
 
-So desk prints events. Each event is one thing that happened: the run started, the model wrote text, a tool
+## Watch it done
+
+Katadata runs its news analysis this way, over "10,000 articles daily". So desk prints events. Each event is one thing that happened: the run started, the model wrote text, a tool
 was called, a result came back, the run ended. `--output-format` picks how they print:
 
 - `text`: lines for a person, as before.
@@ -36,7 +38,7 @@ checked and scored the same way.
 
 ![A stream-json run](../images/expected.png)
 
-## Your challenge
+## Your turn
 
 `src/main.ts` already sends every event to `emit()`. In `src/output.ts`:
 
@@ -48,6 +50,8 @@ In `src/permissions.ts`, ask on stderr, not stdout, so the JSON stays clean. Rea
 `console[Symbol.asyncIterator]()`, one line at a time. When stdin has no more lines, the answer is no.
 `decide()` now returns a promise; `main.ts` already awaits it. In `src/todos.ts`, print the list with
 `console.error`.
+
+## Do it on your work
 
 ```bash
 bun run verify run-headless
@@ -62,6 +66,10 @@ Expect: `Done. All 5 rules pass.`
 - Exit codes: 0 on success, 3 at a cap, 4 for a denial in never-ask mode, 1 on an error.
 - `--output-format json` prints one line: the result.
 - With nobody at the terminal, a call that would ask is denied, and desk never waits.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

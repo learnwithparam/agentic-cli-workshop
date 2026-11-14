@@ -38,9 +38,19 @@ const partsOf = (message: ModelMessage) => message.content as Part[];
 const KEEP_FULL = 3;
 const savedResults = join(root, ".desk", "results");
 
+// The cache reads the start of the conversation, and only while that start stays the same. A trim
+// changes old messages, so a trim on every call would throw the cache away on every call. So desk
+// waits until BATCH old results are ready, then trims them all at once. Between trims, each call
+// only adds to the end, and the cache keeps working.
+const BATCH = 8;
+
+const isFull = (part: Part) =>
+  part.type === "tool-result" && !String(part.output?.value ?? "").startsWith("[trimmed");
+
 export function trimOldResults(messages: ModelMessage[]): void {
   const toolMessages = messages.filter((message) => message.role === "tool");
   const old = toolMessages.slice(0, -KEEP_FULL);
+  if (old.flatMap(partsOf).filter(isFull).length < BATCH) return;
   for (const part of old.flatMap(partsOf)) {
     const value = String(part.output?.value ?? "");
     if (part.type !== "tool-result" || value.startsWith("[trimmed")) continue;

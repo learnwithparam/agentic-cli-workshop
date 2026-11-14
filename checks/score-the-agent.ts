@@ -3,7 +3,13 @@
 // notes/failures.md must explain each fault the starter missed, with a line from a session file.
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { nightRuns, scoreOf } from "../parts/04-extend-and-ship/05-score-the-agent/score";
+import {
+  nightRuns,
+  scoreOf,
+  summarize,
+  TRIALS,
+  trialRuns,
+} from "../parts/04-extend-and-ship/05-score-the-agent/score";
 import type { Rule } from "../scripts/verify";
 import { every } from "./lib/harness";
 
@@ -30,6 +36,26 @@ function sectionsOf(notes: string): { heading: string; body: string }[] {
 function readNotes(folder: string): string {
   const notesPath = join(folder, "notes", "failures.md");
   return existsSync(notesPath) ? readFileSync(notesPath, "utf8") : "";
+}
+
+function readTrialNotes(folder: string): string {
+  const notesPath = join(folder, "notes", "trials.md");
+  return existsSync(notesPath) ? readFileSync(notesPath, "utf8") : "";
+}
+
+// The Trial lines and the last line, as `bun run score --trials` prints them from this desk.
+async function trialLines(folder: string): Promise<string[]> {
+  const scores = (await trialRuns(folder)).map(scoreOf);
+  const lines = scores.map(
+    (score, index) =>
+      `Trial ${index + 1}: caught ${score.caught} of ${score.faults}, ` +
+      `false flags ${score.false_flags.length}`,
+  );
+  const { cleanTrials, worst } = summarize(scores);
+  lines.push(
+    `Clean in ${cleanTrials} of ${TRIALS} trials. Most false flags in one trial: ${worst}.`,
+  );
+  return lines;
 }
 
 export default [
@@ -64,5 +90,29 @@ export default [
     tryNext:
       "Add a ## heading with each missed id from bun run score. Under it, paste the line from " +
       ".desk/sessions/<id>.jsonl that shows the miss, in a json code block.",
+  },
+  {
+    says: "notes/trials.md copies the five trial results of your own desk, line for line",
+    test: async (folder) => {
+      const notes = readTrialNotes(folder);
+      const wanted = await trialLines(folder);
+      return wanted.length === TRIALS + 1 && wanted.every((line) => notes.includes(line));
+    },
+    tryNext:
+      "Run bun run score --trials and paste its six lines into notes/trials.md. " +
+      "The numbers must come from your desk, so a guess will not match.",
+  },
+  {
+    says: "notes/trials.md says in its own words what one clean run hides",
+    test: (folder) => {
+      const section = sectionsOf(readTrialNotes(folder)).find((one) =>
+        one.heading.toLowerCase().includes("one run"),
+      );
+      const words = (section?.body ?? "").trim().split(/\s+/).filter(Boolean);
+      return words.length >= 20 && !section?.body.includes("TODO");
+    },
+    tryNext:
+      "Under the heading about one run, write two or three sentences: what a single clean run " +
+      "hides, and when you will call the desk ready.",
   },
 ] satisfies Rule[];

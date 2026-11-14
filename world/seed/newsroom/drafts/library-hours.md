@@ -8,8 +8,8 @@ embargo:
 sources: [sources/press-releases/library-hours.txt, sources/council-budget.csv]
 ---
 
-Millbrook Library will open until 8pm on weekday evenings from 1 December.
+Millbrook Library will open until 8pm on weekday evenings from the first.
 
-The change costs £46,000 a year. The library currently closes at 6pm.
+The change costs £46,000 a year. Now the library shuts at 6pm.
 
-Councillor Priya Natt, cabinet member for culture, said: "Evening hours mean people who work can use the library too."
+Councillor Priya Natt said: "Evening hours mean people who work can use the library too."

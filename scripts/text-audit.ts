@@ -13,16 +13,9 @@ if (!existsSync(routesFile)) {
 }
 
 const configFile = join(ROOT, "e2e", "playwright.config.ts");
-// The check workflow does not run bun install, so make sure the audit's packages are present.
-const packages = Bun.spawnSync(["bun", "install", "--frozen-lockfile"], { cwd: ROOT });
-const browserCommand = ["bunx", "playwright", "install", "chromium"];
-if (process.env.CI) browserCommand.push("--with-deps");
-const install = Bun.spawnSync(browserCommand, { cwd: ROOT });
-if (packages.exitCode !== 0 || install.exitCode !== 0) {
-  console.error(
-    "Could not get the packages or the browser. " +
-      "Try next: run bun install, then bunx playwright install chromium.",
-  );
+const install = Bun.spawnSync(["bunx", "playwright", "install", "chromium"], { cwd: ROOT });
+if (install.exitCode !== 0) {
+  console.error("Could not get the browser. Try next: run bunx playwright install chromium.");
   process.exit(2);
 }
 const audit = Bun.spawnSync(["bunx", "playwright", "test", "-c", configFile, "--trace", "off"], {

@@ -16,7 +16,7 @@ flowchart LR
 
 ### 1. Set up
 
-You need [Bun](https://bun.sh) 1.4 or newer, and you need git. Bun runs the TypeScript code in this course.
+You need a recent [Bun](https://bun.sh), and you need git. Bun runs the TypeScript code in this course.
 
 ```bash
 bun install

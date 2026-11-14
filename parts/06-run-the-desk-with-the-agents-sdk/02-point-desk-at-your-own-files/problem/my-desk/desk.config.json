@@ -1,0 +1,4 @@
+{
+  "root": "TODO: the path to your own folder, such as ../my-project",
+  "permissions": { "allow": [], "deny": [] }
+}

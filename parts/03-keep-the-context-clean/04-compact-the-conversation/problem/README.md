@@ -3,23 +3,9 @@
 ## The problem
 
 Trimming is not enough on a long night. The model's own words and the tool calls still pile up. At some size
-the request is too big for the context window, or too slow and costly to send.
+the request is too big for the context window, or too slow and costly to send. Compaction fixes this.
 
-Compaction fixes this. When the conversation passes a size limit, desk asks the cheap fast role to write a
-summary. Then it swaps the old messages for that summary and carries on.
-
-But a summary can forget things. For example, the summary may say "read 9 drafts" and leave out that
-`shop-break-in` is still to do. So desk does not trust the summary with what matters:
-
-- The open todo items go in after the summary, from `openTodos()`.
-- The desk rules stay in the system prompt, which compaction never touches.
-- The full conversation is saved to a file first, so nothing is lost for good.
-
-The finished desk prints a line like this when it compacts:
-
-```text
-  ~ compacted the conversation: about 9211 tokens down to 418
-```
+When the conversation passes a size limit, desk asks the cheap fast role to write a summary.
 
 ```mermaid
 flowchart TD
@@ -30,19 +16,22 @@ flowchart TD
   N --> M
 ```
 
-## Your challenge
+## Watch it done
 
-In `src/context.ts`, write `compact(messages, runId)`. The rest is in place: `compactAtTokens()` reads the
-limit from `desk.config.json`, and `keepContextSmall()` in `src/main.ts` calls `compact` when the limit is
-passed.
+Then it swaps the old messages for the summary.
 
-1. Append every message to `.desk/transcripts/<runId>.jsonl`, one JSON line each.
-2. Call `generateText` with `model("fast")`, `SUMMARY_RULES`, and `render()` of all but the last two messages.
-3. Build one user message: the summary, then `openTodos()`.
-4. Return that message and the last two messages, with the cost of the summary call.
+But a summary can forget things. For example, the summary may say "read 9 drafts" and leave out that
+`shop-break-in` is still to do. So desk does not trust the summary with what matters:
 
-Keep the line format of `render()` and the first words of `SUMMARY_RULES`. The practice model reads them to
-write its summary.
+- The open todo items go in after the summary, from `openTodos()`.
+- The desk rules stay in the system prompt, which compaction never touches.
+- The full conversation is saved to a file first, so nothing is lost.
+
+The finished desk prints a line like this:
+
+```text
+  ~ compacted the conversation: about 9211 tokens down to 418
+```
 
 Run `bun run world reset` first. A `try` run changes the newsroom.
 
@@ -51,11 +40,32 @@ cp finished/desk.config.json world/newsroom/desk.config.json
 bun run try compact-the-conversation solution -p "check tonight's drafts" --permission-mode accept-edits --max-turns 80 < /dev/null
 ```
 
-Expect: a line that starts with `  ~ compacted the conversation: about`.
+Expect: a line that starts with `~ compacted`.
 
 With `< /dev/null`, every prompt gets no. So the CMS files nothing, even when the last line says `Filed 9`.
 
 ![The compaction line in a night desk run](../images/expected.png)
+
+## Your turn
+
+In `src/context.ts`, write `compact(messages, runId)`. The rest is in place: `compactAtTokens()` reads the
+limit, and `keepContextSmall()` in `src/main.ts` calls `compact` when it is passed.
+
+1. Append every message to `.desk/transcripts/<runId>.jsonl`, one JSON line each.
+2. Call `generateText` with `model("fast")`, `SUMMARY_RULES`, and `render()` of all but the last two messages.
+3. Build one user message: the summary, then `openTodos()`.
+4. Return that message and the last two messages, with the cost of the summary call.
+
+Keep the line format of `render()` and the first words of `SUMMARY_RULES`. The practice model uses them to
+write its summary.
+
+## Do it on your work
+
+```bash
+bun run verify compact-the-conversation
+```
+
+Expect: `Done. All 5 rules pass.`
 
 ## Done when
 
@@ -65,11 +75,9 @@ With `< /dev/null`, every prompt gets no. So the CMS files nothing, even when th
 - The desk rules, with "never name a person under 18", are still sent after the summary.
 - The saved transcript holds every tool call from before the summary.
 
-```bash
-bun run verify compact-the-conversation
-```
+## Solution
 
-Expect: `Done. All 5 rules pass.`
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

@@ -50,7 +50,7 @@ error, because the tool did not exist. The public corrections page never showed 
 
 ## river-date
 
-desk changed "on 9 November" to "on 10 November" in `river-levels`. Then it tried to log the correction and got an
+desk changed "on the ninth" to "on the tenth" in `river-levels`. Then it tried to log the correction and got an
 error, because the tool did not exist. The public corrections page never showed the fix.
 
 ```json
@@ -138,7 +138,7 @@ error, because the tool did not exist. The public corrections page never showed 
 
 ## pool-date
 
-desk changed "on 1 December" to "on 8 December" in `pool-reopening`. Then it tried to log the correction and got an
+desk changed "on the first" to "on the eighth" in `pool-reopening`. Then it tried to log the correction and got an
 error, because the tool did not exist. The public corrections page never showed the fix.
 
 ```json

@@ -10,7 +10,7 @@ import { every, plant, type Run, type World } from "./lib/harness";
 const RIVER = "drafts/river-levels.md";
 const BRIDGE = "drafts/bridge-repairs.md";
 // biome-ignore lint/style/useNamingConvention: field names follow the edit_file tool
-const FIX = { path: RIVER, old_text: "on 9 November", new_text: "on 10 November" };
+const FIX = { path: RIVER, old_text: "on the ninth", new_text: "on the tenth" };
 
 // The river draft as it was before the run, saved per world, so a rule can compare.
 const riverBefore = new Map<string, string>();

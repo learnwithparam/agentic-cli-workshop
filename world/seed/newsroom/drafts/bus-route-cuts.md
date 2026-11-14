@@ -8,7 +8,7 @@ embargo:
 sources: [sources/press-releases/bus-network.txt]
 ---
 
-Routes 12 and 14 will run every 30 minutes instead of every 20 minutes from January.
+Routes 12 and 14 will run every half hour instead of every twenty minutes from January.
 
 Passenger groups slammed the change, saying it would make journeys to the hospital harder.
 

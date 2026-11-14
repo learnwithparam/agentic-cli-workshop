@@ -27,6 +27,22 @@ function firstSeen(desk: Run, text: string): number | null {
   return null;
 }
 
+// The service fails the first calls with a status, then answers.
+// DESK_RETRY_MS keeps the waits short.
+const flaky = (folder: string, name: string, failures: number, status: number) =>
+  runs(folder, name, {
+    args: ["-p", "Check the bridge draft."],
+    // biome-ignore lint/style/useNamingConvention: the shell fixes this name
+    env: { DESK_RETRY_MS: "40" },
+    scenario: (world) => (_request, all) => {
+      if (all.length <= failures) return { status, error: "The service is busy." };
+      return { text: answer(world.nonce) };
+    },
+  });
+const recovers = (folder: string) => flaky(folder, "retry-recovers", 2, 503);
+const neverRecovers = (folder: string) => flaky(folder, "retry-gives-up", 99, 529);
+const ourMistake = (folder: string) => flaky(folder, "retry-our-mistake", 99, 400);
+
 export default [
   {
     says: "Every model call asks for a stream",
@@ -68,5 +84,33 @@ export default [
     tryNext:
       "After the stream ends, await reply.toolCalls and reply.responseMessages, " +
       "then run the tools as before.",
+  },
+  {
+    says: "A busy service (503) is retried with a printed wait, and the run then finishes",
+    test: (folder) =>
+      every(recovers(folder), (desk) => {
+        const waits = desk.stdout.match(/Retrying in \d+ ms/g) ?? [];
+        const finished = desk.code === 0 && desk.stdout.includes(`End ${desk.world.nonce}`);
+        return finished && desk.requests.length === 3 && waits.length === 2;
+      }),
+    tryNext:
+      "Catch the error, check error.statusCode is 429 or 500 or more, print Retrying in N ms, " +
+      "wait, and call again. Set maxRetries: 0 so the waits are yours.",
+  },
+  {
+    says: "A service that never recovers is tried 4 times in all, then desk stops with exit 1",
+    test: (folder) =>
+      every(neverRecovers(folder), (desk) => {
+        const stopped = desk.code === 1 && desk.stdout.includes("Stopped:");
+        return stopped && desk.requests.length === 4 && !desk.timedOut;
+      }),
+    tryNext: "Give up after 3 retries: print a Stopped line and call process.exit(1).",
+  },
+  {
+    says: "Our own mistake (400) is not retried",
+    test: (folder) =>
+      every(ourMistake(folder), (desk) => desk.requests.length === 1 && desk.code === 1),
+    tryNext:
+      "Retry only 429 and 500 or more. A 400 means the request is wrong, so asking again fails.",
   },
 ] satisfies Rule[];

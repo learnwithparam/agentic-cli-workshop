@@ -33,8 +33,8 @@
         {
           "id": "river-date",
           "kind": "date",
-          "wrong": "on 9 November",
-          "right": "on 10 November",
+          "wrong": "on the ninth",
+          "right": "on the tenth",
           "source": "sources/river-levels.csv",
           "correction": true
         }
@@ -118,8 +118,8 @@
         {
           "id": "pool-date",
           "kind": "date",
-          "wrong": "on 1 December",
-          "right": "on 8 December",
+          "wrong": "on the first",
+          "right": "on the eighth",
           "source": "sources/press-releases/pool-reopening.txt",
           "correction": true
         },

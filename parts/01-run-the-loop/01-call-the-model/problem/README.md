@@ -19,15 +19,7 @@ sequenceDiagram
   desk-->>You: prints the reply
 ```
 
-## Your challenge
-
-Open `src/main.ts` in this folder. It already reads the text after `-p`. Send that text to the model with
-`generateText` from `ai`. Then print the reply.
-
-Ask `config/models.ts` for the model by its role, never by its name. A role says what a call is for. Use
-`model("smart")` from `"#models"`. The main loop does the hard thinking, so it uses the smart role. With no
-setting, the smart role is the practice model. The practice model is a small server on your computer. It
-answers like a real model API, with no key and no cost.
+## Watch it done
 
 For example, you type `bun run try call-the-model -p "say ready"`. Desk sends the words `say ready` to the
 practice model. The model sends back one line of text, and desk prints it:
@@ -39,6 +31,20 @@ bun run try call-the-model -p "say ready"
 Expect: `Ready. The night desk is listening.` once your desk calls the model.
 
 ![The reply on screen](../images/expected.png)
+
+## Your turn
+
+Open `src/main.ts` in this folder. It already reads the text after `-p`. Send that text to the model with
+`generateText` from `ai`. Then print the reply.
+
+Ask `config/models.ts` for the model by its role, never by its name. A role says what a call is for. Use
+`model("smart")` from `"#models"`. The main loop does the hard thinking, so it uses the smart role. With no
+setting, the smart role is the practice model. The practice model is a small server on your computer. It
+needs no key and costs nothing.
+
+## Do it on your work
+
+Send desk a question from your work. Decide if the reply is usable.
 
 ## Done when
 
@@ -61,9 +67,13 @@ Expect: `Done. All 4 rules pass.` and a `Progress:` line.
 | `FAIL It sends one request with your prompt as the user message`  | Pass the `-p` text as `prompt`, and call the model once.                                                                    |
 | `FAIL It asks config/models.ts for the smart role`                | Use `model("smart")`. The fast role is for cheap side calls, such as summaries.                                             |
 | `FAIL It sends no temperature`                                    | Delete `temperature`. Newer models can reject it, and copied examples often set it.                                         |
-| `Cannot find module '#models'`                                    | Run `bun install` at the repo root. `#models` is set in the root `package.json`.                                            |
+| the "Cannot find module" error                                    | Run `bun install` at the repo root. `#models` is set in the root `package.json`.                                            |
 
 Compare with `../solution/src/main.ts` once your check passes.
+
+## Solution
+
+Open the `solution` folder after your check passes.
 
 ## Words you will use
 

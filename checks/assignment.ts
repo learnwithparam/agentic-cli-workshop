@@ -71,9 +71,9 @@ function handBuiltPasses(): number {
 
 export default [
   {
-    says: `promptfoo reports ${PROMPTFOO_VERSION}`,
+    says: "promptfoo reports the pinned version",
     test: async () => (await promptfooVersion()) === PROMPTFOO_VERSION,
-    tryNext: `Run it as npx promptfoo@${PROMPTFOO_VERSION} so the version is pinned.`,
+    tryNext: `Run it with the pinned version from the step page.`,
   },
   {
     says: "Every course task has at least one assertion",
@@ -90,7 +90,8 @@ export default [
       return finished.exitCode === 0 && finished.failures === 0 && matches;
     },
     tryNext:
-      "Run npx promptfoo@0.125.1 eval in your folder. Each draft that bun run score counts as " +
-      "caught must pass, so check your assertion against the CMS rules.",
+      "Run npx promptfoo eval with the pinned version in your folder. " +
+      "Each draft that bun run score counts as caught must pass, " +
+      "so check your assertion against the CMS rules.",
   },
 ] satisfies Rule[];
