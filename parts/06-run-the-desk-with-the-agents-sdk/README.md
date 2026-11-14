@@ -65,7 +65,7 @@ Expect: `Done. All 5 rules pass.` The check runs the sample answer three times, 
 bun run verify run-the-desk-with-the-openai-agents-sdk
 ```
 
-Expect: `0 of 5 rules pass` on the starter, with a try-next line under each FAIL. Finish the step to see
+Expect: "0 of 5" on the starter, with a try-next line under each FAIL. Finish the step to see
 it change.
 
 ```bash

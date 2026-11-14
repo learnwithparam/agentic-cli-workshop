@@ -26,9 +26,9 @@ flowchart LR
 This step starts from your Run the loop desk. `src/main.ts` holds the loop. You work in `src/tools.ts`, which
 holds the tools.
 
-1. Add `search_files { pattern, path }`. It looks in one file, or in every file of a folder. It returns each
-   match as `path:line number: text`.
-2. Add `file_story { slug, note }` and `hold_story { slug, reason }`. They POST to the CMS at
+1. Add `search_files(pattern, path)`. It looks in one file, or in every file of a folder. It returns each
+   match as `path:line: text`.
+2. Add `file_story(slug, note)` and `hold_story(slug, reason)`. They POST to the CMS at
    `process.env.CMS_URL`. Read the CMS API list at the top of `world/cms/server.ts`.
 3. Give every schema `required` with every field, and `additionalProperties: false`. Then the model cannot
    invent a field.
@@ -48,7 +48,7 @@ Run `bun run world reset` first. A `try` run changes the newsroom.
 bun run try shape-the-tools solution -p "check tonight's drafts" --max-turns 6
 ```
 
-Expect: lines such as `  > file_story allotment-waiting-list`, then `Stopped: error_max_turns after 6 turns`.
+Expect: lines such as a `file_story` line, then `Stopped: error_max_turns`.
 
 Lines such as `error: There is no tool "todo_write"` are fine. You build those tools later.
 

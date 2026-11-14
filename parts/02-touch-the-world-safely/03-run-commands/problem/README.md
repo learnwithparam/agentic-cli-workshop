@@ -33,7 +33,7 @@ flowchart LR
 
 In `src/tools.ts`:
 
-1. Add the `run_command { command }` tool and its runner.
+1. Add the `run_command(command)` tool and its runner.
 2. Run the command with `Bun.spawnSync(["bash", "-c", command], { cwd: root, timeout: 5000 })`.
 3. When `exitedDueToTimeout` is true, throw an error that says the command was stopped.
 4. Join stdout and stderr. Over 20,000 characters, keep the first 20,000 and add a note with the number of

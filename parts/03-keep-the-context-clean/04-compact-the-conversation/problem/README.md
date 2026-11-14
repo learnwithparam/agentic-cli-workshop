@@ -51,7 +51,7 @@ cp finished/desk.config.json world/newsroom/desk.config.json
 bun run try compact-the-conversation solution -p "check tonight's drafts" --permission-mode accept-edits --max-turns 80 < /dev/null
 ```
 
-Expect: a line that starts with `  ~ compacted the conversation: about`.
+Expect: a line that starts with `~ compacted`.
 
 With `< /dev/null`, every prompt gets no. So the CMS files nothing, even when the last line says `Filed 9`.
 

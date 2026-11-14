@@ -25,13 +25,13 @@ You get this line from `bun run demo --output-format json`. The `subtype` says h
 ## Why it matters
 
 Newsrooms already run agents this way. Katadata's news analysis system "scales to process over 10,000 articles
-daily". Its analysis time fell "from 3 hours to 15 minutes"
-([Google Cloud customer story, read in November 2026](https://cloud.google.com/customers/katadata)).
+daily". Its analysis time fell sharply
+([Google Cloud customer story](https://cloud.google.com/customers/katadata)).
 
 FUNKE Mediengruppe runs its tools through "a central registry on the Model Context Protocol with more than 20
 MCP servers". The Model Context Protocol, or MCP, is a standard way to plug outside tools into an agent. One of
 those servers is for Germany's national news agency
-([Google Cloud customer story, read in November 2026](https://cloud.google.com/customers/funkemediengruppe)).
+([Google Cloud customer story](https://cloud.google.com/customers/funkemediengruppe)).
 
 Both stories come from a company that sells to these newsrooms. The numbers are the claims of the newsrooms, as
 that company published them.
@@ -58,7 +58,7 @@ flowchart LR
 | `run-headless`          | 15      | `-p` with `--output-format text`, `json` and `stream-json`, and the exit codes                         | Every stdout line against `checks/lib/contract.schema.json`, exit codes 0, 1, 3 and 4                                             |
 | `score-the-agent`       | 25      | `bun run score` over the 12 drafts: faults caught, false flags, rule breaks, turns, cost               | The scorer's JSON against the answer key, `notes/failures.md` with a session line per missed fault                                |
 
-This part takes 95 minutes. A deeper step that rebuilds desk on the Claude Agent SDK is not in the repo yet.
+This part fits in an evening. A deeper step that rebuilds desk on the Claude Agent SDK is not in the repo yet.
 
 Every step starts from `problem/src/`. The first step starts from your Keep the context clean desk, with three new files
 left empty until their step: `src/wire.ts`, `src/session.ts` and `src/output.ts`.

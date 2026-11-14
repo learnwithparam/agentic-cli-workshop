@@ -49,7 +49,7 @@ Two more moves, because a run can be stopped in the middle:
 7. On load, drop a last assistant message whose tool call has no result. That is the repair after a crash. Then
    add `--rewind <n>`: drop the last `n` turns and rewrite the file. It undoes the talk, not the work.
 
-desk prints the id on its first line, such as `desk session 3f9a1c2e`. Keep it to resume later.
+desk prints the id on its first line, such as `desk session` and a short id. Keep it to resume later.
 
 ```bash
 bun run verify resume-a-session

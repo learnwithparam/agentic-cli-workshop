@@ -1,3 +1,3 @@
 # Lentil soup
 
-Serves four. Cook one cup of lentils for 25 minutes with an onion and two carrots.
+Serves four. Cook one cup of lentils until soft with an onion and two carrots.

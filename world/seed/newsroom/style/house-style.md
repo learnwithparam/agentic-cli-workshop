@@ -8,12 +8,12 @@
 
 ## Dates
 
-- Write `10 November`, never `November 10th` or `10/11`.
+- Write `the tenth`, never `November 10th` or `10/11`.
 
 ## Titles
 
-- First mention: full title and name, as in `Councillor Dev Ranasinghe`. After that, surname only.
-- The mayor is `the mayor`, lower case, unless it comes before the name: `Mayor Helen Okafor`.
+- First mention: full title and name, as in `Councillor Ranasinghe`. After that, surname only.
+- The mayor is `the mayor`, lower case, unless it comes before the name: `Mayor Okafor`.
 
 ## Banned words
 

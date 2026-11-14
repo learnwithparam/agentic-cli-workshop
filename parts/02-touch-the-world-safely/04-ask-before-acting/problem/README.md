@@ -56,7 +56,7 @@ Run `bun run world reset` first. A `try` run changes the newsroom.
 bun run try ask-before-acting solution -p "check tonight's drafts" --max-turns 9
 ```
 
-Expect: `Allow file_story? [y]es once, [a]lways, [n]o:` and desk waits for you to type an answer.
+Expect: `Allow file_story?` and the choices and desk waits for you to type an answer.
 
 ![The permission prompt with the diff of an edit](../images/expected.png)
 

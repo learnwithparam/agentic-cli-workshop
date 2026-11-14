@@ -70,7 +70,7 @@ Expect: `Done. All 4 rules pass.`
 
 | What you see                                                    | Fix                                                                  |
 | --------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `FAIL  A good list is saved, and the terminal shows every item` | Print each item, such as `[>] Check bridge-repairs`.                 |
+| `FAIL  A good list is saved, and the terminal shows every item` | Print each item, such as `[>] Check` and the item.                   |
 | `FAIL  After 3 turns with no todo_write, ...`                   | Keep the counter outside the function, so it lasts between turns.    |
 | `FAIL  No reminder comes before ...`                            | Set the counter back to 0 after a `todo_write` and after a reminder. |
 

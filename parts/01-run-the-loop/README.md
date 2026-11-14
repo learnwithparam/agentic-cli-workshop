@@ -29,10 +29,10 @@ If you get the loop wrong, the agent is useless or costs too much. Here are thre
 
 ## Why it matters
 
-The loop is small, and it is enough. In 2024, Anthropic built a coding agent from a model in a loop with two tools: a
+The loop is small, and it is enough. Anthropic built a coding agent from a model in a loop with two tools: a
 shell and a file editor. They let it "sample until the model decides that it is finished". It scored 49% on
 SWE-bench Verified, a public test of coding agents. The best score before it was 45%
-([Anthropic, read in November 2026](https://www.anthropic.com/engineering/swe-bench-sonnet)). Everything later in this
+([Anthropic](https://www.anthropic.com/engineering/swe-bench-sonnet)). Everything later in this
 course is built around this loop: permissions, compaction, helper agents and hooks.
 
 ```mermaid

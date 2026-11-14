@@ -44,7 +44,7 @@ Expect: `The practice model is running at http://localhost:4010.` Leave it runni
 bun run verify run-the-desk-with-the-openai-agents-sdk
 ```
 
-Expect: `0 of 5 rules pass` until you finish, then `Done. All 5 rules pass.`
+Expect: "0 of 5" until you finish, then `Done. All 5 rules pass.`
 
 ## Done when
 

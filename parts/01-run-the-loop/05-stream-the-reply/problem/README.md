@@ -31,7 +31,7 @@ In `src/main.ts`, replace `generateText` with `streamText`:
 3. Do not print `reply.text` again at the end. It is already on screen.
 
 4. A busy service answers 503 or 429. Those pass, so ask again. Pass `maxRetries: 0` to `streamText`, catch the
-   error, read `error.statusCode`, print `Retrying in N ms`, wait, and call again, twice as long each time. Give
+   error, read `error.statusCode`, print a `Retrying` line with the wait in ms, wait, and call again, twice as long each time. Give
    up after three retries with a `Stopped:` line and exit 1. Never retry a 400. `DESK_RETRY_MS` sets the first wait.
 
 ```bash
@@ -44,7 +44,7 @@ For example, the solution prints these three lines. Each line arrives in small p
 
 ```text
 I will read drafts/river-levels.md.
-I read drafts/river-levels.md. It opens: "The River Brook peaked at 3.4 metres at Brook Bridge on 9 November after heavy rain."
+I read drafts/river-levels.md. It opens: "The River Brook peaked at 3.4 metres at Brook Bridge on the ninth after heavy rain."
 Done. 2 turns, $0.0016.
 ```
 

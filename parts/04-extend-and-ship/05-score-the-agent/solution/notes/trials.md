@@ -1,7 +1,8 @@
 # Trials
 
-One score is one roll of the dice. A real model gives a different answer each time, so I ran the whole night
-five times with `bun run score --trials` and copied the output.
+One score is one roll of the dice. A real model can give a different answer each time. The practice model slips
+on some trials on purpose to show that. I ran the whole night five times with `bun run score --trials` and
+copied the output.
 
 Trial 1: caught 13 of 13, false flags 0
 Trial 2: caught 13 of 13, false flags 1

@@ -13,7 +13,7 @@ const readRiver = { name: "read_file", input: { path: RIVER } };
 const fixRiver = {
   name: "edit_file",
   // biome-ignore lint/style/useNamingConvention: field names follow the edit_file tool
-  input: { path: RIVER, old_text: "on 9 November", new_text: "on 10 November" },
+  input: { path: RIVER, old_text: "on the ninth", new_text: "on the tenth" },
 };
 const fileStory = (slug: string) => ({ name: "file_story", input: { slug, note: NOTE } });
 const createFile = { name: "run_command", input: { command: "touch planned.txt" } };
@@ -85,7 +85,7 @@ const filingsOf = (desk: Run) =>
   desk.world.cms.state().log.filter((line) => line.path.endsWith("/file"));
 const statusOf = (desk: Run, slug: string) => desk.world.cms.state().stories[slug]?.status;
 const riverNow = (desk: Run) => readFileSync(join(desk.world.newsroom, RIVER), "utf8");
-const riverWasFixed = (desk: Run) => riverNow(desk).includes("on 10 November");
+const riverWasFixed = (desk: Run) => riverNow(desk).includes("on the tenth");
 
 function resultFor(desk: Run, call: { name: string; input: unknown }) {
   const wanted = JSON.stringify(call.input);

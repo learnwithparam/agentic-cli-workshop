@@ -32,11 +32,11 @@ context shrinks to about one sixth of its size.
 
 Anthropic measured this on a web search task of 100 turns. Clearing old tool results let agents finish work
 that would fail without it, "while reducing token consumption by 84%"
-([Anthropic, read in November 2026](https://claude.com/blog/context-management)).
+([Anthropic](https://claude.com/blog/context-management)).
 
 A helper agent with its own clean context also helps. Anthropic's research system with helper agents beat a
 single agent by 90.2% on their own research test
-([Anthropic, read in November 2026](https://www.anthropic.com/engineering/built-multi-agent-research-system)). But it
+([Anthropic](https://www.anthropic.com/engineering/built-multi-agent-research-system)). But it
 used many more tokens. In this part, you measure both of these trade-offs on the newsroom.
 
 ```mermaid
@@ -67,7 +67,7 @@ flowchart TB
 | `compact-the-conversation`  | 25      | Compaction at a token threshold on the fast role, the full transcript saved first                               | The request after the threshold: a summary, under the target size, open todo items and the desk rules still present                  |
 | `delegate-to-a-subagent`    | 25      | `ask_researcher`: a child loop on the fast role with a fresh context, read-only tools and a turn cap            | The parent's next request grows by the answer only (under 2,000 characters), the child cannot file or edit, its cost is in the total |
 
-This part takes 90 minutes. The deeper step is 15 of them.
+This part fits in an evening. One step is a deeper one.
 
 Every step starts from `problem/src/`. The first step starts from your Touch the world safely desk. This part adds three
 files: `src/todos.ts`, `src/context.ts` and `src/researcher.ts`.

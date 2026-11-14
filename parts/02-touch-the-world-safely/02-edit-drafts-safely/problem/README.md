@@ -5,9 +5,9 @@
 Last month a style fix wiped out a whole paragraph, and nobody saw it until morning. An editing tool must
 change only what the model means to change.
 
-For example, the draft `drafts/river-levels.md` says the river peaked "on 9 November". The source
-`sources/river-levels.csv` shows the peak on 10 November. The fix is one small swap: the old text
-`on 9 November` becomes the new text `on 10 November`.
+For example, the draft `drafts/river-levels.md` says the river peaked "on the ninth". The source
+`sources/river-levels.csv` shows the peak on the tenth. The fix is one small swap: the old text
+"on the ninth" becomes the new text "on the tenth".
 
 Four things can go wrong:
 
@@ -34,7 +34,7 @@ flowchart TD
 
 In `src/tools.ts`:
 
-1. Add the `edit_file { path, old_text, new_text }` tool and its runner.
+1. Add the `edit_file(path, old_text, new_text)` tool and its runner.
 2. In `readFile`, save the text you read in a `Map` from the full path to the text.
 3. In `editFile`, refuse with a clear error in each of the four cases above.
 4. Otherwise replace that one piece, save the new text in the `Map`, and return a short diff.

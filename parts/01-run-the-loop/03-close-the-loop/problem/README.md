@@ -28,7 +28,7 @@ In `src/main.ts`, turn the single call into a loop:
 
 1. Call the model and add `reply.responseMessages` to `messages`.
 2. If `reply.toolCalls` is empty, print `reply.text` and stop.
-3. Run every call. Wrap each runner in `try` and `catch`. A throw becomes `{ type: "error-text", value: message }`.
+3. Run every call. Wrap each runner in `try` and `catch`. A throw becomes `{type:"error-text",value:message}`.
 4. Add one message with role `tool` that holds every result from this turn, each with its `toolCallId`.
 5. Go back to 1.
 

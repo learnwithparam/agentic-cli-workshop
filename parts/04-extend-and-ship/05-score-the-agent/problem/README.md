@@ -51,10 +51,11 @@ Expect: a JSON score with `"caught": 6` and seven ids under `"missed"`.
    the newest file in `world/newsroom/.desk/sessions/` and search it for `log_correction`.
 3. In `notes/failures.md`, add a `##` heading for each missed id. Under it, say why in one or two sentences,
    and paste the session line that shows it in a json code block.
-4. Fix desk: add the `log_correction { slug, wrong, right, source }` tool in `src/tools.ts`. Its runner POSTs to
+4. Fix desk: add the `log_correction(slug, wrong, right, source)` tool in `src/tools.ts`. Its runner POSTs to
    `/api/corrections` on the CMS.
 5. Run `bun run score` again. Expect `"caught": 13`.
-6. One run is one roll of the dice. A real model gives a different answer each time, so run the night five times:
+6. One run is one roll of the dice. A real model can give a different answer each time. The practice model slips on
+   some trials on purpose, so you can see the spread. Run the night five times:
 
 ```bash
 bun run score --trials

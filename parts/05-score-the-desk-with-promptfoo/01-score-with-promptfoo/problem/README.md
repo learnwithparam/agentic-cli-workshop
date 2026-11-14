@@ -47,7 +47,7 @@ Expect: three `PASS` lines, `Every line passes.`, and a new `assignment/result.j
 
 ## Done when
 
-- promptfoo reports 0.125.1.
+- promptfoo reports the pinned version.
 - Every course task has at least one assertion.
 - The run exits zero when the desk passes the bar you set. Its pass count matches the hand-built score.
 

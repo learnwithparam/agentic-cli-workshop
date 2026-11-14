@@ -30,7 +30,7 @@ In `src/main.ts`:
 2. Write `readFile(path)`. Resolve the path against the newsroom folder. If the path leaves the folder, refuse
    it, and say so in words the model can read. Do the same when the file does not exist.
 3. If the model asked for tools, add one message with role `tool`. It holds a `tool-result` for each call,
-   with the call's `toolCallId`. A good read is `{ type: "text", value }`. A problem is `{ type: "error-text", value }`.
+   with the call's `toolCallId`. A good read is `{type:"text",value}`. A problem is `{type:"error-text",value}`.
 4. Call the model again with the longer message list and print its answer.
 
 ```bash

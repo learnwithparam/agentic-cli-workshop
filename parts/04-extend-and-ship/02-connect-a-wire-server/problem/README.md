@@ -9,11 +9,11 @@ The Model Context Protocol, or MCP, is a standard way to plug outside tools into
 offers tools. An MCP client, here desk, lists and calls them. Over stdio, desk starts the server as a child
 program.
 
-The wire server is ready in this step's `wire/` folder. It has two tools, `search_wire { query }` and
-`get_wire_story { id }`. desk offers them to the model as `wire__search_wire` and `wire__get_wire_story`. The
+The wire server is ready in this step's `wire/` folder. It has two tools, `search_wire(query)` and
+`get_wire_story(id)`. desk offers them to the model as `wire__search_wire` and `wire__get_wire_story`. The
 server's name comes first, so two servers can both have a tool called `search`.
 
-For example, `search_wire { "query": "River Brook" }` answers `PA-1107: Heavy rain brings river warnings across the county`.
+For example, `search_wire("query": "River Brook")` answers the story `PA-1107`.
 
 ```mermaid
 flowchart LR

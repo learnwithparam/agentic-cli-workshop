@@ -17,9 +17,9 @@ EMBARGOED UNTIL 2026-11-13T09:00:00Z. Not for publication before this time.
 The website updates before that time. So the draft `new-clinic-opening.md` must be held, not filed. In the
 demo run, desk reads the draft and the press release, then calls `hold_story new-clinic-opening`.
 
-A safe edit is small. The draft `river-levels.md` says the river peaked "on 9 November". The file
+A safe edit is small. The draft `river-levels.md` says the river peaked "on the ninth". The file
 `sources/river-levels.csv` shows the peak, 3.4 metres, at `2026-11-10T04:00:00Z`. So desk changes the old text
-`on 9 November` to the new text `on 10 November`, and nothing else.
+"on the ninth" to the new text "on the tenth", and nothing else.
 
 So every tool that changes something must pass a gate first. The gate is a check in your code. It decides one
 of three things: allow the tool, ask the night editor, or deny the tool.
@@ -27,10 +27,10 @@ of three things: allow the tool, ask the night editor, or deny the tool.
 ## Why it matters
 
 Asking is not enough on its own. Anthropic reports that people who use Claude Code "accept 93% of" its
-permission prompts anyway ([Anthropic, read in November 2026](https://www.anthropic.com/research/claude-code-auto-mode)).
+permission prompts anyway ([Anthropic](https://www.anthropic.com/research/claude-code-auto-mode)).
 Good tools matter too. Anthropic shows the same tool answer in 206 tokens and in 72 tokens, and says errors
 should give "specific and actionable improvements"
-([Anthropic, read in November 2026](https://www.anthropic.com/engineering/writing-tools-for-agents)).
+([Anthropic](https://www.anthropic.com/engineering/writing-tools-for-agents)).
 A gate that asks about everything teaches people to say yes. A useful gate does three things:
 
 - It allows safe work without asking.
@@ -63,7 +63,7 @@ flowchart LR
 | `run-commands`       | 15      | `run_command` with a timeout, a folder jail and output cut at 20,000 characters                                        | Exit and timing of a planted `sleep`, the length of the result, the answer to a sum over `sources/school-results.csv` |
 | `ask-before-acting`  | 30      | Permission modes (`ask`, `accept-edits`, `plan`, `never-ask`) and rules (`allow`, `ask`, `deny`) in `desk.config.json` | The CMS after a "no" (unchanged), a deny that beats an allow, `plan` mode leaving files untouched                     |
 
-This part takes 85 minutes.
+This part fits in an evening.
 
 Every step starts from `problem/src/`. From this part on, desk lives in more than one file: `src/main.ts`
 holds the loop and `src/tools.ts` holds the tools. The last step adds `src/permissions.ts`.
@@ -123,7 +123,7 @@ you approved.
 | Does `notes/approvals.md` give the number of prompts and the number approved?                 | Two numbers in the note |
 
 Going further: Anthropic stops a run after "3 consecutive denials or 20 total" and hands it to a person
-([Anthropic, read in November 2026](https://www.anthropic.com/research/claude-code-auto-mode)). Add the same
+([Anthropic](https://www.anthropic.com/research/claude-code-auto-mode)). Add the same
 rule to your gate.
 
 ## Finished
