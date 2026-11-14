@@ -96,18 +96,48 @@ function stopAtCap(reason: "error_max_turns" | "error_max_budget"): never {
   process.exit(3);
 }
 
+// A busy or broken service answers 429 or 5xx. Those pass, so desk waits and asks again: 1 second,
+// then 2, then 4, then gives up. A 4xx such as 400 is our own mistake, and asking again cannot fix it.
+// DESK_RETRY_MS changes the first wait, so a test does not have to sit through the real one.
+const RETRIES = 3;
+const firstWaitMs = Number(process.env.DESK_RETRY_MS ?? 1000);
+
+function worthRetrying(error: unknown): boolean {
+  const status = (error as { statusCode?: number }).statusCode;
+  return status === 429 || (status !== undefined && status >= 500);
+}
+
+// One streamed call. The SDK's own retries are off, so every wait is ours and is printed.
+async function streamWithRetries() {
+  for (let attempt = 0; ; attempt++) {
+    const reply = streamText({ model: model("smart"), messages, tools, maxRetries: 0 });
+    try {
+      let printedText = false;
+      for await (const piece of reply.fullStream) {
+        if (piece.type === "error") throw piece.error;
+        if (piece.type !== "text-delta") continue;
+        process.stdout.write(piece.text);
+        printedText = true;
+      }
+      if (printedText) process.stdout.write("\n");
+      return reply;
+    } catch (error) {
+      if (!worthRetrying(error) || attempt >= RETRIES) {
+        console.log(`Stopped: the model service failed: ${(error as Error).message}`);
+        process.exit(1);
+      }
+      const waitMs = firstWaitMs * 2 ** attempt;
+      console.log(`Retrying in ${waitMs} ms (retry ${attempt + 1} of ${RETRIES}).`);
+      await Bun.sleep(waitMs);
+    }
+  }
+}
+
 while (true) {
   // Check the caps before every call. One call can go past the budget; the next one never starts.
   if (turns >= maxTurns) stopAtCap("error_max_turns");
   if (cost >= maxBudgetUsd) stopAtCap("error_max_budget");
-  const reply = streamText({ model: model("smart"), messages, tools });
-  // Print each piece of text the moment it arrives.
-  let printedText = false;
-  for await (const piece of reply.textStream) {
-    process.stdout.write(piece);
-    printedText = true;
-  }
-  if (printedText) process.stdout.write("\n");
+  const reply = await streamWithRetries();
   turns++;
   // The price per token for this role comes from config/models.ts. It is null when unknown.
   cost += costUsd("smart", await reply.usage) ?? 0;

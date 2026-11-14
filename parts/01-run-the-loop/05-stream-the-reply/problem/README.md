@@ -31,6 +31,11 @@ In `src/main.ts`, replace `generateText` with `streamText`:
    With `streamText`, these are promises. A promise is a value that arrives later.
 3. Do not print `reply.text` again at the end. It is already on screen.
 
+4. A busy service answers with a status such as 503 or 429. Those pass, so ask again. Pass `maxRetries: 0` to
+   `streamText`, catch the error, read `error.statusCode`, print `Retrying in N ms`, wait, and call again. Wait
+   twice as long each time. Give up after three retries with a `Stopped:` line and exit 1. A 400 is your own
+   mistake, so never retry it. Set `DESK_RETRY_MS` to change the first wait.
+
 ```bash
 bun run try stream-the-reply -p "what does the river-levels draft say?"
 ```
@@ -53,12 +58,15 @@ Done. 2 turns, $0.0016.
 - The start of the reply is on screen well before its end arrives.
 - The whole reply is printed exactly once.
 - Tools still work: the tool result goes back, and the run ends with code 0.
+- A busy service (503) is retried with a printed wait, and the run then finishes.
+- A service that never recovers is tried 4 times in all, then desk stops with exit 1.
+- Our own mistake (400) is not retried.
 
 ```bash
 bun run verify stream-the-reply
 ```
 
-Expect: `Done. All 4 rules pass.`
+Expect: `Done. All 7 rules pass.`
 
 ## If you get stuck
 
@@ -67,6 +75,7 @@ Expect: `Done. All 4 rules pass.`
 | `FAIL Every model call asks for a stream`                                       | Call `streamText`, not `generateText`.                                   |
 | `FAIL The start of the reply is on screen well before its end arrives`          | Write inside the `for await` loop. `await reply.text` waits for the end. |
 | `FAIL The whole reply is printed exactly once`                                  | Remove the extra `console.log` of the full text.                         |
+| `FAIL A busy service (503) is retried ...`                                      | Catch the error and read `error.statusCode`. Print the wait, then loop.  |
 | `FAIL Tools still work: the tool result goes back and the run ends with code 0` | `await reply.toolCalls` after the stream and run them as before.         |
 
 ## Words you will use
