@@ -3,12 +3,6 @@
 ## The problem
 
 `bun run score` tells you how many faults desk caught. Your team wants the same answer from a shared tool.
-promptfoo is an open-source eval runner. It reads one YAML file of tasks and assertions, runs each task, and
-prints a table of passes and fails.
-
-Your desk already ran headless over the 12 drafts. That run is saved in `assignment/recorded.json`, so the eval
-needs no key. A small provider file hands one draft at a time to promptfoo. A provider is the code that
-returns the output for a task.
 
 For example, the task `bridge-repairs` must come back filed, with `£420,000` in the text and a correction
 logged for `£4.2m`.
@@ -21,7 +15,16 @@ flowchart LR
   A --> O[Pass or fail per draft]
 ```
 
-## Your challenge
+## Watch it done
+
+promptfoo is an open-source eval runner. It reads one YAML file of tasks and assertions, runs each task, and
+prints a table of passes and fails.
+
+Your desk already ran headless over the 12 drafts. That run is saved in `assignment/recorded.json`, so the eval
+needs no key. A small provider file hands one draft at a time to promptfoo. A provider is the code that
+returns the output for a task.
+
+## Your turn
 
 Work in the `assignment/` folder. The steps below use the sample answer's names, so you can compare.
 
@@ -29,6 +32,9 @@ Work in the `assignment/` folder. The steps below use the sample answer's names,
    `world/seed/answer-key.json`. Give each task a `slug`, the `status` it must end with, and its `fixes`.
 2. Write the assertion in `assignment/caught.mjs`. Copy the rule from `score.ts`: a held story is held, and a
    filed story has the right text, loses the wrong text, and logs a correction when one is needed.
+
+## Do it on your work
+
 3. Run the eval:
 
 ```bash
@@ -50,6 +56,10 @@ Expect: three `PASS` lines, `Every line passes.`, and a new `assignment/result.j
 - promptfoo reports the pinned version.
 - Every course task has at least one assertion.
 - The run exits zero when the desk passes the bar you set. Its pass count matches the hand-built score.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

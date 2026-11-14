@@ -4,11 +4,7 @@
 
 Tonight's 12 drafts must be filed or held before the 06:00 website update. Your hand-built loop
 does the work, but you wrote every part of it: the messages, the tool results and the approval step.
-A team that does not want to own a loop uses a framework instead. The OpenAI Agents SDK runs the loop
-for you. You describe the agent, its tools and its approvals.
-
-The risk is that the framework files a story the rules say to hold. For example, a draft with an
-embargo that has not passed must wait for the night editor. An approval step stops that filing.
+A team that does not want to own a loop uses a framework instead.
 
 ```mermaid
 flowchart LR
@@ -20,7 +16,14 @@ flowchart LR
   D --> H[CMS: held]
 ```
 
-## Your challenge
+## Watch it done
+
+The OpenAI Agents SDK runs the loop for you. You describe the agent, its tools and its approvals.
+
+The risk is that the framework files a story the rules say to hold. For example, a draft with an
+embargo that has not passed must wait for the night editor. An approval step stops that filing.
+
+## Your turn
 
 Open `src/main.ts`. It stops with a TODO message. Build the desk on the SDK.
 
@@ -40,6 +43,8 @@ bun run practice-model
 
 Expect: `The practice model is running at http://localhost:4010.` Leave it running.
 
+## Do it on your work
+
 ```bash
 bun run verify run-the-desk-with-the-openai-agents-sdk
 ```
@@ -51,6 +56,10 @@ Expect: "0 of 5" until you finish, then `Done. All 5 rules pass.`
 - The desk files 9 stories and holds 3 on the practice model, and the last line shows those counts.
 - Held stories stop at approval, not in the instructions text.
 - Removing `needsApproval` would make the check fail.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

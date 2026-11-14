@@ -1,5 +1,20 @@
 # Extend and ship
 
+## After this part you can
+
+- Block a tool call with a hook that runs before it.
+- Connect an outside tool server over MCP.
+- Resume a stopped run from its session file.
+- Run desk headless and read its exit code.
+- Score the agent on planted faults.
+
+## You leave with
+
+desk is now a harness you can ship. Hooks guard the tools, a wire service plugs in over MCP, and a stopped run
+carries on where it was. A script can read every event and every exit code. And a score says how good it is,
+read from the CMS, not from the agent's own words. You built every part of it, from one model call in part
+one to a scored night run here.
+
 ## The problem
 
 The night editor wants desk to run with nobody watching, before the website updates. A run like that is called
@@ -110,7 +125,13 @@ bun run verify part extend-and-ship
 
 Expect: `Part extend-and-ship is done: 5/5 steps pass.`
 
-## Assignment
+## Watch and read
+
+- [MCP TypeScript SDK README](https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/main/README.md)
+- [Scaling Managed Agents: decoupling the brain from the hands](https://www.anthropic.com/research/managed-agents)
+- [Demystifying evals for AI agents](https://www.anthropic.com/research/demystifying-evals-for-ai-agents)
+
+## Project
 
 The problem: the editor wants the run to happen with nobody watching, survive a crash, leave an audit trail,
 and prove it is good enough.
@@ -126,16 +147,3 @@ real harness on the same drafts. For example, run the same 12 drafts with `claud
 | Are there zero false flags and zero rule breaks?                     | `bun run score`                       |
 | Does `notes/failures.md` name each missed fault with a session line? | A rule of the `score-the-agent` check |
 | Does `scorecard.md` have a second column for a real harness?         | A heading and a row in the file       |
-
-## Finished
-
-desk is now a harness you can ship. Hooks guard the tools, a wire service plugs in over MCP, and a stopped run
-carries on where it was. A script can read every event and every exit code. And a score says how good it is,
-read from the CMS, not from the agent's own words. You built every part of it, from one model call in part
-one to a scored night run here.
-
-## Read
-
-- [MCP TypeScript SDK README](https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/main/README.md)
-- [Scaling Managed Agents: decoupling the brain from the hands](https://www.anthropic.com/research/managed-agents)
-- [Demystifying evals for AI agents](https://www.anthropic.com/research/demystifying-evals-for-ai-agents)

@@ -8,6 +8,8 @@ Every tool result stays in the conversation, and the whole conversation goes out
 reads thirty drafts, it sends all thirty drafts again on call thirty-one. The model needs only the last few.
 The rest costs money and pushes the rules out of view.
 
+## Watch it done
+
 For example, here is an old result before and after trimming:
 
 ```text
@@ -28,7 +30,7 @@ flowchart LR
   Before --> After
 ```
 
-## Your challenge
+## Your turn
 
 In `src/context.ts`, write `trimOldResults(messages)`. `src/main.ts` already calls it before every call.
 
@@ -44,6 +46,8 @@ In `src/context.ts`, write `trimOldResults(messages)`. `src/main.ts` already cal
 
 Change the parts in place. Never delete a part or a message: a tool call with no result is an error.
 
+## Do it on your work
+
 ```bash
 bun run verify trim-old-results
 ```
@@ -57,6 +61,10 @@ Expect: `Done. All 5 rules pass.`
 - The last 3 tool results are still whole.
 - Each stub names a saved file that holds the full text.
 - Trimming comes in batches, so at least 20 of 29 calls only add to the end of the last one.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

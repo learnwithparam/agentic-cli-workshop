@@ -1,5 +1,17 @@
 # Score the desk with promptfoo
 
+## After this part you can
+
+- Turn the 12 drafts into promptfoo tasks.
+- Write the hand-built scorer's rule as one assertion.
+- Read the pass and fail table, and open it with `promptfoo view`.
+- Prove that the new count equals the old one.
+
+## You leave with
+
+Your eval runs without a key, and its count equals your hand-built score. The hand-built scorer taught you the
+rule. promptfoo is how a team runs that rule every day.
+
 ## The problem
 
 You built a scorer by hand in `score-the-agent`. It runs desk on tonight's 12 drafts, reads the CMS, and
@@ -86,14 +98,13 @@ Choose Inspect AI when your scorers are Python, or when you want a dataset, a so
 Python code.
 
 Trade-off: Inspect AI needs a Python setup inside a TypeScript repo. promptfoo runs from `npx` with one YAML
-file. In `CHOICE.md`, write which one you would pick for your own team and why.
+file.
 
-## Finished
-
-Your eval runs without a key, and its count equals your hand-built score. The hand-built scorer taught you the
-rule. promptfoo is how a team runs that rule every day.
-
-## Read
+## Watch and read
 
 - [promptfoo documentation](https://www.promptfoo.dev/docs/intro/)
 - [Inspect AI](https://inspect.aisi.org.uk/)
+
+## Project
+
+In `CHOICE.md`, write which one you would pick for your own team and why.

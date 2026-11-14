@@ -1,28 +1,11 @@
 # Touch the world safely
 
-## The problem
+## After this part you can
 
-After Run the loop, desk can read the newsroom. Now it must also change things. It must fix a figure in a draft,
-add up numbers in a CSV file, and file a story to the CMS. Each of these can go wrong, and then a person must
-clean up. A style fix can wipe out a whole paragraph. A command can hang. A story can go to the website before
-its embargo, the time before which it must not be published.
-
-For example, the press release `sources/press-releases/clinic-opening.txt` starts like this:
-
-```text
-MILLBROOK HEALTH PARTNERSHIP
-EMBARGOED UNTIL 2026-11-13T09:00:00Z. Not for publication before this time.
-```
-
-The website updates before that time. So the draft `new-clinic-opening.md` must be held, not filed. In the
-demo run, desk reads the draft and the press release, then calls `hold_story new-clinic-opening`.
-
-A safe edit is small. The draft `river-levels.md` says the river peaked "on the ninth". The file
-`sources/river-levels.csv` shows the peak, 3.4 metres, at `2026-11-10T04:00:00Z`. So desk changes the old text
-"on the ninth" to the new text "on the tenth", and nothing else.
-
-So every tool that changes something must pass a gate first. The gate is a check in your code. It decides one
-of three things: allow the tool, ask the night editor, or deny the tool.
+- Shape tools with strict schemas and helpful errors.
+- Edit a draft by changing one exact piece of text.
+- Run a command with a timeout and cut its output.
+- Gate every action with permission modes and rules.
 
 ## Why it matters
 
@@ -104,7 +87,44 @@ bun run verify part touch-the-world-safely
 
 Expect: `Part touch-the-world-safely is done: 4/4 steps pass.`
 
-## Assignment
+## You leave with
+
+You now have a desk that changes the world with care. It searches the sources and fixes one exact piece of text.
+It runs a command that cannot hang, and it files a story only once. And it asks the night editor before it does
+anything that matters. The next part, `keep-the-context-clean`, keeps a long night's run inside the model's context window:
+a todo list, the desk rules, compaction and a helper agent.
+
+## The problem
+
+After Run the loop, desk can read the newsroom. Now it must also change things. It must fix a figure in a draft,
+add up numbers in a CSV file, and file a story to the CMS. Each of these can go wrong, and then a person must
+clean up. A style fix can wipe out a whole paragraph. A command can hang. A story can go to the website before
+its embargo, the time before which it must not be published.
+
+For example, the press release `sources/press-releases/clinic-opening.txt` starts like this:
+
+```text
+MILLBROOK HEALTH PARTNERSHIP
+EMBARGOED UNTIL 2026-11-13T09:00:00Z. Not for publication before this time.
+```
+
+The website updates before that time. So the draft `new-clinic-opening.md` must be held, not filed. In the
+demo run, desk reads the draft and the press release, then calls `hold_story new-clinic-opening`.
+
+A safe edit is small. The draft `river-levels.md` says the river peaked "on the ninth". The file
+`sources/river-levels.csv` shows the peak, 3.4 metres, at `2026-11-10T04:00:00Z`. So desk changes the old text
+"on the ninth" to the new text "on the tenth", and nothing else.
+
+So every tool that changes something must pass a gate first. The gate is a check in your code. It decides one
+of three things: allow the tool, ask the night editor, or deny the tool.
+
+## Watch and read
+
+- [Writing effective tools for agents, with agents](https://www.anthropic.com/engineering/writing-tools-for-agents)
+- [How we built Claude Code auto mode](https://www.anthropic.com/research/claude-code-auto-mode)
+- [Beyond permission prompts](https://www.anthropic.com/research/claude-code-sandboxing) (optional)
+
+## Project
 
 The problem: last month a style fix overwrote a whole paragraph, and nobody noticed. And people approve most
 prompts without reading them.
@@ -125,16 +145,3 @@ you approved.
 Going further: Anthropic stops a run after "3 consecutive denials or 20 total" and hands it to a person
 ([Anthropic](https://www.anthropic.com/research/claude-code-auto-mode)). Add the same
 rule to your gate.
-
-## Finished
-
-You now have a desk that changes the world with care. It searches the sources and fixes one exact piece of text.
-It runs a command that cannot hang, and it files a story only once. And it asks the night editor before it does
-anything that matters. The next part, `keep-the-context-clean`, keeps a long night's run inside the model's context window:
-a todo list, the desk rules, compaction and a helper agent.
-
-## Read
-
-- [Writing effective tools for agents, with agents](https://www.anthropic.com/engineering/writing-tools-for-agents)
-- [How we built Claude Code auto mode](https://www.anthropic.com/research/claude-code-auto-mode)
-- [Beyond permission prompts](https://www.anthropic.com/research/claude-code-sandboxing) (optional)

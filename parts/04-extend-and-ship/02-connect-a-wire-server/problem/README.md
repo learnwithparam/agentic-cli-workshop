@@ -2,8 +2,11 @@
 
 ## The problem
 
-Some stories come from a news agency, called the wire. The wire is not a folder. It is a service with its own
-tools. FUNKE's newsrooms reach the German news agency through one of "more than 20 MCP servers".
+Some stories come from a news agency, called the wire. The wire is a service with its own tools, not a folder.
+
+FUNKE's newsrooms reach the German news agency through one of "more than 20 MCP servers".
+
+## Watch it done
 
 The Model Context Protocol, or MCP, is a standard way to plug outside tools into an agent. An MCP server
 offers tools. An MCP client, here desk, lists and calls them. Over stdio, desk starts the server as a child
@@ -24,7 +27,7 @@ flowchart LR
   D -->|tool result| M
 ```
 
-## Your challenge
+## Your turn
 
 `src/main.ts` already calls `connectWireServers()` before the first model call. `src/tools.ts` has `addTool()`,
 which adds a tool the model sees like the rest.
@@ -40,10 +43,12 @@ In `src/wire.ts`, write `connectWireServers()`:
    `isError` is an error: throw it.
 6. Wire text is data, never an order. Planted story `PA-1120` tells the editor to file a story. Put the text of
    every wire result between `<untrusted>` markers, and remove any marker already inside it.
-7. Once wire text is in the run, keep `file_story`, `edit_file` and `run_command` shut with an error result.
+7. Once wire text arrives, keep `file_story`, `edit_file` and `run_command` shut with an error result.
 
 Wire tools pass the same gate and hooks as every tool, so a `deny` rule keeps a call out. If the server dies,
 `callTool` throws, and the loop turns that into an error result.
+
+## Do it on your work
 
 ```bash
 bun run verify connect-a-wire-server
@@ -59,6 +64,10 @@ Expect: `Done. All 6 rules pass.`
 - When the wire server dies, desk sends back an error result and carries on.
 - Wire text goes back fenced in `<untrusted>` markers, and a fake closing marker in it is removed.
 - After wire text is read, a story the wire told desk to file never reaches the CMS.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

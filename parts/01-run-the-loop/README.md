@@ -1,31 +1,13 @@
 # Run the loop
 
-## The problem
+## After this part you can
 
-Twelve drafts wait on the Millbrook Herald night desk. The night editor wants an agent that reads them, checks
-them and files them. First, the agent needs a loop. The loop is the center of every agent harness. It calls the
-model and runs the tools the model asks for. It sends the results back to the model. And it stops at the
-right time.
-
-For example, here are five lines from the finished desk at work on the river story. Each line is one tool
-call that the model asked for:
-
-```text
-  > read_file drafts/river-levels.md
-  > read_file sources/river-levels.csv
-  > edit_file drafts/river-levels.md
-  > log_correction river-levels
-  > file_story river-levels
-```
-
-Between those lines, the loop sends each result back, and the model picks the next step. When the model asks
-for no more tools, the loop ends.
-
-If you get the loop wrong, the agent is useless or costs too much. Here are three ways it goes wrong:
-
-- It stops after the first tool call and says nothing.
-- It sends a result the model cannot match to its call, and the API refuses the request.
-- It never stops. It keeps spending money on a question it answered long ago.
+- Call a model by its role and print the reply.
+- Give the model a tool to read files, and pair each result with its call.
+- Run a loop of model calls and tools until the model stops asking.
+- Stop the loop with a turn cap and a budget cap.
+- Stream the reply to the terminal as it arrives.
+- Switch to a second provider with one setting.
 
 ## Why it matters
 
@@ -112,8 +94,43 @@ bun run verify part run-the-loop
 
 Expect: `Part run-the-loop is done: 6/6 steps pass.`
 
-## Read
+## You leave with
+
+A desk that reads drafts, runs tools in a loop, stops on its caps and streams its replies. It also runs on a second provider with one setting.
+
+## The problem
+
+Twelve drafts wait on the Millbrook Herald night desk. The night editor wants an agent that reads them, checks
+them and files them. First, the agent needs a loop. The loop is the center of every agent harness. It calls the
+model and runs the tools the model asks for. It sends the results back to the model. And it stops at the
+right time.
+
+For example, here are five lines from the finished desk at work on the river story. Each line is one tool
+call that the model asked for:
+
+```text
+  > read_file drafts/river-levels.md
+  > read_file sources/river-levels.csv
+  > edit_file drafts/river-levels.md
+  > log_correction river-levels
+  > file_story river-levels
+```
+
+Between those lines, the loop sends each result back, and the model picks the next step. When the model asks
+for no more tools, the loop ends.
+
+If you get the loop wrong, the agent is useless or costs too much. Here are three ways it goes wrong:
+
+- It stops after the first tool call and says nothing.
+- It sends a result the model cannot match to its call, and the API refuses the request.
+- It never stops. It keeps spending money on a question it answered long ago.
+
+## Watch and read
 
 - [How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works): the words for the loop, tools and sessions.
 - [Tutorial: build a tool-using agent](https://platform.claude.com/docs/en/agents-and-tools/tool-use/build-a-tool-using-agent): the same loop, ring by ring.
 - [How the agent loop works](https://code.claude.com/docs/en/agent-sdk/agent-loop): turns, `maxTurns`, `maxBudgetUsd` and result subtypes, the names `cap-the-loop` uses.
+
+## Project
+
+Finish all six steps. Then run `bun run verify part run-the-loop`. The check should say that all six steps pass.

@@ -3,8 +3,12 @@
 ## The problem
 
 Everything so far ran on the Millbrook newsroom. That folder is made up, so it proves little. The real test is a
-folder you care about: your notes, your recipes, your reports. desk only needs three things from you. A rules
-file that names your real files, a permission file that fences it in, and proof from one real run.
+folder you care about: your notes, your recipes, your reports.
+
+desk only needs three things from you. A rules file that names your real files, a permission file that fences it
+in, and proof from one real run.
+
+## Watch it done
 
 For example, take a home folder with `notes/trip-plan.md` and two recipes. It needs a rule such as "every date
 in the trip plan must match the ferry tickets". A rule that names no real file cannot be checked.
@@ -19,7 +23,7 @@ flowchart LR
   E --> K[Check: reads your three files and your folder]
 ```
 
-## Your challenge
+## Your turn
 
 The three starter files are in `my-desk/`. Fill them in. The check reads them and your folder. It never reads the
 course world, and it refuses a folder that belongs to this course.
@@ -34,6 +38,8 @@ course world, and it refuses a folder that belongs to this course.
    `my-desk/evidence.md`, in a json block.
 6. Under "What it found", write two or three sentences about what desk found or got wrong.
 
+## Do it on your work
+
 ```bash
 bun run verify point-desk-at-your-own-files
 ```
@@ -47,6 +53,10 @@ Expect: `Done. All 5 rules pass.`
 - `DESK.md` has the three rule sections, each filled in, and names real files of yours.
 - `evidence.md` pastes a session line where desk read one of your files.
 - `evidence.md` says in your own words what desk found, in at least 20 words.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

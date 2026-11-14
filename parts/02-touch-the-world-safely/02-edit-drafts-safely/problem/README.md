@@ -2,21 +2,8 @@
 
 ## The problem
 
-Last month a style fix wiped out a whole paragraph, and nobody saw it until morning. An editing tool must
-change only what the model means to change.
-
-For example, the draft `drafts/river-levels.md` says the river peaked "on the ninth". The source
-`sources/river-levels.csv` shows the peak on the tenth. The fix is one small swap: the old text
-"on the ninth" becomes the new text "on the tenth".
-
-Four things can go wrong:
-
-- The old text is not in the file. The model copied it wrong.
-- The old text is in the file twice. `metres` is in the river draft two times, so which one?
-- The model never read the file, so it guesses.
-- A reporter changed the file after the model read it, so its copy is out of date.
-
-In each case, desk must refuse and say why.
+Last month a style fix wiped out a whole paragraph, and nobody saw it until morning. An editing tool must change
+only what the model means to change.
 
 ```mermaid
 flowchart TD
@@ -30,7 +17,28 @@ flowchart TD
   N -->|1| W[Write the file, send back a short diff]
 ```
 
-## Your challenge
+## Watch it done
+
+For example, the draft `drafts/river-levels.md` says the river peaked "on the ninth". The source
+`sources/river-levels.csv` shows the peak on the tenth. The fix is one small swap: the old text
+"on the ninth" becomes the new text "on the tenth".
+
+Four things can go wrong:
+
+- The old text is not in the file.
+- The old text is in the file twice, so which one?
+- The model never read the file, so it guesses.
+- A reporter changed the file after it was read.
+
+```bash
+bun run try edit-drafts-safely solution -p "check tonight's drafts" --max-turns 9
+```
+
+Expect: an `edit_file drafts/bridge-repairs.md` line with `- £4.2m` and `+ £420,000` under it.
+
+![The edit and its diff](../images/expected.png)
+
+## Your turn
 
 In `src/tools.ts`:
 
@@ -46,13 +54,9 @@ the new text as a code.
 
 Run `bun run world reset` first. A `try` run changes the newsroom.
 
-```bash
-bun run try edit-drafts-safely solution -p "check tonight's drafts" --max-turns 9
-```
+## Do it on your work
 
-Expect: an `edit_file drafts/bridge-repairs.md` line with `- £4.2m` and `+ £420,000` under it.
-
-![The edit and its diff in the terminal](../images/expected.png)
+Pick a file at work that someone else edits. Name one edit a tool should refuse.
 
 ## Done when
 
@@ -77,7 +81,11 @@ Expect: `Done. All 6 rules pass.`
 | `FAIL  An edit to a file that changed since desk read it ...` | Read the file again and compare it with the saved text. |
 | `FAIL  A good edit sends back a short diff ...`               | Return two lines, `- old` and `+ new`, not the file.    |
 
+## Solution
+
+Open the `solution` folder after your check passes.
+
 ## Words you will use
 
-- **Diff**: a short view of a change, with `-` before removed text and `+` before added text.
+- **Diff**: a short view of a change. `-` marks removed text, `+` added.
 - **Exact replace**: an edit that names the old text word for word.

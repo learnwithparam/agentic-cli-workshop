@@ -2,22 +2,11 @@
 
 ## The problem
 
-Some checks are faster with a command than with reading. For example, the school draft says the pass rate
-"has fallen to 58.5%". To check it, desk adds up a column of `sources/school-results.csv`. One `awk` command
-does that:
+Some checks need a command. But a shell is the most powerful tool, and three things go wrong fast.
 
-```text
-awk -F, 'NR > 1 { total += $4 } END { print total }' sources/school-results.csv
-259
-```
-
-So desk needs a `run_command` tool. But a shell is the most powerful tool desk has. Three things go wrong
-fast:
-
-- A command never ends, such as `sleep 60` or a `tail -f`. The whole run waits.
-- A command prints far too much. `cat` on the council transcript prints about 400,000 characters. That
-  fills the model's context window and costs money on every turn after.
-- A command fails, but desk sends back its output as if all went well. The model trusts a wrong answer.
+- A command never ends, such as `sleep 60` or `tail -f`. The run waits.
+- A command prints too much. That fills the model's context window.
+- A failed command looks like success. The model trusts a wrong answer.
 
 ```mermaid
 flowchart LR
@@ -29,9 +18,21 @@ flowchart LR
   O -->|no| A[Send it all back]
 ```
 
-## Your challenge
+## Watch it done
 
-In `src/tools.ts`:
+For example, the school draft says the pass rate "has fallen to 58.5%". To check it, desk adds up a column of
+`sources/school-results.csv`. One `awk` command does that:
+
+```text
+awk -F, 'NR > 1 { total += $4 } END { print total }' sources/school-results.csv
+259
+```
+
+`cat` on the council transcript prints about 400,000 characters. That costs money on every turn after.
+
+## Your turn
+
+So desk needs a `run_command` tool. In `src/tools.ts`:
 
 1. Add the `run_command(command)` tool and its runner.
 2. Run the command with `Bun.spawnSync(["bash", "-c", command], { cwd: root, timeout: 5000 })`.
@@ -41,7 +42,7 @@ In `src/tools.ts`:
 5. When the exit code is not 0, throw an error with the code and what the command printed.
 
 The command runs in the newsroom folder. That keeps paths short, but it is not a sandbox. A command can
-still `cd ..` and touch other files. The next step puts a permission gate in front of it.
+still `cd ..` and touch other files. The next step adds a permission gate.
 
 ```bash
 bun run verify run-commands
@@ -49,6 +50,10 @@ bun run verify run-commands
 
 Expect: `Done. All 5 rules pass.` One rule waits for a `sleep 60` to be stopped, so the check takes about 20
 seconds.
+
+## Do it on your work
+
+Pick a command you run at work. Decide how long it may run.
 
 ## Done when
 
@@ -67,8 +72,12 @@ seconds.
 | `FAIL  The awk sum over sources/school-results.csv ...`       | Send back stdout as it is. The check plants a new school row on every run. |
 | `FAIL  A command that fails comes back as an error ...`       | Check `exitCode` after the timeout, and throw when it is not 0.            |
 
+## Solution
+
+Open the `solution` folder after your check passes.
+
 ## Words you will use
 
 - **Timeout**: the longest time desk lets a command run before it stops it.
 - **Exit code**: the number a command ends with. 0 means it worked. Anything else means it failed.
-- **Context window**: everything the model reads on one call. Long tool output takes up room in it.
+- **Context window**: what the model reads on one call.

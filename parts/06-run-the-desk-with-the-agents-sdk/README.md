@@ -1,5 +1,21 @@
 # Run the desk with the OpenAI Agents SDK
 
+## After this part you can
+
+- Describe a desk as one `Agent` with instructions and tools.
+- Write a tool with `tool()` and a zod schema.
+- Pause a filing with `needsApproval`, and refuse it when no editor is there.
+- Point the SDK at the practice model, with no call that leaves the machine.
+
+## You leave with
+
+The desk runs on a framework and files the same 9 stories. It holds the same 3, and it refuses to file a
+held story, whatever the model asks. You did not write the loop. You wrote the rule that stops the filing.
+
+This step proves the wiring. It shows that the SDK runs the tool loop and that the approval holds a
+story. It does not prove the quality of a real OpenAI model's choices. The practice model answers the same
+way every run. Tracing, handoffs, guardrails, sessions and the Realtime package are not taught here.
+
 ## The problem
 
 Your desk loop works. You wrote it by hand in `run-the-loop` and `touch-the-world-safely`. It sends
@@ -85,15 +101,10 @@ one loop over many providers. It adds no new package to the repo.
 Trade-off: the Agents SDK gives approvals and run state for free. Its tool shapes and its client are its
 own. The Vercel loop adds no package, but you write the approval step yourself.
 
-## Finished
-
-The desk runs on a framework and files the same 9 stories. It holds the same 3, and it refuses to file a
-held story, whatever the model asks. You did not write the loop. You wrote the rule that stops the filing.
-
-This step proves the wiring. It shows that the SDK runs the tool loop and that the approval holds a
-story. It does not prove the quality of a real OpenAI model's choices. The practice model answers the same
-way every run. Tracing, handoffs, guardrails, sessions and the Realtime package are not taught here.
-
-## Read
+## Watch and read
 
 - [@openai/agents on npm](https://www.npmjs.com/package/@openai/agents)
+
+## Project
+
+Do the second step on a folder of your own. It ends with three files and a run record from your own folder.

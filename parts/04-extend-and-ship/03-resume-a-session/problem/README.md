@@ -5,8 +5,11 @@
 The night run takes a while. The laptop can sleep or someone can press Ctrl+C. Then everything desk knew is
 gone, and a new run may file `bridge-repairs` a second time.
 
-So desk saves every message to a session file the moment it exists. One run is one file,
-`.desk/sessions/<id>.jsonl`, with one JSON message per line.
+So desk saves every message to a session file at once.
+
+## Watch it done
+
+One run is one file, `.desk/sessions/<id>.jsonl`, with one JSON message per line.
 
 For example, after two turns a session file starts like this:
 
@@ -31,25 +34,27 @@ sequenceDiagram
   D->>D: history first, then the new prompt
 ```
 
-## Your challenge
+## Your turn
 
 `src/main.ts` already calls `openSession()` at the start, starts from `session.history`, and calls
 `session.save()` for every new message. In `src/session.ts`, write `openSession()`:
 
-1. Keep the session files in `.desk/sessions/` in the newsroom folder.
+1. Keep session files in `.desk/sessions/` in the newsroom folder.
 2. With `--resume <id>`, use that id. With `--continue`, use the file that changed last.
 3. A resumed session's history is its file, one `JSON.parse` per line.
 4. `save()` appends each message with `appendFileSync`, at once.
 5. A new session gets a short id, such as `crypto.randomUUID().slice(0, 8)`.
 
-Two more moves, because a run can be stopped in the middle:
+Two more moves, because a run can stop midway:
 
 6. Listen for `SIGINT`, the signal Ctrl-C sends. Set a flag, finish the step, give each pending tool call an
    error result, print `Interrupted. Resume with: --resume <id>`, and exit 130.
 7. On load, drop a last assistant message whose tool call has no result. That is the repair after a crash. Then
    add `--rewind <n>`: drop the last `n` turns and rewrite the file. It undoes the talk, not the work.
 
-desk prints the id on its first line, such as `desk session` and a short id. Keep it to resume later.
+desk prints the id on its first line, such as `desk session` and a short id. Keep it to resume.
+
+## Do it on your work
 
 ```bash
 bun run verify resume-a-session
@@ -67,6 +72,10 @@ Expect: `Done. All 8 rules pass.`
 - After Ctrl-C every tool call in the saved session has a result.
 - A session cut off between a tool call and its result is repaired when it is resumed.
 - `--rewind 1` drops the last turn from what the model sees and from the saved file.
+
+## Solution
+
+The sample answer is in `solution/`.
 
 ## If you get stuck
 

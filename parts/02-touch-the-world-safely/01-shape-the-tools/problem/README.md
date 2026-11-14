@@ -2,15 +2,9 @@
 
 ## The problem
 
-The model acts only through tools. It reads each tool's schema and every error that comes back. So a tool
-is a contract, errors included.
-
-Right now desk has two tools. It cannot search the sources or file a story. And its errors are not
-helpful. For example, the model asks `list_files` for `drafts/bridge-repairs.md`, which is a file. desk
-sends back `ENOTDIR: not a directory, scandir ...`. The model cannot tell what to do next.
-
-Second trap: a model can send the same `file_story` call twice. Without care, the second call
-is refused, or the story goes out twice.
+The model acts only through tools. It reads each tool's schema and every error. So a tool is a contract, errors
+included. Right now desk has two tools. It cannot search the sources or file a story. Its errors are not
+helpful. A model can also send the same `file_story` call twice. Without care, the story goes out twice.
 
 ```mermaid
 flowchart LR
@@ -21,7 +15,28 @@ flowchart LR
   C -->|200: already filed with this key| D
 ```
 
-## Your challenge
+## Watch it done
+
+For example, the model asks `list_files` for `drafts/bridge-repairs.md`, which is a file. desk sends back
+`ENOTDIR: not a directory, scandir ...`. The model cannot tell what to do next.
+
+A good error for that call reads:
+
+```text
+"drafts/bridge-repairs.md" is not a folder. Use read_file for a file, or list_files with path "." to see the folders.
+```
+
+```bash
+bun run try shape-the-tools solution -p "check tonight's drafts" --max-turns 6
+```
+
+Expect: lines such as a `file_story` line, then `Stopped: error_max_turns`.
+
+Lines such as `error: There is no tool "todo_write"` are fine.
+
+![The sample solution at work in the newsroom](../images/expected.png)
+
+## Your turn
 
 This step starts from your Run the loop desk. `src/main.ts` holds the loop. You work in `src/tools.ts`, which
 holds the tools.
@@ -36,23 +51,11 @@ holds the tools.
 5. Send an `idempotency_key` with each filing: one id per run, plus the slug. An idempotency key is a label
    that makes a repeated request safe. The CMS files a story once per key.
 
-For example, a good error for the call above reads:
-
-```text
-"drafts/bridge-repairs.md" is not a folder. Use read_file for a file, or list_files with path "." to see the folders.
-```
-
 Run `bun run world reset` first. A `try` run changes the newsroom.
 
-```bash
-bun run try shape-the-tools solution -p "check tonight's drafts" --max-turns 6
-```
+## Do it on your work
 
-Expect: lines such as a `file_story` line, then `Stopped: error_max_turns`.
-
-Lines such as `error: There is no tool "todo_write"` are fine. You build those tools later.
-
-![The sample solution at work in the newsroom](../images/expected.png)
+Name a tool you would give an assistant at work. Write its required fields.
 
 ## Done when
 
@@ -75,6 +78,10 @@ Expect: `Done. All 5 rules pass.`
 | `FAIL  Every tool schema lists its fields as required ...`                 | Write one helper that builds every schema the same strict way.    |
 | `FAIL  Each planted bad call comes back as an error that names a tool ...` | Check for the problem before Node does, and throw your own error. |
 | `FAIL  Two identical file_story calls file the story once ...`             | Make the id once, at the top of the file, not inside `fileStory`. |
+
+## Solution
+
+Open the `solution` folder after your check passes.
 
 ## Words you will use
 
