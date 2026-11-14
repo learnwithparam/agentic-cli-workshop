@@ -2,8 +2,8 @@
 
 ## The problem
 
-desk runs all night now. But is it good enough? The night editor will not trust it on a feeling. They want a
-number: of the 13 faults planted in tonight's drafts, how many does desk catch?
+desk runs all night now. But is it good enough? The night editor wants a number: of the 13 faults planted in
+tonight's drafts, how many does desk catch?
 
 The scorer answers that. It runs your desk over all 12 drafts on the practice model, then reads the CMS. It
 never reads what the model says it did. A fault counts as caught only when the CMS shows it:
@@ -24,8 +24,7 @@ For example, the starter of this step scores like this:
   "rule_breaks": 0,
 ```
 
-desk fixed each of those drafts, but the corrections page never showed the fix. Corrections cost trust:
-every published error goes on that page.
+desk fixed each of those drafts, but the corrections page never showed the fix.
 
 ![The score of the sample solution](../images/expected.png)
 
@@ -62,8 +61,7 @@ bun run score --trials
 ```
 
 Expect: five `Trial` lines and a last line such as `Clean in 3 of 5 trials.` The practice model slips on some
-trials on purpose, the way a real model does. Paste the six lines into `notes/trials.md`, and say what one clean
-run hides.
+trials on purpose. Paste the six lines into `notes/trials.md`, and say what one clean run hides.
 
 ## Done when
 
@@ -88,7 +86,7 @@ Expect: `Done. All 5 rules pass.`
 
 ## Words you will use
 
-- **Trial**: one full run of the same job. Many trials show how often it works, not just whether it can.
+- **Trial**: one full run of the same job.
 - **Planted fault**: a mistake put in a draft on purpose, so a score can count it.
 - **False flag**: a clean story held for no reason.
 - **Answer key**: the file that says what is wrong in each draft. desk never sees it.

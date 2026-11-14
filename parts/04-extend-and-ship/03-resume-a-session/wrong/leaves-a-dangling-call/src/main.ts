@@ -171,6 +171,16 @@ function capReached(): Subtype | null {
   return null;
 }
 
+// Run the tools a turn asked for, then add the reminder, unless Ctrl-C came in. Ctrl-C before the
+// tools run still gives each call a result.
+async function finishTurn(toolCalls: ToolCall[]): Promise<void> {
+  if (interrupted) stopForInterrupt(toolCalls);
+  await runToolCalls(toolCalls);
+  if (interrupted) stopForInterrupt([]);
+  const reminder = reminderAfterTurn(toolCalls.map((call) => call.toolName));
+  if (reminder) addMessages({ role: "user", content: reminder });
+}
+
 // The loop. Returns how the run ended.
 async function runTheLoop(): Promise<Subtype> {
   while (true) {
@@ -178,12 +188,8 @@ async function runTheLoop(): Promise<Subtype> {
     if (capped) return capped;
     await keepContextSmall();
     const toolCalls = await oneTurn();
-    if (interrupted) stopForInterrupt(toolCalls);
-    if (toolCalls.length === 0) return "success";
-    await runToolCalls(toolCalls);
-    if (interrupted) stopForInterrupt([]);
-    const reminder = reminderAfterTurn(toolCalls.map((call) => call.toolName));
-    if (reminder) addMessages({ role: "user", content: reminder });
+    if (toolCalls.length === 0) return interrupted ? stopForInterrupt([]) : "success";
+    await finishTurn(toolCalls);
   }
 }
 

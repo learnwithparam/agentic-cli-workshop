@@ -161,7 +161,8 @@ function writeSession(world: World, turns: number, dangling: boolean) {
   }
   const folder = join(world.newsroom, ".desk", "sessions");
   mkdirSync(folder, { recursive: true });
-  writeFileSync(join(folder, "made.jsonl"), `${lines.map((l) => JSON.stringify(l)).join("\n")}\n`);
+  const text = lines.map((line) => JSON.stringify(line)).join("\n");
+  writeFileSync(join(folder, "made.jsonl"), `${text}\n`);
 }
 
 const answerOnly = () => () => ({ text: "Carrying on." });

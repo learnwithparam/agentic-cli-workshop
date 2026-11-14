@@ -23,12 +23,15 @@ function loadServers(): Record<string, ServerSettings> {
 // Wire text comes from outside the newsroom, so it is data and never an order. desk fences it in
 // a marker the model is told about, and once any wire text is in the conversation, tools that
 // change something stay shut for the rest of the run.
-let wireTextSeen = false;
+const wireTextSeen = false;
 const CHANGING_TOOLS = ["file_story", "edit_file", "run_command"];
 
 export function blockedAfterWire(toolName: string): string | null {
   if (!wireTextSeen || !CHANGING_TOOLS.includes(toolName)) return null;
-  return `${toolName} is shut: wire text is in this run, and wire text cannot start a change. Tell the night editor instead.`;
+  return (
+    `${toolName} is shut: wire text is in this run, and wire text cannot start a change. ` +
+    "Tell the night editor instead."
+  );
 }
 
 // A closing marker inside the text would end the fence early, so it is taken out first.

@@ -96,8 +96,9 @@ function stopAtCap(reason: "error_max_turns" | "error_max_budget"): never {
   process.exit(3);
 }
 
-// A busy or broken service answers 429 or 5xx. Those pass, so desk waits and asks again: 1 second,
-// then 2, then 4, then gives up. A 4xx such as 400 is our own mistake, and asking again cannot fix it.
+// A busy or broken service answers 429 or 5xx. Those pass, so desk waits and asks again:
+// 1 second, then 2, then 4, then gives up. A 4xx such as 400 is our own mistake,
+// and asking again cannot fix it.
 // DESK_RETRY_MS changes the first wait, so a test does not have to sit through the real one.
 const RETRIES = 3;
 const firstWaitMs = Number(process.env.DESK_RETRY_MS ?? 1000);
@@ -107,7 +108,8 @@ function worthRetrying(error: unknown): boolean {
   return status === 429 || (status !== undefined && status >= 500);
 }
 
-// Print each piece of text the moment it arrives. An error piece is thrown so the retry code sees it.
+// Print each piece of text the moment it arrives.
+// An error piece is thrown so the retry code sees it.
 async function printStream(reply: ReturnType<typeof streamText>): Promise<void> {
   let printedText = false;
   for await (const piece of reply.fullStream) {

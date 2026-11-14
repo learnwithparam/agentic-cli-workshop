@@ -28,7 +28,10 @@ const CHANGING_TOOLS = ["file_story", "edit_file", "run_command"];
 
 export function blockedAfterWire(toolName: string): string | null {
   if (!wireTextSeen || !CHANGING_TOOLS.includes(toolName)) return null;
-  return `${toolName} is shut: wire text is in this run, and wire text cannot start a change. Tell the night editor instead.`;
+  return (
+    `${toolName} is shut: wire text is in this run, and wire text cannot start a change. ` +
+    "Tell the night editor instead."
+  );
 }
 
 // A closing marker inside the text would end the fence early, so it is taken out first.

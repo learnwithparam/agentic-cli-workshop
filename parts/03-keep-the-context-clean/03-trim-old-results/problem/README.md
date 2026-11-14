@@ -8,9 +8,6 @@ Every tool result stays in the conversation, and the whole conversation goes out
 reads thirty drafts, it sends all thirty drafts again on call thirty-one. The model needs only the last few.
 The rest costs money and pushes the rules out of view.
 
-Anthropic tested this on a search task of 100 turns. Clearing old tool results let agents finish work that
-would fail without it, "while reducing token consumption by 84%".
-
 For example, here is an old result before and after trimming:
 
 ```text
@@ -18,8 +15,7 @@ before: ---\nslug: bridge-repairs\nheadline: Bridge repairs to cost ... (620 cha
 after:  [trimmed: 620 characters, in .desk/results/toolu_abc123.txt]
 ```
 
-The stub keeps the call paired with its result, so the API still accepts the request. And it says where the
-full text is, so the model can read it again with `read_file` if it must.
+The stub keeps the call paired with its result, and says where the full text is.
 
 ```mermaid
 flowchart LR

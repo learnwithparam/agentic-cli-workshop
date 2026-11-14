@@ -2,10 +2,9 @@
 
 ## The problem
 
-A long answer takes time. While it comes, the night editor looks at an empty terminal. Is the model slow, or
-is it stuck? Nobody can tell. A model API can send its reply in small pieces while it writes. That is called a
-stream. desk should print each piece as soon as it arrives. It should print the whole reply once. And it should
-still run tools when the reply asks for them.
+A long answer takes time, and the night editor sees an empty terminal. Is the model slow, or stuck? A model API
+can send its reply in small pieces while it writes. That is called a stream. desk should print each piece as it
+arrives, print the whole reply once, and still run tools.
 
 ```mermaid
 sequenceDiagram
@@ -31,10 +30,9 @@ In `src/main.ts`, replace `generateText` with `streamText`:
    With `streamText`, these are promises. A promise is a value that arrives later.
 3. Do not print `reply.text` again at the end. It is already on screen.
 
-4. A busy service answers with a status such as 503 or 429. Those pass, so ask again. Pass `maxRetries: 0` to
-   `streamText`, catch the error, read `error.statusCode`, print `Retrying in N ms`, wait, and call again. Wait
-   twice as long each time. Give up after three retries with a `Stopped:` line and exit 1. A 400 is your own
-   mistake, so never retry it. Set `DESK_RETRY_MS` to change the first wait.
+4. A busy service answers 503 or 429. Those pass, so ask again. Pass `maxRetries: 0` to `streamText`, catch the
+   error, read `error.statusCode`, print `Retrying in N ms`, wait, and call again, twice as long each time. Give
+   up after three retries with a `Stopped:` line and exit 1. Never retry a 400. `DESK_RETRY_MS` sets the first wait.
 
 ```bash
 bun run try stream-the-reply -p "what does the river-levels draft say?"
@@ -81,5 +79,4 @@ Expect: `Done. All 7 rules pass.`
 ## Words you will use
 
 - **Stream**: a reply sent in pieces while the model writes it, instead of all at the end.
-- **Server-sent events**: the format the pieces travel in over HTTP. The AI SDK reads it for you.
 - **Promise**: a value that arrives later. `await` waits for it.

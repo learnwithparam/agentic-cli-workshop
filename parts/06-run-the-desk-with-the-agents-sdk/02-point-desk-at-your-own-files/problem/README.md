@@ -6,8 +6,8 @@ Everything so far ran on the Millbrook newsroom. That folder is made up, so it p
 folder you care about: your notes, your recipes, your reports. desk only needs three things from you. A rules
 file that names your real files, a permission file that fences it in, and proof from one real run.
 
-For example, a home folder with `notes/trip-plan.md` and two recipes needs a rule such as "every date in the
-trip plan must match the ferry tickets". A rule that names no real file cannot be checked.
+For example, take a home folder with `notes/trip-plan.md` and two recipes. It needs a rule such as "every date
+in the trip plan must match the ferry tickets". A rule that names no real file cannot be checked.
 
 ```mermaid
 flowchart LR
@@ -50,11 +50,11 @@ Expect: `Done. All 5 rules pass.`
 
 ## If you get stuck
 
-| What you see                                      | Fix                                                                   |
-| ------------------------------------------------- | --------------------------------------------------------------------- |
-| `FAIL  my-desk/desk.config.json names ...`        | The `root` path must exist and hold three files. It is not a course folder. |
-| `FAIL  my-desk/DESK.md has the three ...`         | Remove every `TODO`. Name two real files in backticks.                |
-| `FAIL  my-desk/evidence.md pastes a session ...`  | Copy a whole line, and make sure its `path` is a file in your folder. |
+| What you see                                     | Fix                                                                         |
+| ------------------------------------------------ | --------------------------------------------------------------------------- |
+| `FAIL  my-desk/desk.config.json names ...`       | The `root` path must exist and hold three files. It is not a course folder. |
+| `FAIL  my-desk/DESK.md has the three ...`        | Remove every `TODO`. Name two real files in backticks.                      |
+| `FAIL  my-desk/evidence.md pastes a session ...` | Copy a whole line, and make sure its `path` is a file in your folder.       |
 
 ## Words you will use
 

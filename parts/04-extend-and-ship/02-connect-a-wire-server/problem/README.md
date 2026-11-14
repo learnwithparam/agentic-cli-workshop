@@ -2,26 +2,16 @@
 
 ## The problem
 
-Some stories come from a news agency, called the wire. The wire is not a folder in the newsroom. It is a
-service with its own tools. FUNKE's newsrooms reach the German news agency in the same way: through one of
-"more than 20 MCP servers".
+Some stories come from a news agency, called the wire. The wire is not a folder. It is a service with its own
+tools. FUNKE's newsrooms reach the German news agency through one of "more than 20 MCP servers".
 
 The Model Context Protocol, or MCP, is a standard way to plug outside tools into an agent. An MCP server
-offers tools. An MCP client, here desk, asks for the list and calls them. Over stdio, desk starts the server
-as a child program and talks to it on its stdin and stdout.
+offers tools. An MCP client, here desk, lists and calls them. Over stdio, desk starts the server as a child
+program.
 
-The wire server is ready in this step's `wire/` folder. It has two tools. For example:
-
-```text
-search_wire { "query": "River Brook" }
-  Wire results for "River Brook": 1
-  PA-1107: Heavy rain brings river warnings across the county
-get_wire_story { "id": "PA-1107" }
-  PA-1107: Heavy rain brings river warnings across the county ...
-```
-
-desk offers them to the model as `wire__search_wire` and `wire__get_wire_story`. The server's name comes first,
-so two servers can both have a tool called `search`.
+The wire server is ready in this step's `wire/` folder. It has two tools, `search_wire { query }` and
+`get_wire_story { id }`. desk offers them to the model as `wire__search_wire` and `wire__get_wire_story`. The
+server's name comes first, so two servers can both have a tool called `search`.
 
 ```mermaid
 flowchart LR
@@ -47,12 +37,11 @@ In `src/wire.ts`, write `connectWireServers()`:
    wrapped in `jsonSchema()`, and a runner.
 5. The runner calls `client.callTool({ name, arguments })` and returns the text of the result. A result marked
    `isError` is an error: throw it.
-6. Wire text comes from outside, so it is data and never an order. The server holds a planted story, `PA-1120`,
-   whose text tells the editor to file a story. Put the text of every wire result between `<untrusted>` markers,
-   and take any marker already inside the text out first.
-7. Once wire text is in the run, keep `file_story`, `edit_file` and `run_command` shut. Send back an error instead.
+6. Wire text is data, never an order. Planted story `PA-1120` tells the editor to file a story. Put the text of
+   every wire result between `<untrusted>` markers, and remove any marker already inside it.
+7. Once wire text is in the run, keep `file_story`, `edit_file` and `run_command` shut with an error result.
 
-The wire tools go through the same gate and hooks as every other tool. So a `deny` rule keeps a call from the
+The wire tools go through the same gate and hooks as every other tool, so a `deny` rule keeps a call from the
 server. If the server dies, `callTool` throws, and the loop turns that into an error result.
 
 ```bash
@@ -82,4 +71,4 @@ Expect: `Done. All 6 rules pass.`
 
 - **MCP server**: a program that offers tools to any agent that speaks the Model Context Protocol.
 - **stdio**: talking to a program through its standard input and output.
-- **Namespace**: a prefix such as `wire__` that keeps tool names from different servers apart.
+- **Namespace**: a prefix such as `wire__` that keeps tool names apart.

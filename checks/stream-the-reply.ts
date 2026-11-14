@@ -27,7 +27,8 @@ function firstSeen(desk: Run, text: string): number | null {
   return null;
 }
 
-// The service fails the first calls with a status, then answers. DESK_RETRY_MS keeps the waits short.
+// The service fails the first calls with a status, then answers.
+// DESK_RETRY_MS keeps the waits short.
 const flaky = (folder: string, name: string, failures: number, status: number) =>
   runs(folder, name, {
     args: ["-p", "Check the bridge draft."],

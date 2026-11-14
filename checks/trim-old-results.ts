@@ -115,7 +115,9 @@ export default [
       "then put that path in the stub, such as [trimmed: 512 characters, in .desk/results/x.txt].",
   },
   {
-    says: "Trimming comes in batches, so at least 20 of 29 calls only add to the end of the last one",
+    says:
+      "Trimming comes in batches, " +
+      "so at least 20 of 29 calls only add to the end of the last one",
     test: (folder) => every(trimming(folder), (desk) => stepsThatOnlyAdd(desk) >= 20),
     tryNext:
       "Trim only when 8 or more old results are still whole, then trim them all at once. " +

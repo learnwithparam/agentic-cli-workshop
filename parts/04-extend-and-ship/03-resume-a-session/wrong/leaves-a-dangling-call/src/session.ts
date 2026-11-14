@@ -80,7 +80,10 @@ export function openSession(
   let history = resumed ? loadHistory(sessionFile) : [];
   if (resumed && rewind > 0) history = rewindTurns(history, rewind);
   // The file must match the history the run starts from, or a later resume would bring it back.
-  if (resumed) writeFileSync(sessionFile, history.map((m) => `${JSON.stringify(m)}\n`).join(""));
+  if (resumed) {
+    const text = history.map((message) => `${JSON.stringify(message)}\n`).join("");
+    writeFileSync(sessionFile, text);
+  }
   const save = (added: ModelMessage[]) => {
     for (const message of added) appendFileSync(sessionFile, `${JSON.stringify(message)}\n`);
   };

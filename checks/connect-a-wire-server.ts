@@ -145,7 +145,9 @@ export default [
       "into an error result.",
   },
   {
-    says: "Wire text goes back to the model fenced in <untrusted> markers, and a fake closing marker in it is removed",
+    says:
+      "Wire text goes back to the model fenced in <untrusted> markers, " +
+      "and a fake closing marker in it is removed",
     test: (folder) =>
       every(injectedRuns(folder), (desk) => {
         const text = resultOf(desk, readPlanted.name, sameInput(readPlanted.input))?.content ?? "";

@@ -5,7 +5,17 @@
 I ran desk on my own notes folder. This line from the session file shows it reading my trip plan.
 
 ```json
-{"role":"assistant","content":[{"type":"tool-call","toolCallId":"call_01","toolName":"read_file","input":{"path":"notes/missing.md"}}]}
+{
+  "role": "assistant",
+  "content": [
+    {
+      "type": "tool-call",
+      "toolCallId": "call_01",
+      "toolName": "read_file",
+      "input": { "path": "notes/missing.md" }
+    }
+  ]
+}
 ```
 
 ## What it found

@@ -2,13 +2,11 @@
 
 ## The problem
 
-The night run takes a while. The laptop can sleep, the network can drop, or someone can press Ctrl+C. Then
-desk stops in the middle of the night, and everything it knew is gone. A new run starts from the first draft.
-Worse, it may file `bridge-repairs` a second time.
+The night run takes a while. The laptop can sleep or someone can press Ctrl+C. Then everything desk knew is
+gone, and a new run may file `bridge-repairs` a second time.
 
-So desk saves every message to a session file the moment the message exists. One run is one file,
-`.desk/sessions/<id>.jsonl`, with one JSON message per line. JSONL means one JSON value on each line. The
-file only grows; desk never rewrites it.
+So desk saves every message to a session file the moment it exists. One run is one file,
+`.desk/sessions/<id>.jsonl`, with one JSON message per line.
 
 For example, after two turns a session file starts like this:
 
@@ -18,9 +16,8 @@ For example, after two turns a session file starts like this:
 {"role":"tool","content":[{"type":"tool-result","toolName":"read_file", ...}]}
 ```
 
-To carry on, the night editor runs desk again with `--resume <id>`, or `--continue` for the newest session.
-desk loads the file and sends the whole history first. The model sees the filing it already made, so it does
-not make it again.
+To carry on, run desk with `--resume <id>`, or `--continue` for the newest session. desk sends the saved history
+first, so the model sees the filing it already made.
 
 ```mermaid
 sequenceDiagram
@@ -49,9 +46,8 @@ Two more moves, because a run can be stopped in the middle:
 
 6. Listen for `SIGINT`, the signal Ctrl-C sends. Set a flag, finish the step, give each pending tool call an
    error result, print `Interrupted. Resume with: --resume <id>`, and exit 130.
-7. When you load a history, a last assistant message whose tool call has no result is cut off. Drop it. This
-   is the repair after a crash. Then add `--rewind <n>`: drop the last `n` turns, and rewrite the file from
-   what is left. Rewind undoes the talk, not the work: a story already filed stays filed.
+7. On load, drop a last assistant message whose tool call has no result. That is the repair after a crash. Then
+   add `--rewind <n>`: drop the last `n` turns and rewrite the file. It undoes the talk, not the work.
 
 desk prints the id on its first line, such as `desk session 3f9a1c2e`. Keep it to resume later.
 

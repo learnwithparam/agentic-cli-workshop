@@ -18,7 +18,8 @@ function sections(markdown: string): Record<string, string> {
   const found: Record<string, string> = {};
   for (const part of markdown.split(/^## /m).slice(1)) {
     const [heading, ...body] = part.split("\n");
-    found[heading.trim().toLowerCase()] = body.join("\n").trim();
+    const name = heading.trim().toLowerCase();
+    found[name] = body.join("\n").trim();
   }
   return found;
 }
@@ -32,7 +33,8 @@ function settingsOf(folder: string): Settings {
   }
 }
 
-// The learner's own folder, as the config names it, or null when it is missing or inside the course.
+// The learner's own folder, as the config names it.
+// Null when it is missing or inside the course.
 function ownFolder(folder: string): string | null {
   const root = settingsOf(folder).root;
   if (typeof root !== "string") return null;
@@ -54,17 +56,22 @@ function filesUnder(folder: string, base = folder): string[] {
 
 export default [
   {
-    says: "my-desk/desk.config.json names your own folder, with at least 3 files, outside the course world",
+    says:
+      "my-desk/desk.config.json names your own folder, " +
+      "with at least 3 files, outside the course world",
     test: (folder) => {
       const own = ownFolder(folder);
       return own !== null && filesUnder(own).length >= 3;
     },
     tryNext:
-      'Set "root" in my-desk/desk.config.json to the path of your own folder, such as ../my-project. ' +
+      'Set "root" in my-desk/desk.config.json to the path of your own folder, ' +
+      "such as ../my-project. " +
       "It must exist, hold 3 or more files, and not be a folder of this course.",
   },
   {
-    says: "my-desk/desk.config.json denies at least one tool that changes things, and allows reading",
+    says:
+      "my-desk/desk.config.json denies at least one tool that changes things, " +
+      "and allows reading",
     test: (folder) => {
       const permissions = settingsOf(folder).permissions ?? {};
       const changing = ["edit_file", "run_command", "file_story", "hold_story", "log_correction"];
@@ -76,7 +83,9 @@ export default [
       'such as run_command, in "deny".',
   },
   {
-    says: "my-desk/DESK.md has the three rule sections, each filled in, and names real files of yours",
+    says:
+      "my-desk/DESK.md has the three rule sections, each filled in, " +
+      "and names real files of yours",
     test: (folder) => {
       const own = ownFolder(folder);
       const rules = readIn(folder, "DESK.md");
@@ -111,7 +120,8 @@ export default [
       }
     },
     tryNext:
-      "Open the newest file in .desk/sessions/, copy one line where the assistant called read_file, " +
+      "Open the newest file in .desk/sessions/, " +
+      "copy one line where the assistant called read_file, " +
       "and paste it in a json block. Its path must be a file in your own folder.",
   },
   {
