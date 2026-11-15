@@ -39,10 +39,12 @@ the permission gate and the context handling in code you wrote. Maybe you must b
 company, and you need to explain its design. You know TypeScript and the terminal. You do not need to have
 called a model API before.
 
-**What you leave with.** You can write the tool loop from memory. You can explain why an agent stopped. You can
-put a gate in front of a risky tool, and you can cap the number of turns and the money spent. You can shrink a
-long run and still keep the rule that matters. You can measure what a helper agent saves and what it costs. You
-can run the whole thing headless, with exit codes and a score.
+**What you leave with.** You can write the tool loop from memory. You can explain why an agent stopped.
+
+You can put a gate in front of a risky tool. You can cap the number of turns and the money spent.
+
+You can shrink a long run and keep the rule that matters. You can measure what a helper agent saves and what it
+costs. You can run the whole thing headless, with exit codes and a score.
 
 ## Run the finished system
 
@@ -117,9 +119,13 @@ flowchart LR
 | [Run the desk with the OpenAI Agents SDK](parts/06-run-the-desk-with-the-agents-sdk/README.md) | Move the desk loop onto the OpenAI Agents SDK             | `run-the-desk-with-the-openai-agents-sdk`                                                                                | 25      |
 
 Two steps go deeper: `swap-the-model` and `trim-old-results`. You can skip them the first time through. A
-third deeper step, `rebuild-on-the-agent-sdk`, is not in the repo yet. Each step says what you will make. Each
-step also has one command that checks your work: `bun run verify <step-name>`. The file
-[schedules.toml](schedules.toml) shows how to fit the parts into one long session or into several shorter ones.
+third deeper step, `rebuild-on-the-agent-sdk`, is planned but not in the repo yet.
+
+Each step tells you what you will make. Each step also has one command that checks your work: `bun run verify
+<step-name>`.
+
+The file [schedules.toml](schedules.toml) shows how to fit the parts into one long session or into several shorter
+ones.
 
 ## The project
 
@@ -133,7 +139,7 @@ At the end, you put four things in your own public repo:
    a filing, the compaction notice and the result line.
 4. A file called `notes/failures.md`. It lists the faults your desk missed and why. It quotes the session file.
 
-A script grades each item with a yes or no question. You find the questions in Extend and ship.
+A script checks each item with a yes or no question. You find the questions in Extend and ship.
 
 ## Read before you start
 
