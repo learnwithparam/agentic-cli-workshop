@@ -48,8 +48,10 @@ In `src/main.ts`, replace `generateText` with `streamText`:
    With `streamText`, these are promises.
 3. Do not print `reply.text` again at the end. It is already on screen.
 
-4. A busy service answers 503 or 429. Pass `maxRetries: 0` to `streamText`, catch the
-   error, read `error.statusCode`, print a `Retrying` line with the wait in ms, wait, and call again, twice as long each time. Give
+4. A busy service answers 503 or 429. Pass `maxRetries: 0` to `streamText` and catch the
+   error. Read `error.statusCode`. Print a `Retrying` line with the wait in ms, wait, and call again, twice as long each time.
+
+   Give
    up after three retries with a `Stopped:` line and exit 1. Never retry a 400. `DESK_RETRY_MS` sets the first wait.
 
 ## Do it on your work

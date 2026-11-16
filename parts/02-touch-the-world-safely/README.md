@@ -11,6 +11,7 @@
 
 Asking is not enough on its own. Anthropic reports that people who use Claude Code "accept 93% of" its
 permission prompts anyway ([Anthropic](https://www.anthropic.com/research/claude-code-auto-mode)).
+
 Good tools matter too. Anthropic shows the same tool answer in 206 tokens and in 72 tokens, and says errors
 should give "specific and actionable improvements"
 ([Anthropic](https://www.anthropic.com/engineering/writing-tools-for-agents)).
@@ -98,7 +99,9 @@ a todo list, the desk rules, compaction and a helper agent.
 
 After Run the loop, desk can read the newsroom. Now it must also change things. It must fix a figure in a draft,
 add up numbers in a CSV file, and file a story to the CMS. Each of these can go wrong, and then a person must
-clean up. A style fix can wipe out a whole paragraph. A command can hang. A story can go to the website before
+clean up.
+
+A style fix can wipe out a whole paragraph. A command can hang. A story can go to the website before
 its embargo, the time before which it must not be published.
 
 For example, the press release `sources/press-releases/clinic-opening.txt` starts like this:

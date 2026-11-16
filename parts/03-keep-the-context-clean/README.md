@@ -11,7 +11,9 @@
 
 desk can now run a whole night without losing its plan or its rules. It keeps a todo list and loads the desk
 rules on every call. It trims old results and compacts a long conversation. And it hands big questions to a
-cheap helper. The next part, `extend-and-ship`, adds hooks and a wire service over MCP.
+cheap helper.
+
+The next part, `extend-and-ship`, adds hooks and a wire service over MCP.
 It also adds sessions you can resume, a headless mode for scripts, and a score for the whole run.
 
 ## The problem

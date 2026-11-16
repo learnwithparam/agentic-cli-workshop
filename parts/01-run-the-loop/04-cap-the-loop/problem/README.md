@@ -78,5 +78,5 @@ Open the `solution` folder after your check passes.
 ## Words you will use
 
 - **Cap**: a limit that stops the loop: turns or dollars.
-- **Exit code**: the number a program returns when it ends. 0 means success; desk uses 3 for "a cap stopped me".
+- **Exit code**: the number a program returns when it ends. 0 means success. desk uses 3 for "a cap stopped me".
 - **Usage**: the token counts a reply reports. Cost is usage times price.

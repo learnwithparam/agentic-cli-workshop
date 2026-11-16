@@ -1,7 +1,9 @@
 # Start here
 
 In this part you set up the repo and meet the newsroom. Then you run the finished `desk` agent and write down
-what it did. You do not need an API key. Every command and every check runs on the practice model. The practice
+what it did.
+
+You do not need an API key. Every command and every check runs on the practice model. The practice
 model is a small server on your own computer. It answers like a model API, gives the same answer every time,
 and costs nothing.
 
@@ -33,7 +35,9 @@ Expect: `Ready. Next: bun run world reset`
 ### 2. Meet the world
 
 The Millbrook Herald is a small local newspaper. It comes out every morning. Tonight, twelve drafts wait in
-`world/newsroom/drafts/`. You check their facts against the files in `world/newsroom/sources/`. These files hold
+`world/newsroom/drafts/`. You check their facts against the files in `world/newsroom/sources/`.
+
+These files hold
 council budget lines, police incidents, school results and river readings. There are also six press releases
 and a very long transcript of a council meeting.
 
@@ -48,7 +52,9 @@ Jordan Pike is 16. The file `world/newsroom/DESK.md` holds the rules of the nigh
 a person under 18 who appears in a police record." So this story must not go on the website tonight.
 
 The CMS is the newspaper's website system. It is the system of record, which means its state is the one that
-counts. If the CMS shows a story as filed or held, that is the truth, whatever an agent says.
+counts.
+
+If the CMS shows a story as filed or held, that is the truth, whatever an agent says.
 
 ```bash
 bun run world reset

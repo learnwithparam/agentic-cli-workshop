@@ -41,7 +41,9 @@ In `src/context.ts`, write `trimOldResults(messages)`. `src/main.ts` already cal
 5. Change its `output` to a text stub that gives the length and the saved path.
 
 6. Trim in batches. Model services keep a cache of the start of your conversation, so a repeat call costs far
-   less. The cache only works while that start stays the same. A trim changes old messages. If you trim on every
+   less.
+
+   The cache only works while that start stays the same. A trim changes old messages. If you trim on every
    call, the cache never hits. So wait until `BATCH` (8) old results are still whole, then trim them all at once.
 
 Change the parts in place. Never delete a part or a message: a tool call with no result is an error.

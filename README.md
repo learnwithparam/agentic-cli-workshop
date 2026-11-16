@@ -2,7 +2,9 @@
 
 In this course you build an agent CLI in TypeScript, starting from an empty file. An agent CLI is a program you
 run in a terminal. It calls a model again and again, and it uses tools to do real work. Tools like Claude Code
-work this way. The code around the model is called the harness. You build the harness, and then you test it on
+work this way.
+
+The code around the model is called the harness. You build the harness, and then you test it on
 the same planted mistakes as a real one.
 
 Your agent is called `desk`. It works the night desk of the Millbrook Herald, a small local newspaper. Each night,
@@ -132,7 +134,7 @@ ones.
 At the end, you put four things in your own public repo:
 
 1. Your `desk` code. `bun run verify` passes every step on the practice model.
-2. A file called `scorecard.md`. It is a table of what `bun run score` prints for your desk: the faults caught
+2. A file called `scorecard.md`. It is a table of what `bun run score` prints for your desk. It lists the faults caught
    out of 13, the false flags, the rules broken, the turns and the cost. A second column shows a real harness
    (`claude -p`) on the same drafts.
 3. A screen recording of one run, shorter than two minutes. It shows the todo list, a permission prompt before

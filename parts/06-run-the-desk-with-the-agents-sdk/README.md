@@ -20,6 +20,7 @@ way every run. Tracing, handoffs, guardrails, sessions and the Realtime package 
 
 Your desk loop works. You wrote it by hand in `run-the-loop` and `touch-the-world-safely`. It sends
 messages, reads tool results and stops at the right moments. But every line of it is yours to keep up.
+
 When a new tool arrives, you change the loop. When a new approval rule arrives, you change the loop again.
 
 A team that ships an agent often does not want to own that loop. They use a framework. The framework runs

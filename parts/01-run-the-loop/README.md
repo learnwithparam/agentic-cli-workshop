@@ -14,7 +14,9 @@
 The loop is small, and it is enough. Anthropic built a coding agent from a model in a loop with two tools: a
 shell and a file editor. They let it "sample until the model decides that it is finished". It scored 49% on
 SWE-bench Verified, a public test of coding agents. The best score before it was 45%
-([Anthropic](https://www.anthropic.com/engineering/swe-bench-sonnet)). Everything later in this
+([Anthropic](https://www.anthropic.com/engineering/swe-bench-sonnet)).
+
+Everything later in this
 course is built around this loop: permissions, compaction, helper agents and hooks.
 
 ```mermaid
@@ -101,7 +103,9 @@ A desk that reads drafts, runs tools in a loop, stops on its caps and streams it
 ## The problem
 
 Twelve drafts wait on the Millbrook Herald night desk. The night editor wants an agent that reads them, checks
-them and files them. First, the agent needs a loop. The loop is the center of every agent harness. It calls the
+them and files them. First, the agent needs a loop.
+
+The loop is the center of every agent harness. It calls the
 model and runs the tools the model asks for. It sends the results back to the model. And it stops at the
 right time.
 

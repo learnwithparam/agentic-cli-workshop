@@ -38,7 +38,9 @@ Open `src/main.ts` in this folder. It already reads the text after `-p`. Send th
 `generateText` from `ai`. Then print the reply.
 
 Ask `config/models.ts` for the model by its role, never by its name. A role says what a call is for. Use
-`model("smart")` from `"#models"`. The main loop does the hard thinking, so it uses the smart role. With no
+`model("smart")` from `"#models"`.
+
+The main loop does the hard thinking, so it uses the smart role. With no
 setting, the smart role is the practice model. The practice model is a small server on your computer. It
 needs no key and costs nothing.
 

@@ -3,7 +3,9 @@
 ## The problem
 
 It is late on the Millbrook Herald night desk. Someone must check twelve drafts before the website updates.
-Last month the Herald printed four corrections. Two of them were for numbers that nobody checked. The night
+Last month the Herald printed four corrections. Two of them were for numbers that nobody checked.
+
+The night
 editor will not trust an agent they cannot follow. So before you build one, you watch the finished one work.
 You write down what it refused to publish, and why.
 

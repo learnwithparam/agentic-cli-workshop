@@ -48,7 +48,8 @@ checked and scored the same way.
 
 In `src/permissions.ts`, ask on stderr, not stdout, so the JSON stays clean. Read the answer with
 `console[Symbol.asyncIterator]()`, one line at a time. When stdin has no more lines, the answer is no.
-`decide()` now returns a promise; `main.ts` already awaits it. In `src/todos.ts`, print the list with
+
+`decide()` now returns a promise. `main.ts` already awaits it. In `src/todos.ts`, print the list with
 `console.error`.
 
 ## Do it on your work

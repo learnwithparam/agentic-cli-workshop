@@ -3,7 +3,9 @@
 ## The problem
 
 The model acts only through tools. It reads each tool's schema and every error. So a tool is a contract, errors
-included. Right now desk has two tools. It cannot search the sources or file a story. Its errors are not
+included.
+
+Right now desk has two tools. It cannot search the sources or file a story. Its errors are not
 helpful. A model can also send the same `file_story` call twice. Without care, the story goes out twice.
 
 ```mermaid
