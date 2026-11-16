@@ -30,7 +30,7 @@ Work in the `assignment/` folder. The steps below use the sample answer's names,
 
 1. Open `assignment/promptfooconfig.yaml`. It has one task and no assertion. Add one task for each draft in
    `world/seed/answer-key.json`. Give each task a `slug`, the `status` it must end with, and its `fixes`.
-2. Write the assertion in `assignment/caught.mjs`. Copy the rule from `score.ts`. A held story is held. A
+2. Write the assertion in `assignment/caught.mjs`. Copy the rule from `score.ts`. It says a held story is held. A
    filed story has the right text, loses the wrong text, and logs a correction when one is needed.
 
 ## Do it on your work
