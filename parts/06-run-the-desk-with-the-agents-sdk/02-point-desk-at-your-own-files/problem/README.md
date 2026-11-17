@@ -2,16 +2,13 @@
 
 ## The problem
 
-Everything so far ran on the Millbrook newsroom. That folder is made up, so it proves little. The real test is a
-folder you care about: your notes, your recipes, your reports.
+Everything so far ran on the Millbrook newsroom. That folder is made up, so it proves little. The real test is a folder you care about.
 
-desk only needs three things from you. A rules file that names your real files, a permission file that fences it
-in, and proof from one real run.
+desk needs three things from you. A rules file names your real files. A permission file fences it in. One real run proves it works.
 
 ## Watch it done
 
-For example, take a home folder with `notes/trip-plan.md` and two recipes. It needs a rule such as "every date
-in the trip plan must match the ferry tickets". A rule that names no real file cannot be checked.
+For example, take a home folder with `notes/trip-plan.md` and two recipes. It needs a rule such as "every date in the trip plan must match the ferry tickets". A rule that names no real file cannot be checked.
 
 ```mermaid
 flowchart LR
@@ -25,17 +22,13 @@ flowchart LR
 
 ## Your turn
 
-The three starter files are in `my-desk/`. Fill them in. The check reads them and your folder. It never reads the
-course world, and it refuses a folder that belongs to this course.
+The three starter files are in `my-desk/`. Fill them in. The check reads them, and it reads your folder. It never reads the course world. It refuses a folder that belongs to this course.
 
 1. Pick a small folder of your own with at least three files. Copy it if you want to keep the original safe.
-2. In `my-desk/desk.config.json`, set `root` to its path. Put `read_file` in `allow`. Put at least one tool that
-   changes things, such as `run_command`, in `deny`.
-3. In `my-desk/DESK.md`, fill in the three sections. In "Check before filing", name two or more of your real
-   files in backticks.
-4. Start desk from your folder and ask it to check the files against your rules. Use the same `-p` flag as before.
-5. Open the newest file in `.desk/sessions/`. Copy one line where desk read one of your files into
-   `my-desk/evidence.md`, in a json block.
+2. In `my-desk/desk.config.json`, set `root` to its path. Put `read_file` in `allow`. Put at least one tool that changes things, such as `run_command`, in `deny`.
+3. In `my-desk/DESK.md`, fill in the three sections. In "Check before filing", name two or more of your real files in backticks.
+4. Start desk from your folder, and ask it to check the files against your rules. Use the same `-p` flag as before.
+5. Open the newest file in `.desk/sessions/`. Copy one line where desk read one of your files into `my-desk/evidence.md`, in a json block.
 6. Under "What it found", write two or three sentences about what desk found or got wrong.
 
 ## Do it on your work
@@ -69,5 +62,5 @@ The sample answer is in `solution/`.
 ## Words you will use
 
 - **Root**: the folder desk is allowed to work in.
-- **Evidence**: a saved line from a real run, so a reader can see what desk did without asking you.
-- **Session file**: the saved record of one run, one JSON line for each message.
+- **Evidence**: a saved line from a real run. A reader can see what desk did without asking you.
+- **Session file**: the saved record of one run. It holds one JSON line for each message.
