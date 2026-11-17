@@ -2,10 +2,9 @@
 
 ## The problem
 
-Twelve drafts is a long night. After forty turns, the model can lose track of which drafts it has checked.
-It may check `bridge-repairs` twice and never reach `shop-break-in`.
+After forty turns, the model can lose track of which drafts it has checked. It may check `bridge-repairs` twice and never reach `shop-break-in`.
 
-A todo list fixes this. The model writes its plan with a `todo_write` tool, and sends the full list each time it changes.
+A todo list fixes this. The model writes its plan with a `todo_write` tool. It sends the full list each time the list changes.
 
 ```mermaid
 flowchart LR
@@ -27,11 +26,9 @@ desk keeps the newest list and shows it in the terminal. For example:
     [ ] Check bus-route-cuts
 ```
 
-`[x]` is done, `[>]` is in progress and `[ ]` is still to do. Only one item can be in progress, so the model
-works on one draft at a time.
+`[x]` is done, `[>]` is in progress and `[ ]` is still to do. Only one item can be in progress. So the model works on one draft at a time.
 
-Sometimes the model stops updating the list. Then desk adds a reminder to the next request. Anthropic's
-long-running agents use the same idea: a plan in a file that a fresh session can pick up.
+Sometimes the model stops updating the list. Then desk adds a reminder to the next request. Anthropic's long-running agents use the same idea. They keep a plan in a file that a fresh session can pick up.
 
 Run `bun run world reset` first. A `try` run changes the newsroom.
 
@@ -45,16 +42,13 @@ Expect: the list of twelve drafts, each with `[ ]` in front.
 
 ## Your turn
 
-This step starts from your Touch the world safely desk and adds `src/todos.ts`. The `todo_write` tool and its
-schema are there, and `src/tools.ts` already offers it. `src/permissions.ts` counts it as read-only, because
-it changes nothing in the newsroom.
+This step starts from your Touch the world safely desk. It adds `src/todos.ts`. The `todo_write` tool and its schema are there, and `src/tools.ts` already offers it. `src/permissions.ts` counts it as read-only, because it changes nothing in the newsroom.
 
 1. In `writeTodos`, refuse a list with two items `in_progress`. Throw an error that says what to do.
 2. Otherwise save the list, print it with one item per line and its mark, and return how many are done.
-3. In `reminderAfterTurn`, count the turns since the last `todo_write`. After 3 turns with none, return a
-   reminder that names `todo_write` and lists `openTodos()`. Then start counting again.
+3. In `reminderAfterTurn`, count the turns since the last `todo_write`. After 3 turns with none, return a reminder. The reminder names `todo_write` and lists `openTodos()`. Then start counting again.
 
-`src/main.ts` already calls `reminderAfterTurn` after each turn, and adds the reminder as a user message.
+`src/main.ts` already calls `reminderAfterTurn` after each turn. It adds the reminder as a user message.
 
 ## Do it on your work
 

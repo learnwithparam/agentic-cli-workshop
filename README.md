@@ -1,14 +1,12 @@
 # Build Your Own Agentic CLI
 
-In this course you build an agent CLI in TypeScript, starting from an empty file. An agent CLI is a program you
-run in a terminal. It calls a model again and again, and it uses tools to do real work. Tools like Claude Code
-work this way.
+In this course you build an agent CLI in TypeScript. You start from an empty file.
 
-The code around the model is called the harness. You build the harness, and then you test it on
-the same planted mistakes as a real one.
+An agent CLI is a program you run in a terminal. It calls a model again and again. It uses tools to do real work. Tools like Claude Code work this way.
 
-Your agent is called `desk`. It works the night desk of the Millbrook Herald, a small local newspaper. Each night,
-reporters leave drafts. Before a story goes on the website, someone must check every fact in it.
+The code around the model is called the harness. You build the harness. Then you test it on the same planted mistakes that a real one must catch.
+
+Your agent is called `desk`. It works the night desk of the Millbrook Herald, a small local newspaper. Each night, reporters leave drafts. Before a story goes on the website, someone must check every fact in it.
 
 For example, the draft `world/seed/newsroom/drafts/bridge-repairs.md` says:
 
@@ -20,39 +18,31 @@ The source file `world/seed/newsroom/sources/council-budget.csv` has this row:
 1,highways,Mill Lane bridge repairs,420000,yes
 ```
 
-The real figure is £420,000, not £4.2m. Your finished `desk` finds this mistake. It fixes the draft, logs a
-correction, and files the story.
+The real figure is £420,000, not £4.2m. Your finished `desk` finds this mistake. It fixes the draft, logs a correction, and files the story.
 
 By the end, `desk` does all of this:
 
-- It reads the night's drafts and checks every claim against the source files.
-- It fixes what the sources prove wrong, and it logs a correction for each fix.
+- It reads the night's drafts. It checks every claim against the source files.
+- It fixes what the sources prove wrong. It logs a correction for each fix.
 - It asks you before it files a story.
-- It keeps its context clean while it works with a council transcript of 400,000 characters. The context is
-  everything the model can see at one time.
+- It keeps its context clean while it works. One input is a council transcript of 400,000 characters. The context is everything the model can see at one time.
 - It hands research to a helper agent.
-- It runs hooks. A hook is your own small script that runs at a set moment, such as before each tool call.
+- It runs hooks. A hook is your own small script. It runs at a set moment, such as before each tool call.
 - It talks to an MCP server. MCP is a standard way to plug outside tools into an agent.
 - It picks up where it stopped after a crash.
-- It runs headless, which means with no person at the keyboard. It prints JSON that any script can read.
+- It runs headless. That means no person is at the keyboard. It prints JSON that any script can read.
 
-**Who it is for.** You are an engineer who uses a coding agent every day. You want to see the loop, the tools,
-the permission gate and the context handling in code you wrote. Maybe you must build an agent CLI for your own
-company, and you need to explain its design. You know TypeScript and the terminal. You do not need to have
-called a model API before.
+**Who it is for.** You are an engineer who uses a coding agent every day. You want to see the loop, the tools, the permission gate and the context handling in code you wrote.
 
-**What you leave with.** You can write the tool loop from memory. You can explain why an agent stopped.
+Maybe you must build an agent CLI for your own company. Then you need to explain its design. You know TypeScript and the terminal. You do not need to have called a model API before.
 
-You can put a gate in front of a risky tool. You can cap the number of turns and the money spent.
+**What you leave with.** You can write the tool loop from memory. You can explain why an agent stopped. You can put a gate in front of a risky tool. You can cap the number of turns and the money spent.
 
-You can shrink a long run and keep the rule that matters. You can measure what a helper agent saves and what it
-costs. You can run the whole thing headless, with exit codes and a score.
+You can shrink a long run and keep the rule that matters. You can measure what a helper agent saves and what it costs. You can run the whole thing headless, with exit codes and a score.
 
 ## Run the finished system
 
-You do not need an API key. Every command and every check runs on the practice model. The practice model is a
-small server on your own computer. It answers like a model API, gives the same answer every time, and costs
-nothing.
+You do not need an API key. Every command and every check runs on the practice model. The practice model is a small server on your own computer. It answers like a model API. It gives the same answer every time, and it costs nothing.
 
 ```bash
 bun install
@@ -80,8 +70,7 @@ bun run world
 
 Expect: `The Millbrook Herald CMS is running at http://localhost:4020 with 12 drafts in the newsroom.`
 
-The CMS is the newspaper's website system. Open the address in your browser. You see the board that the run
-left behind:
+The CMS is the newspaper's website system. Open the address in your browser. You see the board that the run left behind:
 
 ![The CMS after the run: nine stories filed, three held with reasons, seven corrections](images/finished-system.png)
 
@@ -120,26 +109,20 @@ flowchart LR
 | [Score the desk with promptfoo](parts/05-score-the-desk-with-promptfoo/README.md)              | Redo the scorer with promptfoo, the eval runner teams use | `score-with-promptfoo`                                                                                                   | 25      |
 | [Run the desk with the OpenAI Agents SDK](parts/06-run-the-desk-with-the-agents-sdk/README.md) | Move the desk loop onto the OpenAI Agents SDK             | `run-the-desk-with-the-openai-agents-sdk`                                                                                | 25      |
 
-Two steps go deeper: `swap-the-model` and `trim-old-results`. You can skip them the first time through. A
-third deeper step, `rebuild-on-the-agent-sdk`, is planned but not in the repo yet.
+Two steps go deeper: `swap-the-model` and `trim-old-results`. You can skip them the first time through. A third deeper step, `rebuild-on-the-agent-sdk`, is planned. It is not in the repo yet.
 
-Each step tells you what you will make. Each step also has one command that checks your work: `bun run verify
-<step-name>`.
+Each step tells you what you will make. Each step also has one command that checks your work: `bun run verify <step-name>`.
 
-The file [schedules.toml](schedules.toml) shows how to fit the parts into one long session or into several shorter
-ones.
+The file [schedules.toml](schedules.toml) shows how to fit the parts into one long session. It also shows how to fit them into several shorter ones.
 
 ## The project
 
 At the end, you put four things in your own public repo:
 
 1. Your `desk` code. `bun run verify` passes every step on the practice model.
-2. A file called `scorecard.md`. It is a table of what `bun run score` prints for your desk. It lists the faults caught
-   out of 13, the false flags, the rules broken, the turns and the cost. A second column shows a real harness
-   (`claude -p`) on the same drafts.
-3. A screen recording of one run, shorter than two minutes. It shows the todo list, a permission prompt before
-   a filing, the compaction notice and the result line.
-4. A file called `notes/failures.md`. It lists the faults your desk missed and why. It quotes the session file.
+2. A file called `scorecard.md`. It is a table of what `bun run score` prints for your desk. It lists the faults caught out of 13, the false flags, the rules broken, the turns and the cost. A second column shows a real harness (`claude -p`) on the same drafts.
+3. A screen recording of one run, shorter than two minutes. It shows the todo list, a permission prompt before a filing, the compaction notice and the result line.
+4. A file called `notes/failures.md`. It lists the faults your desk missed, and why. It quotes the session file.
 
 A script checks each item with a yes or no question. You find the questions in Extend and ship.
 
@@ -154,7 +137,7 @@ A script checks each item with a yes or no question. You find the questions in E
 | Command                            | What it does                                                                                                                            |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `bun run doctor`                   | Checks Bun, the model setting and the ports, in plain sentences                                                                         |
-| `bun run world`                    | Starts the CMS on http://localhost:4020; `bun run world reset` starts the night again; `bun run world status` prints what the CMS holds |
+| `bun run world`                    | Starts the CMS on http://localhost:4020. `bun run world reset` starts the night again. `bun run world status` prints what the CMS holds |
 | `bun run demo`                     | Runs the finished desk on the practice model                                                                                            |
 | `bun run try <step-name> -p "..."` | Runs your desk for one step by hand, in the newsroom, against the practice model                                                        |
 | `bun run verify <step-name>`       | Checks your work on one step, then shows your progress                                                                                  |
@@ -162,9 +145,7 @@ A script checks each item with a yes or no question. You find the questions in E
 | `bun run models`                   | One tiny call per model role on the chosen provider: pass or fail, and the cost                                                         |
 | `bun run check`                    | The repo standard and every check (CI runs this)                                                                                        |
 
-You work in the `problem/` folder of each step. The `solution/` folder next to it holds a sample answer. Compare
-your work with it after your check passes. The rules that every course repo follows are in
-[STANDARD.md](STANDARD.md).
+You work in the `problem/` folder of each step. The `solution/` folder next to it holds a sample answer. Compare your work with it after your check passes. The rules that every course repo follows are in [STANDARD.md](STANDARD.md).
 
 ## Use a live model
 
@@ -174,7 +155,7 @@ Nothing in the course needs a live model. If you want to try desk on a real mode
 2. Set `LLM_PROVIDER` to `anthropic`, `openrouter` or `openai`.
 3. Add the key for that provider.
 
-Git ignores the `.env` file, so your key stays out of the repo. Never type a key on the command line.
+Git ignores the `.env` file. So your key stays out of the repo. Never type a key on the command line.
 
 ```bash
 bun run models

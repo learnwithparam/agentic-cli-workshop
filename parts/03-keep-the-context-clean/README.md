@@ -9,23 +9,15 @@
 
 ## You leave with
 
-desk can now run a whole night without losing its plan or its rules. It keeps a todo list and loads the desk
-rules on every call. It trims old results and compacts a long conversation. And it hands big questions to a
-cheap helper.
+desk can now run a whole night without losing its plan or its rules. It keeps a todo list. It loads the desk rules on every call. It trims old results and compacts a long conversation. And it hands big questions to a cheap helper.
 
-The next part, `extend-and-ship`, adds hooks and a wire service over MCP.
-It also adds sessions you can resume, a headless mode for scripts, and a score for the whole run.
+The next part, `extend-and-ship`, adds hooks and a wire service over MCP. It also adds sessions you can resume, a headless mode for scripts, and a score for the whole run.
 
 ## The problem
 
-The context is everything the model can see at one time. It holds the rules, the tool results and the whole
-conversation so far. The council meeting transcript in `sources/` is about 400,000 characters long. If desk
-reads all of it, the transcript pushes the desk rules out of the model's view. Then the agent can forget the
-rule that matters most: never name a person under 18.
+The context is everything the model can see at one time. It holds the rules, the tool results and the whole conversation so far. The council meeting transcript in `sources/` is about 400,000 characters long. If desk reads all of it, the transcript pushes the desk rules out of the model's view. Then the agent can forget the rule that matters most: never name a person under 18.
 
-Twelve drafts, their sources and every tool result add up, turn after turn. The model gets slower, costs more
-and makes more mistakes. So desk must plan its work. It must keep its standing rules in view. And it must throw
-away what it no longer needs.
+Twelve drafts, their sources and every tool result add up, turn after turn. The model gets slower, costs more and makes more mistakes. So desk must plan its work. It must keep its standing rules in view. And it must throw away what it no longer needs.
 
 For example, the finished desk does not read the transcript itself. It hands one question to a helper agent:
 
@@ -34,15 +26,13 @@ For example, the finished desk does not read the transcript itself. It hands one
   > ask_researcher In the council meeting transcript, what was the final vote on the c...
 ```
 
-The helper searches the transcript and sends back one short answer: "The motion was carried 11 votes to 4". Only
-that answer goes into the context of desk. Later in the same run, desk prints this line:
+The helper searches the transcript and sends back one short answer: "The motion was carried 11 votes to 4". Only that answer goes into the context of desk. Later in the same run, desk prints this line:
 
 ```text
   ~ compacted the conversation: about 9176 tokens down to 1553
 ```
 
-Compaction means desk swaps the old turns for a short summary. A token is a small piece of a word. Here the
-context shrinks to about one sixth of its size.
+Compaction means desk swaps the old turns for a short summary. A token is a small piece of a word. Here the context shrinks to about one sixth of its size.
 
 ## Why it matters
 
@@ -50,10 +40,7 @@ Anthropic measured this on a web search task of 100 turns. Clearing old tool res
 that would fail without it, "while reducing token consumption by 84%"
 ([Anthropic](https://claude.com/blog/context-management)).
 
-A helper agent with its own clean context also helps. Anthropic's research system with helper agents beat a
-single agent by 90.2% on their own research test
-([Anthropic](https://www.anthropic.com/engineering/built-multi-agent-research-system)). But it
-used many more tokens. In this part, you measure both of these trade-offs on the newsroom.
+A helper agent with its own clean context also helps. Anthropic's research system with helper agents beat a single agent by 90.2% on their own research test ([Anthropic](https://www.anthropic.com/engineering/built-multi-agent-research-system)). But it used many more tokens. In this part, you measure both of these trade-offs on the newsroom.
 
 ```mermaid
 flowchart TB
@@ -85,13 +72,11 @@ flowchart TB
 
 This part fits in an evening. One step is a deeper one.
 
-Every step starts from `problem/src/`. The first step starts from your Touch the world safely desk. This part adds three
-files: `src/todos.ts`, `src/context.ts` and `src/researcher.ts`.
+Every step starts from `problem/src/`. The first step starts from your Touch the world safely desk. This part adds three files: `src/todos.ts`, `src/context.ts` and `src/researcher.ts`.
 
 ## Walkthrough
 
-Here is the whole part from start to finish. Each check runs your desk three times on the practice model, in a
-fresh newsroom. Then it reads the requests the model received and the files desk saved.
+Here is the whole part from start to finish. Each check runs your desk three times on the practice model, in a fresh newsroom. Then it reads the requests the model received and the files desk saved.
 
 ```bash
 bun run verify plan-with-a-todo-list
@@ -137,13 +122,9 @@ Expect: `Part keep-the-context-clean is done: 5/5 steps pass.`
 
 ## Project
 
-The problem: the 400,000-character council transcript blows the context, and the agent forgets "never name a
-minor".
+The problem: the 400,000-character council transcript blows the context. The agent forgets "never name a minor".
 
-Hand in your `src/` folder with the todo tool, the rules loader, compaction and `ask_researcher`. Add
-`notes/context.md` with one table. It compares request size and cost on one night desk run in three ways: no
-trimming or compaction, trimming only, and trimming with compaction. For example, set `compact_at_tokens` to a
-very large number in `desk.config.json` to switch compaction off.
+Hand in your `src/` folder with the todo tool, the rules loader, compaction and `ask_researcher`. Add `notes/context.md` with one table. It compares request size and cost on one night desk run in three ways: no trimming or compaction, trimming only, and trimming with compaction. For example, set `compact_at_tokens` to a very large number in `desk.config.json` to switch compaction off.
 
 | Question (yes or no)                                                           | How it is checked              |
 | ------------------------------------------------------------------------------ | ------------------------------ |

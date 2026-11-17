@@ -2,9 +2,9 @@
 
 ## The problem
 
-desk can now edit drafts, run commands and file stories, and nothing stops it. Asking about every call does not
-help. Anthropic reports that people "accept 93% of" Claude Code's permission prompts anyway. So a good
-gate allows safe work, denies what must never happen, and asks only about the rest.
+desk can now edit drafts, run commands and file stories. Nothing stops it. Asking about every call does not help. Anthropic reports that people "accept 93% of" Claude Code's permission prompts anyway.
+
+A good gate allows safe work, denies what must never happen, and asks about the rest.
 
 ```mermaid
 flowchart TD
@@ -31,7 +31,7 @@ For example, with no rules, desk asks before it files a story:
     error: Denied: The night editor said no to file_story. Do not try it again. Move on.
 ```
 
-A "no" goes back to the model as an error, so it can hold the story.
+A "no" goes back to the model as an error. So the model can hold the story instead.
 
 ```bash
 bun run try ask-before-acting solution -p "check tonight's drafts" --max-turns 9
@@ -43,8 +43,7 @@ Expect: `Allow file_story?` and desk waits for your answer.
 
 ## Your turn
 
-1. In `src/main.ts`, read `--permission-mode` (default `ask`) and stop with exit code 1 when it is not
-   one of `ask`, `accept-edits`, `plan` or `never-ask`.
+1. In `src/main.ts`, read `--permission-mode`. The default is `ask`. Stop with exit code 1 when it is not one of `ask`, `accept-edits`, `plan` or `never-ask`.
 2. Load the rules from `desk.config.json` with `loadRules`. They look like this:
 
 ```json
@@ -53,8 +52,7 @@ Expect: `Allow file_story?` and desk waits for your answer.
 
 3. Before a tool runs, call `decide()`. When it says no, throw an error that starts with `Denied:`.
 4. In `src/permissions.ts`, write `decide()` in the order of the diagram. The first answer wins.
-5. To ask, call `prompt()`. It reads one line from stdin.
-   Treat `null` as no. "Always" lasts until the run ends.
+5. To ask, call `prompt()`. It reads one line from stdin. Treat `null` as no. "Always" lasts until the run ends.
 
 The order is the lesson. A deny rule must win over an allow rule. Plan mode must win over "always".
 
@@ -66,13 +64,13 @@ Name one action you would never let an assistant take. Make it a deny rule.
 
 ## Done when
 
-- Answered n, the CMS is unchanged and the model hears the call was denied.
+- Answered n, the CMS is unchanged, and the model hears the call was denied.
 - Read-only tools run without a prompt.
 - y files the story once, and a covers later calls to the same tool.
 - A deny rule in desk.config.json beats an allow rule for the same tool.
 - Plan mode leaves the files and the CMS untouched, and reads still work.
 - never-ask mode denies every call that would prompt.
-- accept-edits mode runs edit_file but still asks before filing.
+- accept-edits mode runs edit_file, but still asks before filing.
 
 ```bash
 bun run verify ask-before-acting

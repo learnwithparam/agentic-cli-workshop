@@ -2,8 +2,8 @@
 
 ## After this part you can
 
-- Call a model by its role and print the reply.
-- Give the model a tool to read files, and pair each result with its call.
+- Call a model by its role, and print the reply.
+- Give the model a tool to read files. Pair each result with its call.
 - Run a loop of model calls and tools until the model stops asking.
 - Stop the loop with a turn cap and a budget cap.
 - Stream the reply to the terminal as it arrives.
@@ -11,13 +11,9 @@
 
 ## Why it matters
 
-The loop is small, and it is enough. Anthropic built a coding agent from a model in a loop with two tools: a
-shell and a file editor. They let it "sample until the model decides that it is finished". It scored 49% on
-SWE-bench Verified, a public test of coding agents. The best score before it was 45%
-([Anthropic](https://www.anthropic.com/engineering/swe-bench-sonnet)).
+The loop is small, and it is enough. Anthropic built a coding agent from a model in a loop with two tools: a shell and a file editor. They let it "sample until the model decides that it is finished". It scored 49% on SWE-bench Verified, a public test of coding agents. The best score before it was 45% ([Anthropic](https://www.anthropic.com/engineering/swe-bench-sonnet)).
 
-Everything later in this
-course is built around this loop: permissions, compaction, helper agents and hooks.
+Everything later in this course is built around this loop. That includes permissions, compaction, helper agents and hooks.
 
 ```mermaid
 flowchart LR
@@ -39,14 +35,13 @@ flowchart LR
 | `stream-the-reply` | 15      | Streaming text to the terminal as it arrives                           | `stream: true`, the time between the first and last piece on screen                    |
 | `swap-the-model`   | 15      | The same loop on a second provider with one setting                    | Requests in OpenRouter's shape, no provider import in `src/`                           |
 
-Every step starts from `problem/src/main.ts`. That file is the answer to the step before, with the new part
-marked `TODO`. You work in the `problem/` folder of the step. `bun run try <step-name> -p "..."` runs your desk
-by hand in the newsroom, on the practice model. `bun run verify <step-name>` checks your work.
+Every step starts from `problem/src/main.ts`. That file is the answer to the step before, with the new part marked `TODO`. You work in the `problem/` folder of the step.
+
+`bun run try <step-name> -p "..."` runs your desk by hand in the newsroom, on the practice model. `bun run verify <step-name>` checks your work.
 
 ## Walkthrough
 
-Here is the whole part from start to finish. Each check runs your `src/main.ts` three times. Every run gets a
-fresh copy of the newsroom and the practice model. Then the check reads what the model received.
+Here is the whole part from start to finish. Each check runs your `src/main.ts` three times. Every run gets a fresh copy of the newsroom and the practice model. Then the check reads what the model received.
 
 ```bash
 bun run try call-the-model solution -p "say ready"
@@ -102,15 +97,11 @@ A desk that reads drafts, runs tools in a loop, stops on its caps and streams it
 
 ## The problem
 
-Twelve drafts wait on the Millbrook Herald night desk. The night editor wants an agent that reads them, checks
-them and files them. First, the agent needs a loop.
+Twelve drafts wait on the Millbrook Herald night desk. The night editor wants an agent that reads them, checks them and files them. First, the agent needs a loop.
 
-The loop is the center of every agent harness. It calls the
-model and runs the tools the model asks for. It sends the results back to the model. And it stops at the
-right time.
+The loop is the center of every agent harness. It calls the model. It runs the tools the model asks for. It sends the results back to the model. And it stops at the right time.
 
-For example, here are five lines from the finished desk at work on the river story. Each line is one tool
-call that the model asked for:
+For example, here are five lines from the finished desk at work on the river story. Each line is one tool call that the model asked for:
 
 ```text
   > read_file drafts/river-levels.md
@@ -120,20 +111,19 @@ call that the model asked for:
   > file_story river-levels
 ```
 
-Between those lines, the loop sends each result back, and the model picks the next step. When the model asks
-for no more tools, the loop ends.
+Between those lines, the loop sends each result back. The model picks the next step. When the model asks for no more tools, the loop ends.
 
-If you get the loop wrong, the agent is useless or costs too much. Here are three ways it goes wrong:
+If you get the loop wrong, the agent is useless or costs too much. There are three common ways it goes wrong:
 
 - It stops after the first tool call and says nothing.
-- It sends a result the model cannot match to its call, and the API refuses the request.
+- It sends a result the model cannot match to its call. The API then refuses the request.
 - It never stops. It keeps spending money on a question it answered long ago.
 
 ## Watch and read
 
 - [How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works): the words for the loop, tools and sessions.
 - [Tutorial: build a tool-using agent](https://platform.claude.com/docs/en/agents-and-tools/tool-use/build-a-tool-using-agent): the same loop, ring by ring.
-- [How the agent loop works](https://code.claude.com/docs/en/agent-sdk/agent-loop): turns, `maxTurns`, `maxBudgetUsd` and result subtypes, the names `cap-the-loop` uses.
+- [How the agent loop works](https://code.claude.com/docs/en/agent-sdk/agent-loop): turns, `maxTurns`, `maxBudgetUsd` and result subtypes. These are the names `cap-the-loop` uses.
 
 ## Project
 

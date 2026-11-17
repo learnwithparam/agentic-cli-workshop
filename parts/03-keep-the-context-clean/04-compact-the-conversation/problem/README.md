@@ -2,8 +2,7 @@
 
 ## The problem
 
-Trimming is not enough on a long night. The model's own words and the tool calls still pile up. At some size
-the request is too big for the context window, or too slow and costly to send. Compaction fixes this.
+Trimming is not enough. The model's own words and the tool calls still pile up. At some size, the request is too big for the context window. Or it is too slow and costly to send. Compaction fixes this.
 
 When the conversation passes a size limit, desk asks the cheap fast role to write a summary.
 
@@ -20,8 +19,7 @@ flowchart TD
 
 Then it swaps the old messages for the summary.
 
-But a summary can forget things. For example, the summary may say "read 9 drafts" and leave out that
-`shop-break-in` is still to do. So desk does not trust the summary with what matters:
+But a summary can forget things. For example, the summary may say "read 9 drafts". It may leave out that `shop-break-in` is still to do. So desk does not trust the summary with what matters:
 
 - The open todo items go in after the summary, from `openTodos()`.
 - The desk rules stay in the system prompt, which compaction never touches.
@@ -42,22 +40,20 @@ bun run try compact-the-conversation solution -p "check tonight's drafts" --perm
 
 Expect: a line that starts with `~ compacted`.
 
-With `< /dev/null`, every prompt gets no. So the CMS files nothing, even when the last line says `Filed 9`.
+With `< /dev/null`, every prompt gets no. So the CMS files nothing. That is true even when the last line says `Filed 9`.
 
 ![The compaction line in a night desk run](../images/expected.png)
 
 ## Your turn
 
-In `src/context.ts`, write `compact(messages, runId)`. The rest is in place: `compactAtTokens()` reads the
-limit, and `keepContextSmall()` in `src/main.ts` calls `compact` when it is passed.
+In `src/context.ts`, write `compact(messages, runId)`. The rest is in place. `compactAtTokens()` reads the limit. `keepContextSmall()` in `src/main.ts` calls `compact` when the limit is passed.
 
 1. Append every message to `.desk/transcripts/<runId>.jsonl`, one JSON line each.
 2. Call `generateText` with `model("fast")`, `SUMMARY_RULES`, and `render()` of all but the last two messages.
 3. Build one user message: the summary, then `openTodos()`.
 4. Return that message and the last two messages, with the cost of the summary call.
 
-Keep the line format of `render()` and the first words of `SUMMARY_RULES`. The practice model uses them to
-write its summary.
+Keep the line format of `render()` and the first words of `SUMMARY_RULES`. The practice model reads them.
 
 ## Do it on your work
 

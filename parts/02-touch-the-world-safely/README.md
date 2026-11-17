@@ -4,17 +4,15 @@
 
 - Shape tools with strict schemas and helpful errors.
 - Edit a draft by changing one exact piece of text.
-- Run a command with a timeout and cut its output.
+- Run a command with a timeout, and cut its output.
 - Gate every action with permission modes and rules.
 
 ## Why it matters
 
-Asking is not enough on its own. Anthropic reports that people who use Claude Code "accept 93% of" its
-permission prompts anyway ([Anthropic](https://www.anthropic.com/research/claude-code-auto-mode)).
+Asking is not enough on its own. Anthropic reports that people who use Claude Code "accept 93% of" its permission prompts anyway ([Anthropic](https://www.anthropic.com/research/claude-code-auto-mode)).
 
-Good tools matter too. Anthropic shows the same tool answer in 206 tokens and in 72 tokens, and says errors
-should give "specific and actionable improvements"
-([Anthropic](https://www.anthropic.com/engineering/writing-tools-for-agents)).
+Good tools matter too. Anthropic shows the same tool answer in 206 tokens and in 72 tokens. It also says errors should give "specific and actionable improvements" ([Anthropic](https://www.anthropic.com/engineering/writing-tools-for-agents)).
+
 A gate that asks about everything teaches people to say yes. A useful gate does three things:
 
 - It allows safe work without asking.
@@ -42,21 +40,18 @@ flowchart LR
 
 | Step                 | Minutes | You build                                                                                                              | The check reads                                                                                                       |
 | -------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `shape-the-tools`    | 15      | `list_files`, `search_files` and `file_story` with schemas the model uses well and errors that say what to try next    | Each schema, the error text for planted bad calls, the CMS filing log (two identical filings land once)               |
-| `edit-drafts-safely` | 25      | `edit_file(path, old_text, new_text)` that refuses 0 or 2+ matches and a file not read first                           | The draft on disk after the run: one line changed, nothing else; the error results                                    |
+| `shape-the-tools`    | 15      | `list_files`, `search_files` and `file_story` with schemas the model uses well, and errors that say what to try next   | Each schema, the error text for planted bad calls, the CMS filing log (two identical filings land once)               |
+| `edit-drafts-safely` | 25      | `edit_file(path, old_text, new_text)` that refuses 0 or 2+ matches, and a file not read first                          | The draft on disk after the run: one line changed, nothing else; the error results                                    |
 | `run-commands`       | 15      | `run_command` with a timeout, a folder jail and output cut at 20,000 characters                                        | Exit and timing of a planted `sleep`, the length of the result, the answer to a sum over `sources/school-results.csv` |
 | `ask-before-acting`  | 30      | Permission modes (`ask`, `accept-edits`, `plan`, `never-ask`) and rules (`allow`, `ask`, `deny`) in `desk.config.json` | The CMS after a "no" (unchanged), a deny that beats an allow, `plan` mode leaving files untouched                     |
 
 This part fits in an evening.
 
-Every step starts from `problem/src/`. From this part on, desk lives in more than one file: `src/main.ts`
-holds the loop and `src/tools.ts` holds the tools. The last step adds `src/permissions.ts`.
+Every step starts from `problem/src/`. From this part on, desk lives in more than one file. `src/main.ts` holds the loop. `src/tools.ts` holds the tools. The last step adds `src/permissions.ts`.
 
 ## Walkthrough
 
-Here is the whole part from start to finish. Each check runs your desk three times, each time in a fresh
-copy of the newsroom with its own CMS and practice model. Then it reads the CMS and the files on disk. It
-never trusts what the model says it did.
+Here is the whole part from start to finish. Each check runs your desk three times. Each time it uses a fresh copy of the newsroom, with its own CMS and practice model. Then it reads the CMS and the files on disk. It never trusts what the model says it did.
 
 ```bash
 bun run verify shape-the-tools
@@ -90,19 +85,15 @@ Expect: `Part touch-the-world-safely is done: 4/4 steps pass.`
 
 ## You leave with
 
-You now have a desk that changes the world with care. It searches the sources and fixes one exact piece of text.
-It runs a command that cannot hang, and it files a story only once. And it asks the night editor before it does
-anything that matters. The next part, `keep-the-context-clean`, keeps a long night's run inside the model's context window:
-a todo list, the desk rules, compaction and a helper agent.
+You now have a desk that changes the world with care. It searches the sources and fixes one exact piece of text. It runs a command that cannot hang. It files a story only once. And it asks the night editor before it does anything that matters.
+
+The next part, `keep-the-context-clean`, keeps a long night's run inside the model's context window. It uses a todo list, the desk rules, compaction and a helper agent.
 
 ## The problem
 
-After Run the loop, desk can read the newsroom. Now it must also change things. It must fix a figure in a draft,
-add up numbers in a CSV file, and file a story to the CMS. Each of these can go wrong, and then a person must
-clean up.
+After Run the loop, desk can read the newsroom. Now it must also change things. It must fix a figure in a draft, add up numbers in a CSV file, and file a story to the CMS. Each of these can go wrong. Then a person must clean up.
 
-A style fix can wipe out a whole paragraph. A command can hang. A story can go to the website before
-its embargo, the time before which it must not be published.
+A style fix can wipe out a whole paragraph. A command can hang. A story can go to the website before its embargo. An embargo is the time before which a story must not be published.
 
 For example, the press release `sources/press-releases/clinic-opening.txt` starts like this:
 
@@ -111,15 +102,11 @@ MILLBROOK HEALTH PARTNERSHIP
 EMBARGOED UNTIL 2026-11-13T09:00:00Z. Not for publication before this time.
 ```
 
-The website updates before that time. So the draft `new-clinic-opening.md` must be held, not filed. In the
-demo run, desk reads the draft and the press release, then calls `hold_story new-clinic-opening`.
+The website updates before that time. So the draft `new-clinic-opening.md` must be held, not filed. In the demo run, desk reads the draft and the press release. Then it calls `hold_story new-clinic-opening`.
 
-A safe edit is small. The draft `river-levels.md` says the river peaked "on the ninth". The file
-`sources/river-levels.csv` shows the peak, 3.4 metres, at `2026-11-10T04:00:00Z`. So desk changes the old text
-"on the ninth" to the new text "on the tenth", and nothing else.
+A safe edit is small. The draft `river-levels.md` says the river peaked "on the ninth". The file `sources/river-levels.csv` shows the peak, 3.4 metres, at `2026-11-10T04:00:00Z`. So desk changes the old text "on the ninth" to the new text "on the tenth", and nothing else.
 
-So every tool that changes something must pass a gate first. The gate is a check in your code. It decides one
-of three things: allow the tool, ask the night editor, or deny the tool.
+So every tool that changes something must pass a gate first. The gate is a check in your code. It decides one of three things: allow the tool, ask the night editor, or deny the tool.
 
 ## Watch and read
 
@@ -129,13 +116,9 @@ of three things: allow the tool, ask the night editor, or deny the tool.
 
 ## Project
 
-The problem: last month a style fix overwrote a whole paragraph, and nobody noticed. And people approve most
-prompts without reading them.
+The problem: last month a style fix overwrote a whole paragraph, and nobody noticed. And people approve most prompts without reading them.
 
-Hand in your `src/` folder with `edit_file`, `run_command` and the permission gate, a `desk.config.json` for
-the night desk, and `notes/approvals.md`. In that note, run desk once in `ask` mode with
-`bun run try ask-before-acting -p "check tonight's drafts"` and write down how many prompts you saw and how many
-you approved.
+Hand in your `src/` folder with `edit_file`, `run_command` and the permission gate. Add a `desk.config.json` for the night desk, and `notes/approvals.md`. In that note, run desk once in `ask` mode with `bun run try ask-before-acting -p "check tonight's drafts"`. Write down how many prompts you saw, and how many you approved.
 
 | Question (yes or no)                                                                          | How it is checked       |
 | --------------------------------------------------------------------------------------------- | ----------------------- |
@@ -145,6 +128,4 @@ you approved.
 | Does `desk.config.json` allow the read-only tools and leave `file_story` to ask?              | Read the file           |
 | Does `notes/approvals.md` give the number of prompts and the number approved?                 | Two numbers in the note |
 
-Going further: Anthropic stops a run after "3 consecutive denials or 20 total" and hands it to a person
-([Anthropic](https://www.anthropic.com/research/claude-code-auto-mode)). Add the same
-rule to your gate.
+Going further: Anthropic stops a run after "3 consecutive denials or 20 total". Then it hands the run to a person ([Anthropic](https://www.anthropic.com/research/claude-code-auto-mode)). Add the same rule to your gate.

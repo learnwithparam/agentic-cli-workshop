@@ -4,9 +4,7 @@ This is a deeper step. You can skip it: the next step's starter already has the 
 
 ## The problem
 
-Every tool result stays in the conversation, and the whole conversation goes out on every call. After desk
-reads thirty drafts, it sends all thirty drafts again on call thirty-one. The model needs only the last few.
-The rest costs money and pushes the rules out of view.
+Every tool result stays in the conversation. The whole conversation goes out on every call. After desk reads thirty drafts, it sends all thirty drafts again on call thirty-one. The model needs only the last few. The rest costs money, and it pushes the rules out of view.
 
 ## Watch it done
 
@@ -17,7 +15,7 @@ before: ---\nslug: bridge-repairs\nheadline: Bridge repairs to cost ... (620 cha
 after:  [trimmed: 620 characters, in .desk/results/toolu_abc123.txt]
 ```
 
-The stub keeps the call paired with its result, and says where the full text is.
+The stub keeps the call paired with its result. It also says where the full text is.
 
 ```mermaid
 flowchart LR
@@ -40,13 +38,11 @@ In `src/context.ts`, write `trimOldResults(messages)`. `src/main.ts` already cal
 4. Save its full text to `.desk/results/<toolCallId>.txt`.
 5. Change its `output` to a text stub that gives the length and the saved path.
 
-6. Trim in batches. Model services keep a cache of the start of your conversation, so a repeat call costs far
-   less.
+6. Trim in batches. Model services keep a cache of the start of your conversation. A repeat call then costs far less. The cache only works while that start stays the same. A trim changes old messages, so trimming on every call stops the cache from ever hitting.
 
-   The cache only works while that start stays the same. A trim changes old messages. If you trim on every
-   call, the cache never hits. So wait until `BATCH` (8) old results are still whole, then trim them all at once.
+   So wait until `BATCH` (8) old results are still whole. Then trim them all at once.
 
-Change the parts in place. Never delete a part or a message: a tool call with no result is an error.
+Change the parts in place. Never delete a part or a message. A tool call with no result is an error.
 
 ## Do it on your work
 

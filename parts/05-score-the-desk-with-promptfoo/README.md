@@ -14,9 +14,9 @@ rule. promptfoo is how a team runs that rule every day.
 
 ## The problem
 
-You built a scorer by hand in `score-the-agent`. It runs desk on tonight's 12 drafts, reads the CMS, and
-counts the faults caught. It works. But a team that ships an agent does not keep a private scorer. They use a
-shared eval tool, so every engineer reads the same table and CI can fail a bad change.
+You built a scorer by hand in `score-the-agent`. It runs desk on tonight's 12 drafts, reads the CMS, and counts the faults caught. It works.
+
+But a team that ships an agent does not keep a private scorer. They use a shared eval tool. So every engineer reads the same table, and CI can fail a bad change.
 
 An eval is a repeatable test of a model or an agent. An eval runner runs it for you and prints a table of passes
 and fails.

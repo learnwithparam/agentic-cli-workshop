@@ -2,19 +2,15 @@
 
 ## The problem
 
-The night desk has standing rules in `DESK.md`. Rule 2 says: "Never name a person under 18 who appears in a police record."
-desk does not know these rules yet. It only knows what the night editor types after `-p`.
+The night desk has standing rules in `DESK.md`. Rule 2 says: "Never name a person under 18 who appears in a police record." desk does not know these rules yet. It only knows what the night editor types after `-p`.
 
 The rules belong in the system prompt.
 
 ## Watch it done
 
-The system prompt is the text that goes out with every request, before the conversation. It stays there when old
-messages are dropped later in this part.
+The system prompt is the text that goes out with every request, before the conversation. It stays there when old messages are dropped later in this part.
 
-Some rules belong to one folder only. A file `drafts/DESK.md` can add rules for the drafts. The nearest file
-comes last, so it has the last word. Claude Code reads `CLAUDE.md` files and Codex reads `AGENTS.md` files in
-the same way.
+Some rules belong to one folder only. A file `drafts/DESK.md` can add rules for the drafts. The nearest file comes last, so it has the last word. Claude Code reads `CLAUDE.md` files, and Codex reads `AGENTS.md` files, in the same way.
 
 For example, with both files, the system prompt that desk sends looks like this:
 
@@ -46,11 +42,9 @@ In `src/context.ts`, finish `systemPrompt()`:
 
 1. Start with `BASE_PROMPT`.
 2. Add `DESK.md`, then `drafts/DESK.md`, read from the newsroom folder. Skip a file that does not exist.
-3. Wrap each file in `<desk-rules file="...">` and `</desk-rules>`, so the model knows where a rule came
-   from.
+3. Wrap each file in `<desk-rules file="...">` and `</desk-rules>`. Then the model knows where a rule came from.
 
-`src/main.ts` already calls `systemPrompt()` once at the start of the run. It passes the result to
-`streamText` as `instructions` on every call. So an edit to `DESK.md` shows up on the next run.
+`src/main.ts` already calls `systemPrompt()` once at the start of the run. It passes the result to `streamText` as `instructions` on every call. So an edit to `DESK.md` shows up on the next run.
 
 ## Do it on your work
 
@@ -82,7 +76,6 @@ The sample answer is in `solution/`.
 
 ## Words you will use
 
-- **System prompt**: text sent before the conversation on every call. The model treats it as its standing
-  orders.
+- **System prompt**: text sent before the conversation on every call. The model treats it as its standing orders.
 - **Rules file**: a Markdown file of standing rules, such as `DESK.md`, `CLAUDE.md` or `AGENTS.md`.
 - **Nearest file**: the rules file closest to the work. It comes last, so it has the last word.

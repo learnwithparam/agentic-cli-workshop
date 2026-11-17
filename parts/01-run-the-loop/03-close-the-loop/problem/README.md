@@ -2,9 +2,9 @@
 
 ## The problem
 
-desk reads one file and stops. Real work takes many rounds: list the drafts, read one, then read its source. The
-model decides when it is done, not your program. Tools also fail, and one bad path must not end the run. The
-model should hear about the error and try something else.
+desk reads one file and stops. Real work takes many rounds, such as listing drafts and then reading one.
+
+The model decides when it is done, not your program. Tools also fail. One bad path must not end the run. The model should hear about the error and try something else.
 
 ```mermaid
 flowchart TD
@@ -34,11 +34,11 @@ Expect: `I read drafts/allotment-waiting-list.md. It opens: ...` once the loop r
 
 In `src/main.ts`, turn the single call into a loop:
 
-1. Call the model and add `reply.responseMessages` to `messages`.
+1. Call the model. Add `reply.responseMessages` to `messages`.
 2. If `reply.toolCalls` is empty, print `reply.text` and stop.
 3. Run every call. Wrap each runner in `try` and `catch`. A throw becomes `{type:"error-text",value:message}`.
-4. Add one message with role `tool` that holds every result from this turn, each with its `toolCallId`.
-5. Go back to 1.
+4. Add one message with role `tool`. It holds every result from this turn, each with its `toolCallId`.
+5. Go back to step 1.
 
 This step adds `list_files`. Its runner throws an error when a folder is missing. That is on purpose.
 
@@ -48,9 +48,9 @@ Write a task at work with several steps. Decide what to say when one fails.
 
 ## Done when
 
-- desk keeps calling until the model stops asking for tools: four calls on the check's script, then the answer, exit code 0.
+- desk keeps calling until the model stops asking for tools. On the check's script that is four calls, then the answer, with exit code 0.
 - Two tool calls in one turn come back together, each with its own id.
-- A tool that throws an error comes back as an error result, and the loop keeps going.
+- A tool that throws an error comes back as an error result. The loop keeps going.
 - Every tool call in the history has exactly one result.
 
 ```bash
@@ -61,12 +61,12 @@ Expect: `Done. All 4 rules pass.`
 
 ## If you get stuck
 
-| What you see                                                                                        | Fix                                                                                 |
-| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `FAIL It keeps going until the model stops asking for tools: 4 calls, then the answer, exit code 0` | Use `while (true)` and `break` only when there are no tool calls.                   |
-| `FAIL Two tool calls in one turn come back together, each paired with its call's id`                | Map over every call in `reply.toolCalls`, not only the first.                       |
-| `FAIL A tool that throws comes back as an error result, and the loop carries on`                    | Put `try` and `catch` around the runner, inside the map.                            |
-| `FAIL Every tool call in the history has exactly one result`                                        | Push `reply.responseMessages` every turn and never rebuild `messages` from scratch. |
+| What you see                                                                                        | Fix                                                                              |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `FAIL It keeps going until the model stops asking for tools: 4 calls, then the answer, exit code 0` | Use `while (true)`. Use `break` only when there are no tool calls.               |
+| `FAIL Two tool calls in one turn come back together, each paired with its call's id`                | Map over every call in `reply.toolCalls`, not only the first.                    |
+| `FAIL A tool that throws comes back as an error result, and the loop carries on`                    | Put `try` and `catch` around the runner, inside the map.                         |
+| `FAIL Every tool call in the history has exactly one result`                                        | Push `reply.responseMessages` every turn. Never rebuild `messages` from scratch. |
 
 This is the most important step. Try it before you open the solution.
 
@@ -76,6 +76,6 @@ Open the `solution` folder after your check passes.
 
 ## Words you will use
 
-- **Agent loop**: call the model, run its tools, send the results, repeat until it answers with no tool call.
-- **Turn**: one call to the model and the tools it asked for.
+- **Agent loop**: call the model, run its tools, send the results back, and repeat. Stop when it answers with no tool call.
+- **Turn**: one call to the model, and the tools it asked for.
 - **Error result**: a tool result that says the tool failed.

@@ -2,9 +2,7 @@
 
 ## The problem
 
-The draft `council-meeting-recap.md` says the car park motion was "voted 9 to 4". To check it, desk must find
-the vote in `sources/council-meeting-transcript.txt`. That file is about 400,000 characters long. Reading it
-would fill desk's context window with one meeting.
+The draft `council-meeting-recap.md` says the car park motion was "voted 9 to 4". To check it, desk must find the vote in `sources/council-meeting-transcript.txt`. That file is about 400,000 characters long. Reading it would fill desk's context window with one meeting.
 
 So desk hands the question to a helper.
 
@@ -18,9 +16,9 @@ and sends back one short answer. For example:
 desk sees: The motion was carried 11 votes to 4 (sources/council-meeting-transcript.txt, line 1791).
 ```
 
-desk never sees the pages the helper read. That is the point. Anthropic's research system with helpers beat a
-single agent by 90.2% on their own test. But it used "about 15× more tokens than chats". So the helper uses the
-cheap fast role, and its cost counts toward desk's budget.
+desk never sees the pages the helper read. That is the point.
+
+Anthropic's research system with helpers beat a single agent by 90.2% on their own test. But it used "about 15× more tokens than chats". So the helper uses the cheap fast role. Its cost counts toward desk's budget.
 
 ```mermaid
 flowchart LR
@@ -32,19 +30,16 @@ flowchart LR
 
 ## Your turn
 
-In `src/researcher.ts`, write `askResearcher(input)`. `src/tools.ts` already offers `ask_researcher` and runs
-it. `src/main.ts` already adds `researcherCost` to the total.
+In `src/researcher.ts`, write `askResearcher(input)`. `src/tools.ts` already offers `ask_researcher` and runs it. `src/main.ts` already adds `researcherCost` to the total.
 
 1. Start a new `messages` list with only the question. Nothing from desk's conversation goes in.
-2. Loop at most `MAX_TURNS` (6) times. Call `generateText` with `model("fast")`, `RESEARCHER_RULES` and
-   only the read-only tools: `read_file`, `list_files` and `search_files`.
+2. Loop at most `MAX_TURNS` (6) times. Call `generateText` with `model("fast")`, `RESEARCHER_RULES`, and only the read-only tools: `read_file`, `list_files` and `search_files`.
 3. Add each call's cost to `researcherCost` with `costUsd("fast", reply.usage)`.
 4. Run the tool calls with `runTool` and send the results back, like desk's own loop.
 5. When the model answers with no tool call, return its text, cut to 2,000 characters.
 6. After 6 turns, return a short line that says the researcher found no answer.
 
-The helper never gets `ask_researcher`, so it cannot start a helper of its own. And it never gets
-`edit_file` or `file_story`, so it cannot change the newsroom.
+The helper never gets `ask_researcher`, so it cannot start a helper of its own. It never gets `edit_file` or `file_story`, so it cannot change the newsroom.
 
 ## Do it on your work
 

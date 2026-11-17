@@ -1,11 +1,10 @@
 # Start here
 
-In this part you set up the repo and meet the newsroom. Then you run the finished `desk` agent and write down
-what it did.
+In this part you set up the repo and meet the newsroom. Then you run the finished `desk` agent. You write down what it did.
 
-You do not need an API key. Every command and every check runs on the practice model. The practice
-model is a small server on your own computer. It answers like a model API, gives the same answer every time,
-and costs nothing.
+You do not need an API key. Every command and every check runs on the practice model. The practice model is a small server on your own computer. It answers like a model API. It gives the same answer every time.
+
+And it costs nothing.
 
 ```mermaid
 flowchart LR
@@ -34,12 +33,9 @@ Expect: `Ready. Next: bun run world reset`
 
 ### 2. Meet the world
 
-The Millbrook Herald is a small local newspaper. It comes out every morning. Tonight, twelve drafts wait in
-`world/newsroom/drafts/`. You check their facts against the files in `world/newsroom/sources/`.
+The Millbrook Herald is a small local newspaper. It comes out every morning. Tonight, twelve drafts wait in `world/newsroom/drafts/`. You check their facts against the files in `world/newsroom/sources/`.
 
-These files hold
-council budget lines, police incidents, school results and river readings. There are also six press releases
-and a very long transcript of a council meeting.
+These files hold council budget lines, police incidents, school results and river readings. There are also six press releases and a very long transcript of a council meeting.
 
 For example, the draft `shop-break-in.md` names a person in the break-in. The file `police-incidents.csv` has
 this row about that person:
@@ -48,13 +44,11 @@ this row about that person:
 MB-2291,High Street,burglary of a shop,Jordan Pike,16,arrested
 ```
 
-Jordan Pike is 16. The file `world/newsroom/DESK.md` holds the rules of the night desk. Rule 2 says: "Never name
-a person under 18 who appears in a police record." So this story must not go on the website tonight.
+Jordan Pike is 16. The file `world/newsroom/DESK.md` holds the rules of the night desk. Rule 2 says: "Never name a person under 18 who appears in a police record." So this story must not go on the website tonight.
 
-The CMS is the newspaper's website system. It is the system of record, which means its state is the one that
-counts.
+The CMS is the newspaper's website system. It is the system of record. That means its state is the one that counts.
 
-If the CMS shows a story as filed or held, that is the truth, whatever an agent says.
+If the CMS shows a story as filed or held, that is the truth. It does not matter what an agent says.
 
 ```bash
 bun run world reset
@@ -74,9 +68,9 @@ running, and open a second terminal for the next steps.
 
 ### 3. Run the finished system
 
-`desk` is the agent CLI you will build. An agent CLI is a program in your terminal that calls a model in a loop
-and uses tools. The finished `desk` checks every draft and fixes what the sources prove wrong. It logs a
-correction for each fix. Then it files or holds each story.
+`desk` is the agent CLI you will build. An agent CLI is a program in your terminal. It calls a model in a loop, and it uses tools. The finished `desk` checks every draft.
+
+It fixes what the sources prove wrong, and it logs a correction for each fix. Then it files or holds each story.
 
 ```bash
 bun run demo
@@ -92,7 +86,7 @@ Each line that starts with `>` is one tool call. Near the end of the run, you se
   > hold_story shop-break-in
 ```
 
-Desk read the draft, then the police record, and then it held the story. That is rule 2 at work.
+Desk read the draft. Then it read the police record. Then it held the story. That is rule 2 at work.
 
 ![The finished desk at work in the terminal](images/demo-run.png)
 
@@ -100,8 +94,7 @@ Refresh http://localhost:4020. Now three stories are in the Held column. Each on
 
 ### 4. See the goal
 
-Your first step is [meet-the-desk](01-meet-the-desk/problem/README.md). In it, you write down what desk held,
-and why.
+Your first step is [meet-the-desk](01-meet-the-desk/problem/README.md). In it, you write down what desk held, and why.
 
 ```bash
 bun run verify meet-the-desk
@@ -109,5 +102,4 @@ bun run verify meet-the-desk
 
 Expect: `Done. All 5 rules pass.` once `first-look.md` is written.
 
-Sometimes a command prints something you do not expect. Look up those words in
-[troubleshooting.md](troubleshooting.md).
+Sometimes a command prints something you do not expect. Look up those words in [troubleshooting.md](troubleshooting.md).

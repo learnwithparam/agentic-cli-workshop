@@ -2,8 +2,7 @@
 
 ## The problem
 
-Last month a style fix wiped out a whole paragraph, and nobody saw it until morning. An editing tool must change
-only what the model means to change.
+Last month a style fix wiped out a whole paragraph. Nobody saw it until morning. An editing tool must change only what the model means to change.
 
 ```mermaid
 flowchart TD
@@ -19,9 +18,7 @@ flowchart TD
 
 ## Watch it done
 
-For example, the draft `drafts/river-levels.md` says the river peaked "on the ninth". The source
-`sources/river-levels.csv` shows the peak on the tenth. The fix is one small swap: the old text
-"on the ninth" becomes the new text "on the tenth".
+For example, the draft `drafts/river-levels.md` says the river peaked "on the ninth". The source `sources/river-levels.csv` shows the peak on the tenth. The fix is a small swap. The old text "on the ninth" becomes the new text "on the tenth".
 
 Four things can go wrong:
 
@@ -43,20 +40,19 @@ Expect: an `edit_file drafts/bridge-repairs.md` line with `- £4.2m` and `+ £42
 In `src/tools.ts`:
 
 1. Add the `edit_file(path, old_text, new_text)` tool and its runner.
-2. In `readFile`, save the text you read in a `Map` from the full path to the text.
+2. In `readFile`, save the text you read in a `Map`. The key is the full path, and the value is the text.
 3. In `editFile`, refuse with a clear error in each of the four cases above.
-4. Otherwise replace that one piece, save the new text in the `Map`, and return a short diff.
+4. Otherwise replace that one piece. Save the new text in the `Map`, and return a short diff.
 
 `src/main.ts` already prints the diff of every edit call.
 
-Tip: split the text on `old_text`, then join the two pieces with `new_text`. `text.replace()` treats `$&` in
-the new text as a code.
+Tip: split on `old_text`, then join the two pieces with `new_text`. `text.replace()` reads `$&` in the new text as a code.
 
 Run `bun run world reset` first. A `try` run changes the newsroom.
 
 ## Do it on your work
 
-Pick a file at work that someone else edits. Name one edit a tool should refuse.
+Pick a shared file at work. Name one edit a tool should refuse.
 
 ## Done when
 
@@ -75,11 +71,11 @@ Expect: `Done. All 6 rules pass.`
 
 ## If you get stuck
 
-| What you see                                                  | Fix                                                     |
-| ------------------------------------------------------------- | ------------------------------------------------------- |
-| `FAIL  The planted fix lands, and every other byte ...`       | Replace one piece only. Never use `replaceAll` here.    |
-| `FAIL  An edit to a file that changed since desk read it ...` | Read the file again and compare it with the saved text. |
-| `FAIL  A good edit sends back a short diff ...`               | Return two lines, `- old` and `+ new`, not the file.    |
+| What you see                                                  | Fix                                                      |
+| ------------------------------------------------------------- | -------------------------------------------------------- |
+| `FAIL  The planted fix lands, and every other byte ...`       | Replace one piece only. Never use `replaceAll` here.     |
+| `FAIL  An edit to a file that changed since desk read it ...` | Read the file again, and compare it with the saved text. |
+| `FAIL  A good edit sends back a short diff ...`               | Return two lines, `- old` and `+ new`, not the file.     |
 
 ## Solution
 
@@ -87,5 +83,5 @@ Open the `solution` folder after your check passes.
 
 ## Words you will use
 
-- **Diff**: a short view of a change. `-` marks removed text, `+` added.
+- **Diff**: a short view of a change. `-` marks removed text, and `+` marks added text.
 - **Exact replace**: an edit that names the old text word for word.

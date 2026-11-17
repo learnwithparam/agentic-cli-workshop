@@ -10,8 +10,7 @@ And it can never answer a permission prompt.
 
 ## Watch it done
 
-Katadata runs its news analysis this way, over "10,000 articles daily". So desk prints events. Each event is one thing that happened: the run started, the model wrote text, a tool
-was called, a result came back, the run ended. `--output-format` picks how they print:
+Katadata runs its news analysis this way, over "10,000 articles daily". Desk prints events the same way. Each event is one thing that happened. The run started, the model wrote text, a tool was called, a result came back, or the run ended. `--output-format` picks how the events print:
 
 - `text`: lines for a person, as before.
 - `stream-json`: one JSON object per line, as each event happens.
